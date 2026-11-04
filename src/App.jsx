@@ -237,18 +237,9 @@ export default function App() {
   };
 
   // --- Dynamic Charging Engine Calculations ---
-  // Formula: Time (hrs) = [(Capacity (mAh) * (1 - initial% / 100)) / Effective Charger Current (mA)] * Efficiency Factor
   const calculateChargeTime = (size, capacity, initialCharge, efficiency, customCharger = null) => {
     const charger = customCharger || currentCharger;
     let baseCurrent = size === 'AA' ? charger.aaCurrentMa : charger.aaaCurrentMa;
-
-    // Paired channel current division calculation
-    // If the charger charges in pairs, effective current split across pairs can alter efficiency
-    if (charger.isPaired) {
-      // In paired chargers, slots share charging circuitry in pairs (e.g., Slot 1&2, Slot 3&4)
-      // We assume effective output is shared across active slot pairs
-      baseCurrent = baseCurrent; // Uses specifications for the channel pair
-    }
 
     const netCapacityNeeded = capacity * (1 - (initialCharge / 100));
     if (baseCurrent <= 0) return 0;
@@ -302,7 +293,7 @@ export default function App() {
       remainingSec: calc.totalSec,
       overchargeSec: 0,
       startTime: Date.now(),
-      status: 'charging', // 'charging' | 'paused' | 'completed'
+      status: 'charging',
       alertTriggered: false
     };
 
@@ -329,7 +320,6 @@ export default function App() {
       if (slot.status === 'charging') {
         return { ...slot, status: 'paused' };
       } else if (slot.status === 'paused') {
-        // Adjust startTime to account for paused duration
         const pausedDurationSec = slot.elapsedSec;
         return {
           ...slot,
@@ -375,10 +365,8 @@ export default function App() {
     if (!editingCharger) return;
 
     if (editingCharger.id) {
-      // Update
       setChargers(prev => prev.map(c => c.id === editingCharger.id ? editingCharger : c));
     } else {
-      // Create new
       const created = {
         ...editingCharger,
         id: 'ch-' + Date.now()
@@ -390,7 +378,7 @@ export default function App() {
     setEditingCharger(null);
   };
 
-  // Helper time formatter (e.g. 01h 45m 12s)
+  // Helper time formatter
   const formatTime = (totalSeconds) => {
     if (totalSeconds < 0) totalSeconds = 0;
     const hrs = Math.floor(totalSeconds / 3600);
@@ -418,7 +406,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quick Stats & Active Charger Selector */}
           <div className="hidden md:flex items-center space-x-4">
             <div className="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
               <Layers className="w-4 h-4 text-blue-400" />
@@ -503,7 +490,6 @@ export default function App() {
         {/* TAB 1: DASHBOARD */}
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
-            {/* Charger Info Header Banner */}
             <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
               <div className="flex items-center space-x-3.5">
                 <div className="p-3 bg-slate-800 rounded-xl text-blue-400 border border-slate-700">
@@ -539,7 +525,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Empty State Banner */}
             {activeSlots.length === 0 && (
               <div className="border border-dashed border-slate-800 rounded-2xl p-12 text-center bg-slate-900/30">
                 <div className="w-16 h-16 bg-slate-800/80 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-500">
@@ -559,13 +544,9 @@ export default function App() {
               </div>
             )}
 
-            {/* Active Battery Charging Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {activeSlots.map((slot) => {
                 const isAA = slot.size === 'AA';
-                const accentColor = isAA ? 'blue' : 'amber';
-                
-                // Calculations
                 const pct = Math.min(100, Math.floor((slot.elapsedSec / slot.totalSec) * 100));
                 const isOvercharging = slot.elapsedSec > slot.totalSec;
                 const isCompleted = slot.status === 'completed' || pct >= 100;
@@ -581,16 +562,12 @@ export default function App() {
                           : 'border-amber-500/30 hover:border-amber-500/50 shadow-amber-950/20'
                     }`}
                   >
-                    {/* Top Accent Strip */}
                     <div className={`h-1.5 w-full ${isOvercharging ? 'bg-red-500 animate-pulse' : isAA ? 'bg-blue-500' : 'bg-amber-500'}`} />
 
                     <div className="p-5 flex-1 flex flex-col justify-between">
-                      {/* Card Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
-                          {/* Realistic Battery Silhouette Icon */}
                           <div className={`relative flex items-center justify-center rounded-lg ${isAA ? 'w-10 h-16 bg-blue-950/80 border-2 border-blue-500/80 text-blue-400' : 'w-8 h-14 bg-amber-950/80 border-2 border-amber-500/80 text-amber-400'}`}>
-                            {/* Terminal Nipple */}
                             <div className={`absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-1.5 rounded-t-sm ${isAA ? 'bg-blue-400' : 'bg-amber-400'}`} />
                             <span className="text-[10px] font-black uppercase tracking-tighter">{slot.size}</span>
                           </div>
@@ -610,7 +587,6 @@ export default function App() {
                           </div>
                         </div>
 
-                        {/* Status Badge */}
                         <div>
                           {isOvercharging ? (
                             <span className="flex items-center space-x-1 text-[11px] font-bold text-red-400 bg-red-950/80 border border-red-800 px-2.5 py-1 rounded-full animate-bounce">
@@ -635,7 +611,6 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* Overcharge Danger Banner if > 100% */}
                       {isOvercharging && (
                         <div className="mb-4 p-3 rounded-xl bg-red-950/60 border border-red-800/80 text-red-200 text-xs space-y-1">
                           <div className="flex items-center space-x-2 font-bold text-red-400">
@@ -648,7 +623,6 @@ export default function App() {
                         </div>
                       )}
 
-                      {/* Main Countdown Display */}
                       <div className="bg-slate-950/80 rounded-xl p-4 border border-slate-800 mb-4 text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">
                           {isOvercharging ? 'Time Exceeded' : 'Time Remaining'}
@@ -667,7 +641,6 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* Animated Progress Bar */}
                       <div className="space-y-1.5 mb-5">
                         <div className="flex justify-between text-xs font-semibold">
                           <span className="text-slate-400">Progress</span>
@@ -684,7 +657,6 @@ export default function App() {
                             }`} 
                             style={{ width: `${pct}%` }}
                           >
-                            {/* Shimmer animation while active */}
                             {slot.status === 'charging' && !isCompleted && (
                               <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full" />
                             )}
@@ -692,7 +664,6 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* Card Action Buttons */}
                       <div className="flex items-center space-x-2 pt-2 border-t border-slate-800/80">
                         <button
                           onClick={() => handleTogglePause(slot.id)}
@@ -882,7 +853,6 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Card 1: NiMH Physics */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
                 <div className="flex items-center space-x-2 text-blue-400 font-bold">
                   <Info className="w-5 h-5" />
@@ -895,7 +865,6 @@ export default function App() {
                 </ul>
               </div>
 
-              {/* Card 2: Li-ion / 14500 Physics */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
                 <div className="flex items-center space-x-2 text-amber-400 font-bold">
                   <AlertTriangle className="w-5 h-5" />
@@ -909,7 +878,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Formula Breakdown */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
               <h3 className="font-bold text-slate-200 text-sm mb-3 flex items-center space-x-2">
                 <Sparkles className="w-4 h-4 text-blue-400" />
@@ -984,7 +952,6 @@ export default function App() {
             </h2>
 
             <div className="space-y-4 text-xs">
-              {/* Sound Toggle */}
               <div className="flex items-center justify-between p-4 bg-slate-950 rounded-xl border border-slate-800">
                 <div className="space-y-0.5">
                   <div className="font-semibold text-slate-200 flex items-center space-x-2">
@@ -1004,7 +971,6 @@ export default function App() {
                 />
               </div>
 
-              {/* Push Notifications Toggle */}
               <div className="flex items-center justify-between p-4 bg-slate-950 rounded-xl border border-slate-800">
                 <div className="space-y-0.5">
                   <div className="font-semibold text-slate-200 flex items-center space-x-2">
@@ -1026,7 +992,6 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Default Efficiency Slider */}
               <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
                 <div className="flex justify-between font-semibold text-slate-200">
                   <span>Default Efficiency Loss Factor</span>
@@ -1050,17 +1015,16 @@ export default function App() {
         )}
       </main>
 
-      {/* MODAL 1: ADD BATTERY TO QUEUE */}
+      {/* MODAL 1: ADD BATTERY TO QUEUE (Fully Responsive with max-h and scroll) */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
             <h2 className="text-base font-bold text-slate-100 mb-4 flex items-center space-x-2">
               <BatteryCharging className="w-5 h-5 text-blue-400" />
               <span>Insert Battery Slot (Mid-Cycle Ready)</span>
             </h2>
 
             <form onSubmit={handleAddSlotSubmit} className="space-y-4">
-              {/* Presets Quick Picker */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Quick Battery Presets</label>
                 <select
@@ -1077,7 +1041,6 @@ export default function App() {
                 </select>
               </div>
 
-              {/* Slot Custom Label */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Slot Identification Label</label>
                 <input 
@@ -1089,7 +1052,6 @@ export default function App() {
                 />
               </div>
 
-              {/* Size & Type */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Battery Size</label>
@@ -1127,7 +1089,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Capacity & Initial Charge % */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Capacity (mAh)</label>
@@ -1156,7 +1117,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Dynamic Efficiency Factor */}
               <div>
                 <div className="flex justify-between text-xs font-semibold text-slate-300 mb-1">
                   <span>Thermal Loss Efficiency Factor</span>
@@ -1177,7 +1137,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Estimated Time Preview */}
               {newSlotForm.capacity > 0 && (
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-300 flex justify-between items-center">
                   <span>Calculated Time:</span>
@@ -1187,7 +1146,6 @@ export default function App() {
                 </div>
               )}
 
-              {/* Form Buttons */}
               <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
                 <button
                   type="button"
@@ -1208,10 +1166,10 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL 2: CHARGER EDITOR */}
+      {/* MODAL 2: CHARGER EDITOR (Fully Responsive with max-h, scroll, and stacking grids) */}
       {isChargerModalOpen && editingCharger && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
             <h2 className="text-base font-bold text-slate-100 mb-4 flex items-center space-x-2">
               <Zap className="w-5 h-5 text-blue-400" />
               <span>{editingCharger.id ? 'Edit Charger Profile' : 'New Charger Profile'}</span>
@@ -1229,7 +1187,8 @@ export default function App() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              {/* Responsive grid: stacks vertically on mobile, 3-columns on small+ screens */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Input V (Min)</label>
                   <input 
