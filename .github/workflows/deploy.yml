@@ -18,11 +18,7 @@ jobs:
   build-and-deploy:
     environment:
       name: github-pages
-<<<<<<< HEAD
-      url: ${{ steps.deployment.outputs.page_url }}
-=======
-      url: ${{ steps.deployment.outputs.page_url}}
->>>>>>> 02eebc8298b4cfbd47fa38f1d2905027b685e996
+      url: '${{ steps.deployment.outputs.page_url }}' # <-- Fixed: wrapped in single quotes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
