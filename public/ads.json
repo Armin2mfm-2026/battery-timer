@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-03-30T00:00:00Z",
+  "ads": [
+    {
+      "id": "github-ad-01",
+      "type": "image",
+      "url": "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=800&auto=format&fit=crop&q=60",
+      "title": "⚡ Smart Charger Pro - 50% Off Today!",
+      "cta": "Learn More",
+      "target_url": "https://github.com/voltguard"
+    },
+    {
+      "id": "github-ad-02",
+      "type": "video",
+      "url": "https://assets.mixkit.co/videos/preview/mixkit-hands-holding-a-smartphone-with-a-green-screen-42995-large.mp4",
+      "title": "🔋 Eneloop Pro Max Batteries - Extreme Life",
+      "cta": "Buy Now",
+      "target_url": "https://github.com/voltguard"
+    },
+    {
+      "id": "github-ad-03",
+      "type": "image",
+      "url": "https://images.unsplash.com/photo-1595246140625-573b715d11dc?w=800&auto=format&fit=crop&q=60",
+      "title": "🛡️ VoltGuard Power Bank Station - Protect Devices",
+      "cta": "Explore",
+      "target_url": "https://github.com/voltguard"
+    }
+  ]
+}
