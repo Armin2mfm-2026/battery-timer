@@ -89,6 +89,39 @@ const TRANSLATIONS = {
     secureCheckout: "درگاه پرداخت امن چندگانه",
     paymentSuccess: "✨ پرداخت و لایسنس با موفقیت تایید شد!"
   },
+  it: {
+    title: "VoltGuard Pro",
+    subtitle: "Gestore Intelligente di Carica e Sicurezza",
+    dashboard: "Dashboard",
+    batteryProfiles: "Profili Batterie",
+    chargers: "Caricabatterie",
+    safety: "Sicurezza",
+    history: "Cronologia",
+    settings: "Impostazioni",
+    noAds: "Senza Annunci",
+    activeCharger: "Caricatore Attivo:",
+    addSlot: "Aggiungi Slot",
+    noSlotsTitle: "Nessuno slot di ricarica attivo",
+    noSlotsDesc: "Aggiungi una batteria AA o AAA per calcolare i tempi di carica.",
+    insertFirst: "Inserisci prima batteria",
+    timeRemaining: "Tempo Rimanente",
+    timeExceeded: "Tempo Superato",
+    targetTime: "Tempo Target",
+    progress: "Progresso",
+    pause: "Pausa",
+    resume: "Riprendi",
+    unplug: "Scollega",
+    overcharging: "SOVRACCARICA",
+    done: "FATTO",
+    removeAdsTitle: "Rimuovi annunci per 1 anno",
+    removeAdsDesc: "Passa a Pro per soli 1 €/$ per 365 giorni senza pubblicità.",
+    buyButton: "Sblocca Senza Annunci (1 €/$)",
+    adActiveUntil: "Senza annunci attivo fino al:",
+    nextAd: "Avanti",
+    prevAd: "Indietro",
+    closeAdIn: "Chiudi tra",
+    seconds: "s"
+  },
   es: {
     title: "VoltGuard Pro",
     subtitle: "Gestor Inteligente de Carga y Temperatura",
@@ -952,6 +985,7 @@ export default function App() {
               >
                 <option value="en" className="bg-slate-900">EN (English)</option>
                 <option value="fa" className="bg-slate-900">FA (فارسی)</option>
+                <option value="it" className="bg-slate-900">IT (Italiano)</option>
                 <option value="es" className="bg-slate-900">ES (Español)</option>
                 <option value="zh" className="bg-slate-900">ZH (中文)</option>
                 <option value="fr" className="bg-slate-900">FR (Français)</option>
