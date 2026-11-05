@@ -444,7 +444,7 @@ const TRANSLATIONS = {
   }
 };
 
-// --- DEFAULT INITIAL PROFILES & FALLBACK ADS ---
+// --- DEFAULT INITIAL PROFILES & FALLBACK ADS (Amazon.it Featured Products) ---
 const INITIAL_CHARGERS = [
   {
     id: 'ch-1',
@@ -482,26 +482,26 @@ const FALLBACK_ADS = [
   {
     id: 'ad-1',
     type: 'image',
-    url: 'https://images.unsplash.com/photo-1616469829941-c7200edec809?w=800&auto=format&fit=crop&q=60',
-    title: '⚡ Fast Charger Pro Sale - 50% Off Today!',
-    cta: 'Learn More',
-    target_url: 'https://github.com/voltguard'
+    url: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=800&auto=format&fit=crop&q=60',
+    title: '🔋 Panasonic Eneloop Pro Caricabatterie + 4 Pile AA - Amazon.it',
+    cta: 'Scopri su Amazon.it',
+    target_url: 'https://www.amazon.it/dp/B07NWT4V24'
   },
   {
     id: 'ad-2',
-    type: 'video',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-hands-holding-a-smartphone-with-a-green-screen-42995-large.mp4',
-    title: '🔋 Eneloop Pro Max Batteries - Extreme Life',
-    cta: 'Buy Now',
-    target_url: 'https://github.com/voltguard'
+    type: 'image',
+    url: 'https://images.unsplash.com/photo-1595246140625-573b715d11dc?w=800&auto=format&fit=crop&q=60',
+    title: '⚡ Energizer Caricabatterie Rapido Universale - Amazon.it',
+    cta: 'Acquista Ora',
+    target_url: 'https://www.amazon.it/dp/B002N39UUA'
   },
   {
     id: 'ad-3',
     type: 'image',
-    url: 'https://images.unsplash.com/photo-1595246140625-573b715d11dc?w=800&auto=format&fit=crop&q=60',
-    title: '🛡️ VoltGuard Power Bank Station - Protect Devices',
-    cta: 'Explore',
-    target_url: 'https://github.com/voltguard'
+    url: 'https://images.unsplash.com/photo-1616469829941-c7200edec809?w=800&auto=format&fit=crop&q=60',
+    title: '🔋 Amazon Basics - Pile Stilo AA Ricaricabili 2400mAh - Amazon.it',
+    cta: 'Vedi Offerta',
+    target_url: 'https://www.amazon.it/dp/B07N3S4R2K'
   }
 ];
 
@@ -547,7 +547,7 @@ export default function App() {
   const [adsSeenCount, setAdsSeenCount] = useState(0);
   const [isFullscreenAdDismissed, setIsFullscreenAdDismissed] = useState(false);
   const [adTimerSeconds, setAdTimerSeconds] = useState(5);
-  const [canCloseAd, setCanCloseAd] = useState(false);
+  const [canCloseAd, setCanCloseAd] = useState(true); // Unblocked for immediate closing/navigation
 
   // UI Navigation & Modals
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -614,7 +614,7 @@ export default function App() {
           setAdminAds(data.ads);
         }
       } catch (err) {
-        console.error("Failed to fetch ads.json, activating offline fallback ad queue:", err);
+        console.error("Failed to fetch ads.json, activating Amazon.it fallback ad queue:", err);
         setAdminAds(FALLBACK_ADS);
       }
     };
@@ -622,11 +622,11 @@ export default function App() {
     fetchAdsConfig();
   }, [isSubscriberValid]);
 
-  // Full-Screen Ad 5-Second Mandatory Lockout Timer
+  // Full-Screen Ad 5-Second Timer
   useEffect(() => {
     if (isSubscriberValid || isFullscreenAdDismissed) return;
     setAdTimerSeconds(5);
-    setCanCloseAd(false);
+    setCanCloseAd(true); // Allow immediate navigation/closing
 
     const timer = setInterval(() => {
       setAdTimerSeconds(prev => {
@@ -652,11 +652,6 @@ export default function App() {
   };
 
   const handleCloseFullscreenAd = () => {
-    if (adsSeenCount < 2) {
-      alert(settings.language === 'fa' ? `لطفاً حداقل ۳ تبلیغ در این نشست مشاهده کنید (${adsSeenCount + 1}/3).` : `Please browse through at least 3 interstitial ads (${adsSeenCount + 1}/3).`);
-      handleNextAd();
-      return;
-    }
     setIsFullscreenAdDismissed(true);
   };
 
@@ -740,26 +735,31 @@ export default function App() {
     return () => clearInterval(timer);
   }, [settings.pushNotifications]);
 
+  // Updated alarm sound using alarm.mp4 from public folder with Web Audio API fallback
   const triggerAlarmSound = () => {
     if (!settings.audioAlerts) return;
     try {
-      if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = audioCtxRef.current;
-      if (ctx.state === 'suspended') ctx.resume();
+      const alarmAudio = new Audio('/alarm.mp4');
+      alarmAudio.play().catch(e => {
+        console.error('Audio file playback error, falling back to synth notes:', e);
+        if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioCtxRef.current;
+        if (ctx.state === 'suspended') ctx.resume();
 
-      const notes = [523.25, 659.25, 783.99, 1046.50];
-      notes.forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        const startTime = ctx.currentTime + (idx * 0.15);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        gain.gain.setValueAtTime(0.3, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
-        osc.start(startTime);
-        osc.stop(startTime + 0.4);
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          const startTime = ctx.currentTime + (idx * 0.15);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          gain.gain.setValueAtTime(0.3, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+          osc.start(startTime);
+          osc.stop(startTime + 0.4);
+        });
       });
     } catch (e) { console.error('Audio playback error:', e); }
   };
@@ -897,7 +897,7 @@ export default function App() {
               <span className="text-xs font-mono uppercase tracking-widest text-red-400 font-bold">{t('adNotice')}</span>
             </div>
             <div className="text-xs font-mono text-slate-400">
-              Ad <span className="text-blue-400 font-bold">{adsSeenCount + 1}</span> of queue
+              Ad <span className="text-blue-400 font-bold">{currentAdIndex + 1}</span> of {adminAds.length}
             </div>
           </div>
 
@@ -906,14 +906,14 @@ export default function App() {
               {currentActiveAd.type === 'video' ? (
                 <video src={currentActiveAd.url} autoPlay muted loop className="w-full h-full object-cover" />
               ) : (
-                <img src={currentActiveAd.url} alt="Interstitial Banner" className="w-full h-full object-cover" />
+                <img src={currentActiveAd.url} alt="Amazon.it Ad Banner" className="w-full h-full object-cover" />
               )}
             </div>
 
             <div className="mt-4 text-center">
               <h2 className="text-base sm:text-lg font-bold text-slate-100">{currentActiveAd.title}</h2>
               <a 
-                href={currentActiveAd.target_url || "https://github.com/voltguard"} 
+                href={currentActiveAd.target_url || "https://www.amazon.it"} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-1 text-xs text-blue-400 mt-1 hover:underline"
@@ -934,25 +934,19 @@ export default function App() {
             </button>
 
             <div className="flex items-center space-x-3 rtl:space-x-reverse w-full sm:w-auto justify-end">
-              <button onClick={handlePrevAd} className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl">
+              <button onClick={handlePrevAd} className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl cursor-pointer">
                 {t('prevAd')}
               </button>
-              <button onClick={handleNextAd} className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl">
+              <button onClick={handleNextAd} className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl cursor-pointer">
                 {t('nextAd')}
               </button>
 
-              {canCloseAd ? (
-                <button 
-                  onClick={handleCloseFullscreenAd}
-                  className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-1 animate-bounce"
-                >
-                  <X className="w-4 h-4" /> <span>Close Ad</span>
-                </button>
-              ) : (
-                <span className="text-xs font-mono text-amber-400 bg-amber-950/60 border border-amber-800/60 px-4 py-2.5 rounded-xl">
-                  {t('closeAdIn')} {adTimerSeconds}{t('seconds')}
-                </span>
-              )}
+              <button 
+                onClick={handleCloseFullscreenAd}
+                className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-1 cursor-pointer"
+              >
+                <X className="w-4 h-4" /> <span>Close Ad</span>
+              </button>
             </div>
           </div>
 
@@ -1148,13 +1142,13 @@ export default function App() {
                     </div>
 
                     <div className="flex items-center space-x-2 rtl:space-x-reverse pt-2 border-t border-slate-800">
-                      <button onClick={() => handleTogglePause(slot.id)} className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-lg">
+                      <button onClick={() => handleTogglePause(slot.id)} className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-lg cursor-pointer">
                         {slot.status === 'charging' ? t('pause') : t('resume')}
                       </button>
-                      <button onClick={() => handleResetSlot(slot.id)} className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg">
+                      <button onClick={() => handleResetSlot(slot.id)} className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg cursor-pointer">
                         <RefreshCw className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleRemoveSlot(slot.id, true)} className="flex-1 bg-slate-800 hover:bg-red-950 text-emerald-400 hover:text-red-300 text-xs py-2 rounded-lg">
+                      <button onClick={() => handleRemoveSlot(slot.id, true)} className="flex-1 bg-slate-800 hover:bg-red-950 text-emerald-400 hover:text-red-300 text-xs py-2 rounded-lg cursor-pointer">
                         {t('unplug')}
                       </button>
                     </div>
@@ -1175,7 +1169,7 @@ export default function App() {
               </div>
               <button 
                 onClick={() => { setEditingBatteryProfile({ name: 'Custom Cell', size: 'AA', type: 'NiMH', capacity: 2000, voltage: 1.2, maxCurrentMa: 2000, thermalLimitC: 50 }); setIsBatteryProfileModalOpen(true); }} 
-                className="bg-blue-600 hover:bg-blue-500 text-white text-xs px-4 py-2.5 rounded-xl font-semibold flex items-center space-x-1 rtl:space-x-reverse"
+                className="bg-blue-600 hover:bg-blue-500 text-white text-xs px-4 py-2.5 rounded-xl font-semibold flex items-center space-x-1 rtl:space-x-reverse cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Battery Profile</span>
@@ -1198,9 +1192,9 @@ export default function App() {
                     </div>
                   </div>
                   <div className="flex space-x-2 rtl:space-x-reverse mt-4 pt-3 border-t border-slate-800">
-                    <button onClick={() => { setEditingBatteryProfile(p); setIsBatteryProfileModalOpen(true); }} className="flex-1 bg-slate-800 hover:bg-slate-700 text-xs py-1.5 rounded-lg text-slate-300">Edit</button>
+                    <button onClick={() => { setEditingBatteryProfile(p); setIsBatteryProfileModalOpen(true); }} className="flex-1 bg-slate-800 hover:bg-slate-700 text-xs py-1.5 rounded-lg text-slate-300 cursor-pointer">Edit</button>
                     {batteryProfiles.length > 1 && (
-                      <button onClick={() => setBatteryProfiles(prev => prev.filter(item => item.id !== p.id))} className="p-1.5 bg-slate-800 hover:bg-red-950 text-red-400 rounded-lg">
+                      <button onClick={() => setBatteryProfiles(prev => prev.filter(item => item.id !== p.id))} className="p-1.5 bg-slate-800 hover:bg-red-950 text-red-400 rounded-lg cursor-pointer">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     )}
@@ -1219,7 +1213,7 @@ export default function App() {
                 <h2 className="text-lg font-bold text-slate-100">{t('chargers')}</h2>
                 <p className="text-xs text-slate-400">Configure charger channel output currents and circuit pairing.</p>
               </div>
-              <button onClick={() => { setEditingCharger({ name: 'New Charger', inputV: 100, inputVMax: 240, inputA: 0.3, inputHz: '50/60Hz', outputV: 1.5, aaCurrentMa: 500, aaaCurrentMa: 250, isPaired: false, notes: '' }); setIsChargerModalOpen(true); }} className="bg-blue-600 text-white text-xs px-4 py-2.5 rounded-xl font-semibold">
+              <button onClick={() => { setEditingCharger({ name: 'New Charger', inputV: 100, inputVMax: 240, inputA: 0.3, inputHz: '50/60Hz', outputV: 1.5, aaCurrentMa: 500, aaaCurrentMa: 250, isPaired: false, notes: '' }); setIsChargerModalOpen(true); }} className="bg-blue-600 text-white text-xs px-4 py-2.5 rounded-xl font-semibold cursor-pointer">
                 <Plus className="w-4 h-4 inline mr-1" /> Add Charger
               </button>
             </div>
@@ -1240,9 +1234,9 @@ export default function App() {
                       </div>
                     </div>
                     <div className="flex space-x-2 rtl:space-x-reverse mt-4 pt-3 border-t border-slate-800">
-                      {!isActive && <button onClick={() => setActiveChargerId(c.id)} className="flex-1 bg-slate-800 text-xs py-1.5 rounded-lg text-blue-400">Set Active</button>}
-                      <button onClick={() => { setEditingCharger(c); setIsChargerModalOpen(true); }} className="p-1.5 bg-slate-800 text-slate-300 rounded-lg"><Edit3 className="w-4 h-4" /></button>
-                      {chargers.length > 1 && <button onClick={() => setChargers(prev => prev.filter(item => item.id !== c.id))} className="p-1.5 bg-slate-800 text-red-400 rounded-lg"><Trash2 className="w-4 h-4" /></button>}
+                      {!isActive && <button onClick={() => setActiveChargerId(c.id)} className="flex-1 bg-slate-800 text-xs py-1.5 rounded-lg text-blue-400 cursor-pointer">Set Active</button>}
+                      <button onClick={() => { setEditingCharger(c); setIsChargerModalOpen(true); }} className="p-1.5 bg-slate-800 text-slate-300 rounded-lg cursor-pointer"><Edit3 className="w-4 h-4" /></button>
+                      {chargers.length > 1 && <button onClick={() => setChargers(prev => prev.filter(item => item.id !== c.id))} className="p-1.5 bg-slate-800 text-red-400 rounded-lg cursor-pointer"><Trash2 className="w-4 h-4" /></button>}
                     </div>
                   </div>
                 );
@@ -1279,7 +1273,7 @@ export default function App() {
           <div className="space-y-4 max-w-4xl mx-auto">
             <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex justify-between items-center">
               <h2 className="font-bold text-slate-100 text-sm">{t('history')}</h2>
-              {history.length > 0 && <button onClick={() => setHistory([])} className="text-xs text-red-400 bg-red-950/40 px-3 py-1.5 rounded-lg">Clear History</button>}
+              {history.length > 0 && <button onClick={() => setHistory([])} className="text-xs text-red-400 bg-red-950/40 px-3 py-1.5 rounded-lg cursor-pointer">Clear History</button>}
             </div>
             {history.length === 0 ? (
               <div className="text-center py-12 text-xs text-slate-500 bg-slate-900/40 border border-dashed border-slate-800 rounded-2xl">No history logged yet.</div>
@@ -1318,7 +1312,7 @@ export default function App() {
                 ) : (
                   <button 
                     onClick={() => setIsPaymentModalOpen(true)}
-                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 text-slate-950 font-black text-xs py-3 rounded-xl shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 text-slate-950 font-black text-xs py-3 rounded-xl shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer"
                   >
                     <DollarSign className="w-4 h-4" />
                     <span>{t('buyButton')}</span>
@@ -1336,11 +1330,27 @@ export default function App() {
               <div className="space-y-3 text-xs">
                 <div className="flex items-center justify-between p-4 bg-slate-950 rounded-xl border border-slate-800">
                   <span>Web Audio Completion Chime</span>
-                  <input type="checkbox" checked={settings.audioAlerts} onChange={(e) => { setSettings({ ...settings, audioAlerts: e.target.checked }); if (e.target.checked) triggerAlarmSound(); }} className="w-5 h-5 accent-blue-600 rounded" />
+                  <input type="checkbox" checked={settings.audioAlerts} onChange={(e) => { setSettings({ ...settings, audioAlerts: e.target.checked }); if (e.target.checked) triggerAlarmSound(); }} className="w-5 h-5 accent-blue-600 rounded cursor-pointer" />
                 </div>
+                
+                {/* REQUIREMENT 1: Notification Toggle Button with Clear Label */}
                 <div className="flex items-center justify-between p-4 bg-slate-950 rounded-xl border border-slate-800">
-                  <span>Browser Push Notifications</span>
-                  <button onClick={() => requestNotificationPermission()} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg">Enable</button>
+                  <div>
+                    <span className="font-semibold text-slate-200 block">Enable Notifications</span>
+                    <span className="text-[11px] text-slate-400">Receive alerts and push notifications when charging completes.</span>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    checked={settings.pushNotifications} 
+                    onChange={(e) => { 
+                      const val = e.target.checked;
+                      setSettings({ ...settings, pushNotifications: val }); 
+                      if (val) {
+                        requestNotificationPermission();
+                      }
+                    }} 
+                    className="w-5 h-5 accent-blue-600 rounded cursor-pointer" 
+                  />
                 </div>
               </div>
             </div>
@@ -1380,8 +1390,8 @@ export default function App() {
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-3 border-t border-slate-800">
-                <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded-xl">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-blue-600 text-xs text-white font-semibold rounded-xl">Start Timer</button>
+                <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded-xl cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2 bg-blue-600 text-xs text-white font-semibold rounded-xl cursor-pointer">Start Timer</button>
               </div>
             </form>
           </div>
@@ -1467,8 +1477,8 @@ export default function App() {
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-3 border-t border-slate-800">
-                <button type="button" onClick={() => setIsBatteryProfileModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded-xl">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-blue-600 text-xs text-white font-semibold rounded-xl">Save Profile</button>
+                <button type="button" onClick={() => setIsBatteryProfileModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded-xl cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2 bg-blue-600 text-xs text-white font-semibold rounded-xl cursor-pointer">Save Profile</button>
               </div>
             </form>
           </div>
@@ -1542,8 +1552,8 @@ export default function App() {
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-3 border-t border-slate-800">
-                <button type="button" onClick={() => setIsChargerModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded-xl">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-blue-600 text-xs text-white font-semibold rounded-xl">Save Charger</button>
+                <button type="button" onClick={() => setIsChargerModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded-xl cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2 bg-blue-600 text-xs text-white font-semibold rounded-xl cursor-pointer">Save Charger</button>
               </div>
             </form>
           </div>
@@ -1556,7 +1566,7 @@ export default function App() {
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative space-y-5">
             <button 
               onClick={() => setIsPaymentModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-full bg-slate-800/60"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-full bg-slate-800/60 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -1604,7 +1614,7 @@ export default function App() {
                 <div className="space-y-2.5 pt-2">
                   <button 
                     onClick={() => handlePaymentRedirect('paypal')}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse transition"
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer"
                   >
                     <DollarSign className="w-4 h-4" />
                     <span>{t('payWithPaypal')}</span>
@@ -1612,7 +1622,7 @@ export default function App() {
 
                   <button 
                     onClick={() => handlePaymentRedirect('revolut')}
-                    className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse transition"
+                    className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer"
                   >
                     <CreditCard className="w-4 h-4" />
                     <span>{t('payWithRevolut')}</span>
