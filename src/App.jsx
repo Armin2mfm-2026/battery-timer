@@ -852,11 +852,11 @@ export default function App() {
   const currentActiveAd = adminAds[currentAdIndex] || adminAds[0];
 
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased pb-36 selection:bg-blue-500 selection:text-white">
+    <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased pb-36 selection:bg-blue-500 selection:text-white pt-[env(safe-area-inset-top)]">
       
       {/* --- 1. FULL-SCREEN INTERSTITIAL AD OVERLAY --- */}
       {!isSubscriberValid && !isFullscreenAdDismissed && (
-        <div className="fixed inset-0 z-50 bg-slate-950/98 backdrop-blur-2xl flex flex-col items-center justify-between p-6 sm:p-10 animate-fade-in">
+        <div className="fixed inset-0 z-50 bg-slate-950/98 backdrop-blur-2xl flex flex-col items-center justify-between p-6 sm:p-10 animate-fade-in pt-[env(safe-area-inset-top)]">
           
           <div className="w-full max-w-4xl flex items-center justify-between border-b border-slate-800 pb-4">
             <div className="flex items-center space-x-2.5 rtl:space-x-reverse">
