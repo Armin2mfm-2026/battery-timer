@@ -4,7 +4,8 @@ import {
   Play, Pause, RefreshCw, Volume2, VolumeX, Settings, Bell, Info, Save, 
   CheckCircle2, Clock, Battery, BatteryFull, Layers, HelpCircle, ChevronRight,
   Flame, Award, Sparkles, Moon, Sun, ArrowUpRight, Globe, DollarSign, 
-  ShieldAlert, ChevronLeft, Video, Image as ImageIcon, X, ExternalLink, CreditCard, Mail, Key, Heart, MessageSquare, Send, Copy, Check, TrendingUp
+  ShieldAlert, ChevronLeft, Video, Image as ImageIcon, X, ExternalLink, CreditCard, Mail, Key, Heart, MessageSquare, Send, Copy, Check, TrendingUp,
+  Download, Upload, Cloud, CloudRain, CloudUpload, CloudDownload, RefreshCw as SyncIcon
 } from 'lucide-react';
 
 // --- i18n TRANSLATION DICTIONARY WITH FULL LANGUAGE NAMES ---
@@ -51,6 +52,18 @@ const TRANSLATIONS = {
     estRuntime: "Estimated Operating Runtime",
     heatLoss: "Efficiency & Heat Loss Index",
     healthTrend: "Degradation Trend Analysis",
+    backupRestoreTitle: "Data Backup & Restore",
+    backupRestoreDesc: "Export or import your complete battery profiles, chargers, and statistical logs securely.",
+    includeStats: "Include Statistics & Log History in Backup",
+    exportLocal: "Export Local Backup (.json)",
+    importLocal: "Import Local Backup",
+    exportGDrive: "Export to Google Drive",
+    importGDrive: "Restore from Google Drive",
+    exportICloud: "Export to Apple iCloud",
+    importICloud: "Restore from Apple iCloud",
+    backupSuccess: "✨ Backup successfully exported!",
+    restoreSuccess: "✨ Data successfully restored from backup!",
+    backupError: "Error: Invalid backup schema or corrupted file format.",
     alert50Title: "⚠️ Battery Health Alert (50% Capacity)",
     alert50Desc: "Battery has reached ~50% of original factory capacity due to wear.",
     alert30Title: "🚨 Critical Battery Warning (30% Capacity)",
@@ -76,7 +89,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "Error: Please select a battery profile or fill in all required fields before starting.",
     errorBatteryExists: "Error: A battery with the same name and specifications already exists.",
     errorChargerExists: "Error: A charger with the same name and specifications already exists.",
-    errorValidation: "Please fix all validation errors before submitting."
+    errorValidation: "Please fix all validation errors before submitting.",
+    errorIncompatibleBattery: "Error: Selected battery size/type is incompatible with this charger slot."
   },
   fa: {
     title: "ولتشیلد پرو",
@@ -120,6 +134,18 @@ const TRANSLATIONS = {
     estRuntime: "زمان تقریبی شارژدهی",
     heatLoss: "شاخص تلفات حرارتی و راندمان",
     healthTrend: "تحلیل روند افت سلامت",
+    backupRestoreTitle: "پشتیبان‌گیری و بازیابی داده‌ها",
+    backupRestoreDesc: "پروفایل‌های باتری، شارژرها و گزارش‌های آماری خود را به صورت ایمن صادر یا وارد کنید.",
+    includeStats: "لحاظ کردن آمار و تاریخچه در فایل پشتیبان",
+    exportLocal: "صدور پشتیبان محلی (.json)",
+    importLocal: "وارد کردن پشتیبان محلی",
+    exportGDrive: "ارسال به گوگل درایو",
+    importGDrive: "بازیابی از گوگل درایو",
+    exportICloud: "ارسال به اپل کلود (iCloud)",
+    importICloud: "بازیابی از اپل کلود (iCloud)",
+    backupSuccess: "✨ پشتیبان با موفقیت صادر شد!",
+    restoreSuccess: "✨ اطلاعات با موفقیت از فایل پشتیبان بازیابی شد!",
+    backupError: "خطا: ساختار فایل پشتیبان نامعتبر یا آسیب‌دیده است.",
     alert50Title: "⚠️ هشدار سلامت باتری (ظرفیت ۵۰٪)",
     alert50Desc: "ظرفیت باتری به دلیل استهلاک به حدود ۵۰٪ کاهش یافته است.",
     alert30Title: "🚨 هشدار بحرانی باتری (ظرفیت ۳۰٪)",
@@ -145,7 +171,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "خطا: لطفاً یک پروفایل باتری انتخاب کنید یا فیلدهای الزامی را پر کنید.",
     errorBatteryExists: "خطا: باتری با همین نام و مشخصات قبلاً وجود دارد.",
     errorChargerExists: "خطا: شارژر با همین نام و مشخصات قبلاً وجود دارد.",
-    errorValidation: "لطفاً خطاهای فرم را برطرف کنید."
+    errorValidation: "لطفاً خطاهای فرم را برطرف کنید.",
+    errorIncompatibleBattery: "خطا: سایز/نوع باتری انتخابی با این اسلات شارژر سازگار نیست."
   },
   it: {
     title: "VoltGuard Pro",
@@ -189,6 +216,18 @@ const TRANSLATIONS = {
     estRuntime: "Autonomia Operativa Stimata",
     heatLoss: "Indice di Perdita Termica ed Efficienza",
     healthTrend: "Analisi Trend di Degrado",
+    backupRestoreTitle: "Backup e Ripristino Dati",
+    backupRestoreDesc: "Esporta o importa in modo sicuro i tuoi profili di batterie, caricabatterie e statistiche.",
+    includeStats: "Includi statistiche e cronologia nel backup",
+    exportLocal: "Esporta Backup Locale (.json)",
+    importLocal: "Importa Backup Locale",
+    exportGDrive: "Esporta su Google Drive",
+    importGDrive: "Ripristina da Google Drive",
+    exportICloud: "Esporta su Apple iCloud",
+    importICloud: "Ripristina da Apple iCloud",
+    backupSuccess: "✨ Backup esportato con successo!",
+    restoreSuccess: "✨ Dati ripristinati con successo dal backup!",
+    backupError: "Errore: schema di backup non valido o file corrotto.",
     alert50Title: "⚠️ Avviso Salute Batteria (Capacità 50%)",
     alert50Desc: "La batteria ha raggiunto circa il 50% della capacità originale.",
     alert30Title: "🚨 Avviso Critico Batteria (Capacità 30%)",
@@ -214,7 +253,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "Errore: selezionare un profilo batteria o compilare i campi richiesti.",
     errorBatteryExists: "Errore: esiste già una batteria con lo stesso nome e le stesse specifiche.",
     errorChargerExists: "Errore: esiste già un caricabatterie con lo stesso nome e le stesse specifiche.",
-    errorValidation: "Correggere gli errori prima di inviare."
+    errorValidation: "Correggere gli errori prima di inviare.",
+    errorIncompatibleBattery: "Errore: La batteria selezionata non è compatibile con questo slot."
   },
   es: {
     title: "VoltGuard Pro",
@@ -258,6 +298,18 @@ const TRANSLATIONS = {
     estRuntime: "Autonomía Operativa Estimada",
     heatLoss: "Índice de Pérdida Térmica y Eficiencia",
     healthTrend: "Análisis de Tendencia de Degradación",
+    backupRestoreTitle: "Copia de Seguridad y Restauración",
+    backupRestoreDesc: "Exporte o importe de forma segura sus perfiles de batería, cargadores y registros estadísticos.",
+    includeStats: "Incluir estadísticas e historial en la copia",
+    exportLocal: "Exportar Copia Local (.json)",
+    importLocal: "Importar Copia Local",
+    exportGDrive: "Exportar a Google Drive",
+    importGDrive: "Restaurar desde Google Drive",
+    exportICloud: "Exportar a Apple iCloud",
+    importICloud: "Restaurar desde Apple iCloud",
+    backupSuccess: "✨ ¡Copia de seguridad exportada con éxito!",
+    restoreSuccess: "✨ ¡Datos restaurados con éxito desde la copia!",
+    backupError: "Error: Esquema de copia no válido o archivo dañado.",
     alert50Title: "⚠️ Alerta de Salud de Batería (Capacidad 50%)",
     alert50Desc: "La batería ha alcanzado ~50% de su capacidad original por desgaste.",
     alert30Title: "🚨 Advertencia Crítica de Batería (Capacidad 30%)",
@@ -283,7 +335,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "Error: Seleccione un perfil o complete los campos obligatorios.",
     errorBatteryExists: "Error: Ya existe una batería con el mismo nombre y especificaciones.",
     errorChargerExists: "Error: Ya existe un cargador con el mismo nombre y especificaciones.",
-    errorValidation: "Corrija los errores antes de continuar."
+    errorValidation: "Corrija los errores antes de continuar.",
+    errorIncompatibleBattery: "Error: La batería seleccionada no es compatible con esta ranura."
   },
   zh: {
     title: "VoltGuard Pro",
@@ -327,6 +380,18 @@ const TRANSLATIONS = {
     estRuntime: "预计续航运行时间",
     heatLoss: "效率与热损耗指数",
     healthTrend: "容量衰减趋势分析",
+    backupRestoreTitle: "数据备份与恢复",
+    backupRestoreDesc: "安全导出或导入您的完整电池配置、充电器和统计日志文件。",
+    includeStats: "在备份中包含统计与历史日志",
+    exportLocal: "导出本地备份 (.json)",
+    importLocal: "导入本地备份",
+    exportGDrive: "导出至谷歌云端硬盘",
+    importGDrive: "从谷歌云端硬盘恢复",
+    exportICloud: "导出至苹果 iCloud",
+    importICloud: "从苹果 iCloud 恢复",
+    backupSuccess: "✨ 备份导出成功！",
+    restoreSuccess: "✨ 已成功从备份中恢复数据！",
+    backupError: "错误：备份架构无效或文件已损坏。",
     alert50Title: "⚠️ 电池健康警告（50% 容量）",
     alert50Desc: "由于正常老化，电池容量已降至原始容量的 ~50%。",
     alert30Title: "🚨 电池严重警告（30% 容量）",
@@ -352,7 +417,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "错误：请选择电池配置或填写所有必填字段。",
     errorBatteryExists: "错误：已存在具有相同名称和规格的电池。",
     errorChargerExists: "错误：已存在具有相同名称和规格的充电器。",
-    errorValidation: "请修正表单错误后提交。"
+    errorValidation: "请修正表单错误后提交。",
+    errorIncompatibleBattery: "错误：所选电池尺寸/类型与此充电槽不兼容。"
   },
   fr: {
     title: "VoltGuard Pro",
@@ -396,6 +462,18 @@ const TRANSLATIONS = {
     estRuntime: "Autonomie de fonctionnement estimée",
     heatLoss: "Indice de perte thermique et d'efficacité",
     healthTrend: "Analyse de la tendance de dégradation",
+    backupRestoreTitle: "Sauvegarde et Restauration",
+    backupRestoreDesc: "Exportez ou importez en toute sécurité vos profils, chargeurs et statistiques.",
+    includeStats: "Inclure les statistiques et l'historique dans la sauvegarde",
+    exportLocal: "Exporter la sauvegarde locale (.json)",
+    importLocal: "Importer une sauvegarde locale",
+    exportGDrive: "Exporter vers Google Drive",
+    importGDrive: "Restaurer depuis Google Drive",
+    exportICloud: "Exporter vers Apple iCloud",
+    importICloud: "Restaurer depuis Apple iCloud",
+    backupSuccess: "✨ Sauvegarde exportée avec succès !",
+    restoreSuccess: "✨ Données restaurées avec succès depuis la sauvegarde !",
+    backupError: "Erreur : schéma de sauvegarde invalide ou fichier corrompu.",
     alert50Title: "⚠️ Alerte santé de la pile (Capacité 50%)",
     alert50Desc: "La pile a atteint ~50% de sa capacité d'usine d'origine.",
     alert30Title: "🚨 Avertissement critique de pile (Capacité 30%)",
@@ -421,7 +499,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "Erreur : veuillez sélectionner un profil de pile ou remplir les champs.",
     errorBatteryExists: "Erreur : Une pile avec le même nom et les mêmes spécifications existe déjà.",
     errorChargerExists: "Erreur : Un chargeur avec le même nom et les mêmes spécifications existe déjà.",
-    errorValidation: "Veuillez corriger les erreurs avant de soumettre."
+    errorValidation: "Veuillez corriger les erreurs avant de soumettre.",
+    errorIncompatibleBattery: "Erreur : La pile sélectionnée n'est pas compatible avec cet emplacement."
   },
   de: {
     title: "VoltGuard Pro",
@@ -463,8 +542,19 @@ const TRANSLATIONS = {
     chargeCycles: "Ladezyklen gesamt",
     overchargeInstances: "Überladungsereignisse",
     estRuntime: "Geschätzte Betriebslaufzeit",
-    heatLoss: "Wärmeverlust- und Effizienzindex",
     healthTrend: "Degradations-Trendanalyse",
+    backupRestoreTitle: "Datensicherung & Wiederherstellung",
+    backupRestoreDesc: "Exportieren oder importieren Sie Ihre Batterieprofile, Ladegeräte und Statistiken sicher.",
+    includeStats: "Statistiken & Verlauf in Backup einbeziehen",
+    exportLocal: "Lokales Backup exportieren (.json)",
+    importLocal: "Lokales Backup importieren",
+    exportGDrive: "In Google Drive exportieren",
+    importGDrive: "Aus Google Drive wiederherstellen",
+    exportICloud: "In Apple iCloud exportieren",
+    importICloud: "Aus Apple iCloud wiederherstellen",
+    backupSuccess: "✨ Backup erfolgreich exportiert!",
+    restoreSuccess: "✨ Daten erfolgreich aus Backup wiederhergestellt!",
+    backupError: "Fehler: Ungültiges Backup-Schema oder beschädigte Datei.",
     alert50Title: "⚠️ Batteriezustand-Warnung (50% Kapazität)",
     alert50Desc: "Der Akku hat durch Verschleiß ~50% der Ursprungskapazität erreicht.",
     alert30Title: "🚨 Kritische Batteriewarnung (30% Kapazität)",
@@ -490,7 +580,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "Fehler: Bitte wählen Sie ein Batterieprofil oder füllen Sie die Pflichtfelder aus.",
     errorBatteryExists: "Fehler: Ein Akku mit demselben Namen und denselben Spezifikationen existiert bereits.",
     errorChargerExists: "Fehler: Ein Ladegerät mit demselben Namen und denselben Spezifikationen existiert bereits.",
-    errorValidation: "Bitte korrigieren Sie die Fehler."
+    errorValidation: "Bitte korrigieren Sie die Fehler.",
+    errorIncompatibleBattery: "Fehler: Der ausgewählte Akku ist mit diesem Ladeslot nicht kompatibel."
   },
   ar: {
     title: "VoltGuard Pro",
@@ -534,6 +625,18 @@ const TRANSLATIONS = {
     estRuntime: "وقت التشغيل المقدر",
     heatLoss: "مؤشر الفقد الحراري والكفاءة",
     healthTrend: "تحليل اتجاه تدهور السعة",
+    backupRestoreTitle: "النسخ الاحتياطي والاستعادة",
+    backupRestoreDesc: "تصدير أو استيراد ملفات تعريف البطارية والشواحن والإحصائيات الخاصة بك بأمان.",
+    includeStats: "تضمين الإحصائيات وسجل السجل في النسخة الاحتياطية",
+    exportLocal: "تصدير نسخة احتياطية محلية (.json)",
+    importLocal: "استيراد نسخة احتياطية محلية",
+    exportGDrive: "التصدير إلى Google Drive",
+    importGDrive: "الاستعادة من Google Drive",
+    exportICloud: "التصدير إلى Apple iCloud",
+    importICloud: "الاستعادة من Apple iCloud",
+    backupSuccess: "✨ تم تصدير النسخة الاحتياطية بنجاح!",
+    restoreSuccess: "✨ تمت استعادة البيانات بنجاح من النسخة الاحتياطية!",
+    backupError: "خطأ: مخطط النسخ الاحتياطي غير صالح أو الملف التالف.",
     alert50Title: "⚠️ تنبيه صحة البطارية (سعة 50%)",
     alert50Desc: "وصلت سعة البطارية إلى ~50% من السعة الأصلية للمصنع بسبب الاستهلاك.",
     alert30Title: "🚨 تحذير حرج للبطارية (سعة 30%)",
@@ -559,7 +662,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "خطأ: يرجى اختيار ملف بطارية أو ملء حقول المطلوبة.",
     errorBatteryExists: "خطأ: توجد بطارية بنفس الاسم والمواصفات بالفعل.",
     errorChargerExists: "خطأ: يوجد شاحن بنفس الاسم والمواصفات بالفعل.",
-    errorValidation: "يرجى تصحيح أخطاء النموذج."
+    errorValidation: "يرجى تصحيح أخطاء النموذج.",
+    errorIncompatibleBattery: "خطأ: حجم/نوع البطارية المحددة غير متوافق مع فتحة الشاحن هذه."
   },
   ja: {
     title: "VoltGuard Pro",
@@ -603,6 +707,18 @@ const TRANSLATIONS = {
     estRuntime: "推定稼働時間",
     heatLoss: "効率・熱損失インデックス",
     healthTrend: "劣化傾向分析",
+    backupRestoreTitle: "データのバックアップと復元",
+    backupRestoreDesc: "バッテリープロファイル、充電器、および統計ログを安全にエクスポートまたはインポートします。",
+    includeStats: "バックアップに統計と履歴ログを含める",
+    exportLocal: "ローカルバックアップのエクスポート (.json)",
+    importLocal: "ローカルバックアップのインポート",
+    exportGDrive: "Google ドライブへエクスポート",
+    importGDrive: "Google ドライブから復元",
+    exportICloud: "Apple iCloudへエクスポート",
+    importICloud: "Apple iCloudから復元",
+    backupSuccess: "✨ バックアップのエクスポートに成功しました！",
+    restoreSuccess: "✨ バックアップからデータを正常に復元しました！",
+    backupError: "エラー: バックアップのスキーマが無効であるか、ファイルが破損しています。",
     alert50Title: "⚠️ バッテリー健康警告 (容量50%)",
     alert50Desc: "経年劣化により、バッテリー容量が工場出荷時の ~50% に低下しました。",
     alert30Title: "🚨 バッテリー重大警告 (容量30%)",
@@ -628,7 +744,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "エラー: バッテリープロファイルを選択するか、必須項目を入力してください。",
     errorBatteryExists: "エラー: 同じ名前と仕様のバッテリーが既に存在します。",
     errorChargerExists: "エラー: 同じ名前と仕様の充電器が既に存在します。",
-    errorValidation: "エラーを修正してください。"
+    errorValidation: "エラーを修正してください。",
+    errorIncompatibleBattery: "エラー: 選択されたバッテリーサイズ/タイプはこの充電スロットと互換性がありません。"
   },
   pt: {
     title: "VoltGuard Pro",
@@ -670,8 +787,20 @@ const TRANSLATIONS = {
     chargeCycles: "Ciclos de Carga Totais",
     overchargeInstances: "Eventos de Sobrecarga",
     estRuntime: "Autonomia de Operação Estimada",
-    heatLoss: "Índice de Perda Térmica e Eficiência",
+    heatLoss: "Índice de Perda Térmica e Eficiencia",
     healthTrend: "Análise de Tendência de Degradação",
+    backupRestoreTitle: "Backup e Restauração de Dados",
+    backupRestoreDesc: "Exporte ou importe com segurança seus perfis de bateria, carregadores e registros estatísticos.",
+    includeStats: "Incluir estatísticas e histórico no backup",
+    exportLocal: "Exportar Backup Local (.json)",
+    importLocal: "Importar Backup Local",
+    exportGDrive: "Exportar para o Google Drive",
+    importGDrive: "Restaurar do Google Drive",
+    exportICloud: "Exportar para o Apple iCloud",
+    importICloud: "Restaurar do Apple iCloud",
+    backupSuccess: "✨ Backup exportado com sucesso!",
+    restoreSuccess: "✨ Dados restaurados com sucesso do backup!",
+    backupError: "Erro: Esquema de backup inválido ou arquivo corrompido.",
     alert50Title: "⚠️ Alerta de Saúde da Bateria (Capacidade 50%)",
     alert50Desc: "A bateria atingiu ~50% da capacidade original de fábrica devido ao desgaste.",
     alert30Title: "🚨 Aviso Crítico da Bateria (Capacidade 30%)",
@@ -694,10 +823,11 @@ const TRANSLATIONS = {
     copied: "Copiado!",
     errorChargerInUse: "Erro: não é possível alterar, editar ou excluir o carregador ativo enquanto houver slots carregando.",
     errorProfileInUse: "Erro: não é possível editar ou excluir este perfil enquanto sua bateria estiver carregando.",
-    errorProfileRequired: "Erro: selecione um perfil de bateria ou preencha os campos obrigatórios.",
+    errorProfileRequired: "Erro: selecione un perfil de bateria ou preencha os campos obrigatórios.",
     errorBatteryExists: "Erro: Já existe uma bateria com o mesmo nome e especificações.",
     errorChargerExists: "Erro: Já existe um carregador com o mesmo nome e especificações.",
-    errorValidation: "Corrija os erros antes de enviar."
+    errorValidation: "Corrija os erros antes de enviar.",
+    errorIncompatibleBattery: "Erro: A bateria selecionada não é compatível com este slot."
   },
   ru: {
     title: "VoltGuard Pro",
@@ -741,6 +871,18 @@ const TRANSLATIONS = {
     estRuntime: "Расчетное время работы",
     heatLoss: "Индекс тепловых потерь и КПД",
     healthTrend: "Анализ динамики износа",
+    backupRestoreTitle: "Резервное копирование и восстановление",
+    backupRestoreDesc: "Экспортируйте или импортируйте профили батарей, зарядные устройства и статистику.",
+    includeStats: "Включить статистику и историю в резервную копию",
+    exportLocal: "Экспорт локального бэкапа (.json)",
+    importLocal: "Импорт локального бэкапа",
+    exportGDrive: "Экспорт в Google Диск",
+    importGDrive: "Восстановление из Google Диска",
+    exportICloud: "Экспорт в Apple iCloud",
+    importICloud: "Восстановление из Apple iCloud",
+    backupSuccess: "✨ Резервная копия успешно экспортирована!",
+    restoreSuccess: "✨ Данные успешно восстановлены из резервной копии!",
+    backupError: "Ошибка: неверная схема бэкапа или поврежденный файл.",
     alert50Title: "⚠️ Предупреждение о здоровье (50% емкости)",
     alert50Desc: "Емкость батареи снизилась примерно до 50% от заводской из-за износа.",
     alert30Title: "🚨 Критическое предупреждение (30% емкости)",
@@ -766,7 +908,8 @@ const TRANSLATIONS = {
     errorProfileRequired: "Ошибка: выберите профиль батареи или заполните обязательные поля.",
     errorBatteryExists: "Ошибка: Батарея с таким же именем и характеристиками уже существует.",
     errorChargerExists: "Ошибка: Зарядное устройство с таким же именем и характеристиками уже существует.",
-    errorValidation: "Пожалуйста, исправьте ошибки валидации."
+    errorValidation: "Пожалуйста, исправьте ошибки валидации.",
+    errorIncompatibleBattery: "Ошибка: Выбранный размер/тип аккумулятора несовместим с этим слотом."
   }
 };
 
@@ -777,6 +920,19 @@ const ALARM_SOUND_OPTIONS = [
   { id: 'bell', name: '🔔 Gentle Battery Bell', frequencies: [659.25, 523.25, 783.99, 1318.51] },
   { id: 'urgent', name: '⚡ Urgent Voltage Alert', frequencies: [987.77, 932.33, 880, 830.61] }
 ];
+
+// --- SUPPORTED SLOT COMPATIBILITY TYPES ---
+const AVAILABLE_SLOT_TYPES = ['AA', 'AAA', '18650', 'C', 'D', 'AA/AAA Combined'];
+
+const isBatteryCompatibleWithSlot = (batterySize, supportedSlotTypes) => {
+  if (!supportedSlotTypes || supportedSlotTypes.length === 0) return true;
+  return supportedSlotTypes.some(type => {
+    if (type === 'AA/AAA Combined') {
+      return batterySize === 'AA' || batterySize === 'AAA';
+    }
+    return type === batterySize;
+  });
+};
 
 // --- GLOBAL PRESET DATABASES ---
 const GLOBAL_BATTERY_PRESETS = [
@@ -793,11 +949,11 @@ const GLOBAL_BATTERY_PRESETS = [
 ];
 
 const GLOBAL_CHARGER_PRESETS = [
-  { name: 'Panasonic BQ-CC55 Smart Fast Charger (4 Slots)', aaCurrentMa: 750, aaaCurrentMa: 375, slotCount: 4, isPaired: false, notes: 'Smart individual slot peak detection' },
-  { name: 'Nitecore D4 Digital Super Charger (4 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 4, isPaired: false, notes: 'Multi-chemistry universal charger' },
-  { name: 'Xtar VC4SL USB-C Charger (4 Slots)', aaCurrentMa: 1000, aaaCurrentMa: 500, slotCount: 4, isPaired: false, notes: 'Quick charge support with capacity test' },
-  { name: 'Basic 4-Slot Paired NiMH Charger', aaCurrentMa: 300, aaaCurrentMa: 150, slotCount: 4, isPaired: true, notes: 'Shares current across slot pairs (1&2, 3&4)' },
-  { name: 'EBL 8-Bay Universal Rapid Charger (8 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 8, isPaired: false, notes: 'Independent 8-bay multi-size charger' }
+  { name: 'Panasonic BQ-CC55 Smart Fast Charger (4 Slots)', aaCurrentMa: 750, aaaCurrentMa: 375, slotCount: 4, isPaired: false, supported_slot_types: ['AA/AAA Combined'], notes: 'Smart individual slot peak detection' },
+  { name: 'Nitecore D4 Digital Super Charger (4 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 4, isPaired: false, supported_slot_types: ['AA', 'AAA', '18650', 'C', 'D'], notes: 'Multi-chemistry universal charger' },
+  { name: 'Xtar VC4SL USB-C Charger (4 Slots)', aaCurrentMa: 1000, aaaCurrentMa: 500, slotCount: 4, isPaired: false, supported_slot_types: ['AA', 'AAA', '18650'], notes: 'Quick charge support with capacity test' },
+  { name: 'Basic 4-Slot Paired NiMH Charger', aaCurrentMa: 300, aaaCurrentMa: 150, slotCount: 4, isPaired: true, supported_slot_types: ['AA/AAA Combined'], notes: 'Shares current across slot pairs (1&2, 3&4)' },
+  { name: 'EBL 8-Bay Universal Rapid Charger (8 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 8, isPaired: false, supported_slot_types: ['AA', 'AAA', 'C', 'D'], notes: 'Independent 8-bay multi-size charger' }
 ];
 
 // --- SLOT DISTINCT COLOR THEMES ---
@@ -818,6 +974,7 @@ const INITIAL_CHARGERS = [
     name: 'Panasonic BQ-CC55 (Smart Fast Charger)',
     inputV: 100, inputVMax: 240, inputA: 0.3, inputHz: '50/60Hz',
     outputV: 1.5, aaCurrentMa: 750, aaaCurrentMa: 375, slotCount: 4, isPaired: false,
+    supported_slot_types: ['AA/AAA Combined'],
     notes: 'Smart individual slot charging with peak detection'
   },
   {
@@ -825,6 +982,7 @@ const INITIAL_CHARGERS = [
     name: 'Basic 4-Slot Paired NiMH Charger',
     inputV: 120, inputVMax: 240, inputA: 0.15, inputHz: '60Hz',
     outputV: 2.8, aaCurrentMa: 300, aaaCurrentMa: 150, slotCount: 4, isPaired: true,
+    supported_slot_types: ['AA/AAA Combined'],
     notes: 'Shares current across slot pairs (1&2, 3&4)'
   },
   {
@@ -832,6 +990,7 @@ const INITIAL_CHARGERS = [
     name: 'Nitecore D4 Digital Super Charger',
     inputV: 100, inputVMax: 240, inputA: 0.5, inputHz: '50/60Hz',
     outputV: 4.2, aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 4, isPaired: false,
+    supported_slot_types: ['AA', 'AAA', '18650', 'C', 'D'],
     notes: 'Multi-chemistry universal charger'
   }
 ];
@@ -845,13 +1004,54 @@ const INITIAL_BATTERY_PROFILES = [
   { id: 'bp-6', name: '14500 Li-ion AA Size (3.7V)', size: 'AA', type: 'Li-ion', capacity: 800, voltage: 3.7, maxCurrentMa: 800, thermalLimitC: 60, condition: 'New', priorUsageValue: 0, priorUsageUnit: 'Months' }
 ];
 
+// --- Offline-first persistence adapter (IndexedDB with localStorage startup fallback) ---
+const VOLTGUARD_DB_NAME = 'VoltGuardProDB';
+const VOLTGUARD_DB_VERSION = 1;
+const VOLTGUARD_STORE_NAME = 'appState';
+
+const openVoltGuardDatabase = () => new Promise((resolve, reject) => {
+  if (!('indexedDB' in window)) {
+    reject(new Error('IndexedDB is not available in this browser.'));
+    return;
+  }
+  const request = window.indexedDB.open(VOLTGUARD_DB_NAME, VOLTGUARD_DB_VERSION);
+  request.onupgradeneeded = () => {
+    const db = request.result;
+    if (!db.objectStoreNames.contains(VOLTGUARD_STORE_NAME)) {
+      db.createObjectStore(VOLTGUARD_STORE_NAME, { keyPath: 'id' });
+    }
+  };
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error || new Error('Could not open local database.'));
+});
+
+const readVoltGuardSnapshot = async () => {
+  const db = await openVoltGuardDatabase();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(VOLTGUARD_STORE_NAME, 'readonly');
+    const request = tx.objectStore(VOLTGUARD_STORE_NAME).get('main');
+    request.onsuccess = () => { db.close(); resolve(request.result?.data || null); };
+    request.onerror = () => { db.close(); reject(request.error); };
+  });
+};
+
+const writeVoltGuardSnapshot = async (data) => {
+  const db = await openVoltGuardDatabase();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(VOLTGUARD_STORE_NAME, 'readwrite');
+    tx.objectStore(VOLTGUARD_STORE_NAME).put({ id: 'main', data, updatedAt: new Date().toISOString() });
+    tx.oncomplete = () => { db.close(); resolve(true); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+    tx.onabort = () => { db.close(); reject(tx.error || new Error('Local database write was aborted.')); };
+  });
+};
+
 export default function App() {
   // --- Persistent Core States ---
   const [chargers, setChargers] = useState(() => JSON.parse(localStorage.getItem('batt_chargers')) || INITIAL_CHARGERS);
   const [batteryProfiles, setBatteryProfiles] = useState(() => JSON.parse(localStorage.getItem('batt_profiles')) || INITIAL_BATTERY_PROFILES);
   const [activeChargerId, setActiveChargerId] = useState(() => localStorage.getItem('batt_active_charger_id') || INITIAL_CHARGERS[0].id);
   
-  // FIX: Ensure slotIndex is correctly mapped and persistent
   const [activeSlots, setActiveSlots] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('batt_active_slots'));
@@ -873,6 +1073,11 @@ export default function App() {
     autoArchiveFinished: false
   });
 
+  // --- Backup & Restore UI States ---
+  const [includeStatsInBackup, setIncludeStatsInBackup] = useState(true);
+  const [backupFeedbackMsg, setBackupFeedbackMsg] = useState({ type: '', text: '' });
+  const fileInputRef = useRef(null);
+
   // --- Supporter / Donation State ---
   const [subscription, setSubscription] = useState(() => JSON.parse(localStorage.getItem('batt_subscription')) || {
     isSupporter: false,
@@ -881,20 +1086,144 @@ export default function App() {
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [checkoutEmail, setCheckoutEmail] = useState(() => localStorage.getItem('batt_user_email') || '');
+  const [storageReady, setStorageReady] = useState(false);
   const [paymentSuccessMsg, setPaymentSuccessMsg] = useState(false);
   
-  // Crypto copy state
   const [copiedCrypto, setCopiedCrypto] = useState(null);
   const [selectedJiggleLogo, setSelectedJiggleLogo] = useState(null);
 
   // UI Navigation & Modals
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [targetSlotIndex, setTargetSlotIndex] = useState(null);
   const [isChargerModalOpen, setIsChargerModalOpen] = useState(false);
   const [isBatteryProfileModalOpen, setIsBatteryProfileModalOpen] = useState(false);
   
   const [editingCharger, setEditingCharger] = useState(null);
   const [editingBatteryProfile, setEditingBatteryProfile] = useState(null);
+
+  // Camera-assisted profile scanning (web/PWA and Capacitor-compatible file capture).
+  const batteryScanInputRef = useRef(null);
+  const chargerScanInputRef = useRef(null);
+  const [profileScanStatus, setProfileScanStatus] = useState({ type: '', message: '' });
+
+  const loadTesseract = async () => {
+    if (window.Tesseract) return window.Tesseract;
+    if (!window.__voltGuardTesseractPromise) {
+      window.__voltGuardTesseractPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+        script.async = true;
+        script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error('OCR engine could not be initialized.'));
+        script.onerror = () => reject(new Error('Could not load the OCR engine. Check your internet connection.'));
+        document.head.appendChild(script);
+      });
+    }
+    return window.__voltGuardTesseractPromise;
+  };
+
+  const estimateVisibleChargerBays = async (file) => {
+    // Lightweight browser-side shape analysis: estimate dark, elongated bay cavities.
+    // This is a visual hint only; reflections, shadows and perspective can affect the count.
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    const width = 320;
+    const height = Math.max(120, Math.round(bitmap.height * width / bitmap.width));
+    canvas.width = width;
+    canvas.height = Math.min(320, height);
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const w = canvas.width, h = canvas.height;
+    const dark = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) {
+      const brightness = (data[i * 4] * 0.299) + (data[i * 4 + 1] * 0.587) + (data[i * 4 + 2] * 0.114);
+      dark[i] = brightness < 62 ? 1 : 0;
+    }
+    const visited = new Uint8Array(w * h);
+    const queue = new Int32Array(w * h);
+    const candidates = [];
+    for (let start = 0; start < w * h; start++) {
+      if (!dark[start] || visited[start]) continue;
+      let head = 0, tail = 0, minX = w, maxX = 0, minY = h, maxY = 0, area = 0;
+      queue[tail++] = start;
+      visited[start] = 1;
+      while (head < tail) {
+        const index = queue[head++], x = index % w, y = (index / w) | 0;
+        area++; minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+        const neighbors = [x > 0 ? index - 1 : -1, x < w - 1 ? index + 1 : -1, y > 0 ? index - w : -1, y < h - 1 ? index + w : -1];
+        for (const next of neighbors) if (next >= 0 && dark[next] && !visited[next]) { visited[next] = 1; queue[tail++] = next; }
+      }
+      const boxW = maxX - minX + 1, boxH = maxY - minY + 1;
+      if (area >= 45 && area <= 2600 && boxW >= 7 && boxW <= 90 && boxH >= 16 && boxH <= 170 && boxH / boxW >= 1.15 && boxH / boxW <= 6) candidates.push({ area, x: minX, y: minY, w: boxW, h: boxH });
+    }
+    // Merge nested/overlapping dark components so a single bay is not counted twice.
+    const unique = candidates.filter((candidate, index) => !candidates.some((other, otherIndex) =>
+      otherIndex !== index && other.area > candidate.area &&
+      Math.abs(other.x - candidate.x) < Math.max(5, candidate.w * 0.35) &&
+      Math.abs(other.y - candidate.y) < Math.max(8, candidate.h * 0.25)
+    ));
+    return unique.length >= 1 && unique.length <= 16 ? unique.length : null;
+  };
+
+  const handleProfileCameraScan = async (file, profileType) => {
+    if (!file) return;
+    setProfileScanStatus({ type: 'loading', message: 'Reading image and extracting profile details…' });
+    try {
+      const Tesseract = await loadTesseract();
+      const result = await Tesseract.recognize(file, 'eng');
+      const rawText = (result?.data?.text || '').replace(/\s+/g, ' ').trim();
+      if (!rawText) throw new Error('No readable text was found. Try a clearer, closer photo.');
+
+      if (profileType === 'battery') {
+        const patch = {};
+        const capacity = rawText.match(/(?:capacity|cap\.?|typ(?:ical)?)?\s*[:=]?\s*(\d{3,5})\s*m\s*a\s*h/i) || rawText.match(/(\d{3,5})\s*m\s*a\s*h/i);
+        const voltage = rawText.match(/(\d+(?:[.,]\d+)?)\s*v(?:olt)?\b/i);
+        const size = rawText.match(/\b(AA\/AAA|AAA|AA|18650|14500|C|D)\b/i);
+        const chemistry = rawText.match(/\b(NiMH|Ni-MH|Li[- ]?ion|Lithium[- ]?ion|Alkaline)\b/i);
+        const thermal = rawText.match(/(?:max(?:imum)?\s*)?(\d{2})\s*°?\s*C\b/i);
+        const modelLine = rawText.split(/[.!?]/).map(x => x.trim()).find(x => x.length >= 3);
+        if (capacity) patch.capacity = Number(capacity[1]);
+        if (voltage) patch.voltage = Number(voltage[1].replace(',', '.'));
+        if (size) patch.size = size[1].toUpperCase().replace('AA/AAA', 'AA');
+        if (chemistry) patch.type = /nimh|ni-mh/i.test(chemistry[1]) ? 'NiMH' : /alkaline/i.test(chemistry[1]) ? 'Alkaline' : 'Li-ion';
+        if (thermal) patch.thermalLimitC = Number(thermal[1]);
+        if (!editingBatteryProfile.name && modelLine) patch.name = modelLine.slice(0, 70);
+        setEditingBatteryProfile(prev => ({ ...prev, ...patch }));
+        const found = Object.keys(patch);
+        setProfileScanStatus({ type: 'success', message: found.length ? `Detected: ${found.join(', ')}. Please verify the values before saving.` : 'Text was read, but no supported battery fields were confidently identified. Please enter the values manually.' });
+      } else {
+        const patch = {};
+        const slotMatch = rawText.match(/\b(\d{1,2})\s*[- ]?(?:slot|bay|channel)s?\b/i) || rawText.match(/\b(?:slots?|bays?)\s*[:=]?\s*(\d{1,2})\b/i);
+        let visualBayCount = null;
+        try { visualBayCount = await estimateVisibleChargerBays(file); } catch (visionError) { /* OCR can still populate the form when visual analysis is unavailable. */ }
+        const aaCurrent = rawText.match(/AA[^\d]{0,20}(\d{2,4})\s*mA/i) || rawText.match(/(\d{2,4})\s*mA[^\n]{0,12}AA/i);
+        const aaaCurrent = rawText.match(/AAA[^\d]{0,20}(\d{2,4})\s*mA/i) || rawText.match(/(\d{2,4})\s*mA[^\n]{0,12}AAA/i);
+        const detectedTypes = [];
+        if (/AA\s*\/\s*AAA|AA\s*\+\s*AAA|AA\s*&\s*AAA|AA\s+AAA/i.test(rawText)) detectedTypes.push('AA/AAA Combined');
+        else {
+          if (/\bAA\b/i.test(rawText)) detectedTypes.push('AA');
+          if (/\bAAA\b/i.test(rawText)) detectedTypes.push('AAA');
+        }
+        if (/18650/i.test(rawText)) detectedTypes.push('18650');
+        if (/\btype\s*[- ]?C\b|\bC\s*size\b/i.test(rawText)) detectedTypes.push('C');
+        if (/\btype\s*[- ]?D\b|\bD\s*size\b/i.test(rawText)) detectedTypes.push('D');
+        if (slotMatch) patch.slotCount = Math.min(16, Math.max(1, Number(slotMatch[1])));
+        else if (visualBayCount) patch.slotCount = visualBayCount;
+        if (aaCurrent) patch.aaCurrentMa = Number(aaCurrent[1]);
+        if (aaaCurrent) patch.aaaCurrentMa = Number(aaaCurrent[1]);
+        if (detectedTypes.length) patch.supported_slot_types = [...new Set(detectedTypes)];
+        const modelLine = rawText.split(/[.!?]/).map(x => x.trim()).find(x => x.length >= 3);
+        if (!editingCharger.name && modelLine) patch.name = modelLine.slice(0, 70);
+        setEditingCharger(prev => ({ ...prev, ...patch }));
+        const found = Object.keys(patch);
+        setProfileScanStatus({ type: 'success', message: found.length ? `Detected: ${found.join(', ')}${!slotMatch && visualBayCount ? `; estimated ${visualBayCount} physical bay(s) from the image` : ''}. Slot type classification is based on visible label text; verify the bay layout and all suggestions before saving.` : 'Text was read, but charger details were not confidently identified. Please configure the fields manually.' });
+      }
+    } catch (error) {
+      setProfileScanStatus({ type: 'error', message: error.message || 'Image scanning failed. Please try again.' });
+    }
+  };
   const [selectedBatteryProfileId, setSelectedBatteryProfileId] = useState('');
 
   // Form error states
@@ -911,10 +1240,37 @@ export default function App() {
     voltage: '',
     initialCharge: 0,
     efficiency: settings.defaultEfficiency,
-    targetMode: 'full' // 'full' (100%) or 'half' (50%)
+    targetMode: 'full'
   });
 
   const audioCtxRef = useRef(null);
+  const alarmAudioRef = useRef(null);
+  const alarmShouldBePlayingRef = useRef(false);
+  const activeAlarmLoopIntervalRef = useRef(null);
+  const wakeLockRef = useRef(null);
+
+  // Service Worker and Background Notification Setup
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('Service Worker registration skipped or failed:', err);
+      });
+    }
+  }, []);
+
+  // Keep the display awake while charging where supported; this does not guarantee background execution.
+  useEffect(() => {
+    const hasChargingSlots = activeSlots.some(s => s.status === 'charging');
+    if (hasChargingSlots && 'wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').then(lock => {
+        wakeLockRef.current = lock;
+      }).catch(err => console.log('Wake Lock request info:', err));
+    } else if (!hasChargingSlots && wakeLockRef.current) {
+      wakeLockRef.current.release().then(() => {
+        wakeLockRef.current = null;
+      }).catch(() => {});
+    }
+  }, [activeSlots]);
 
   // RTL Direction check for Persian & Arabic
   const isRTL = useMemo(() => settings.language === 'fa' || settings.language === 'ar', [settings.language]);
@@ -922,21 +1278,174 @@ export default function App() {
   
   const currentCharger = useMemo(() => chargers.find(c => c.id === activeChargerId) || chargers[0], [chargers, activeChargerId]);
 
-  // Sync LocalStorage
-  useEffect(() => { localStorage.setItem('batt_chargers', JSON.stringify(chargers)); }, [chargers]);
-  useEffect(() => { localStorage.setItem('batt_profiles', JSON.stringify(batteryProfiles)); }, [batteryProfiles]);
-  useEffect(() => { localStorage.setItem('batt_active_charger_id', activeChargerId); }, [activeChargerId]);
-  useEffect(() => { localStorage.setItem('batt_active_slots', JSON.stringify(activeSlots)); }, [activeSlots]);
-  useEffect(() => { localStorage.setItem('batt_history', JSON.stringify(history)); }, [history]);
-  useEffect(() => { localStorage.setItem('batt_settings', JSON.stringify(settings)); }, [settings]);
-  useEffect(() => { localStorage.setItem('batt_subscription', JSON.stringify(subscription)); }, [subscription]);
-  useEffect(() => { if (checkoutEmail) localStorage.setItem('batt_user_email', checkoutEmail); }, [checkoutEmail]);
+  // Hydrate the IndexedDB snapshot once. Existing localStorage values remain the
+  // synchronous fallback for first launch, private browsing, or unavailable IndexedDB.
+  useEffect(() => {
+    let cancelled = false;
+    const hydrate = async () => {
+      try {
+        const snapshot = await readVoltGuardSnapshot();
+        if (!cancelled && snapshot) {
+          if (Array.isArray(snapshot.chargers) && snapshot.chargers.length) setChargers(snapshot.chargers);
+          if (Array.isArray(snapshot.batteryProfiles)) setBatteryProfiles(snapshot.batteryProfiles);
+          if (typeof snapshot.activeChargerId === 'string') setActiveChargerId(snapshot.activeChargerId);
+          if (Array.isArray(snapshot.activeSlots)) {
+            setActiveSlots(snapshot.activeSlots.map((slot, index) => ({
+              ...slot, slotIndex: slot.slotIndex !== undefined ? slot.slotIndex : index
+            })));
+          }
+          if (Array.isArray(snapshot.history)) setHistory(snapshot.history);
+          if (snapshot.settings && typeof snapshot.settings === 'object') setSettings(prev => ({ ...prev, ...snapshot.settings }));
+          if (snapshot.subscription && typeof snapshot.subscription === 'object') setSubscription(prev => ({ ...prev, ...snapshot.subscription }));
+          if (typeof snapshot.checkoutEmail === 'string') setCheckoutEmail(snapshot.checkoutEmail);
+        }
+      } catch (error) {
+        console.info('IndexedDB unavailable; continuing with localStorage persistence.', error);
+      } finally {
+        if (!cancelled) setStorageReady(true);
+      }
+    };
+    hydrate();
+    return () => { cancelled = true; };
+  }, []);
 
-  // Check Supporter Validity
+  // Persist a single coherent offline-first snapshot to IndexedDB and retain
+  // localStorage keys for compatibility with earlier VoltGuard versions.
+  useEffect(() => {
+    if (!storageReady) return;
+    const snapshot = {
+      chargers, batteryProfiles, activeChargerId, activeSlots, history,
+      settings, subscription, checkoutEmail
+    };
+    try {
+      localStorage.setItem('batt_chargers', JSON.stringify(chargers));
+      localStorage.setItem('batt_profiles', JSON.stringify(batteryProfiles));
+      localStorage.setItem('batt_active_charger_id', activeChargerId);
+      localStorage.setItem('batt_active_slots', JSON.stringify(activeSlots));
+      localStorage.setItem('batt_history', JSON.stringify(history));
+      localStorage.setItem('batt_settings', JSON.stringify(settings));
+      localStorage.setItem('batt_subscription', JSON.stringify(subscription));
+      if (checkoutEmail) localStorage.setItem('batt_user_email', checkoutEmail);
+      else localStorage.removeItem('batt_user_email');
+    } catch (error) {
+      console.warn('localStorage persistence failed:', error);
+    }
+    writeVoltGuardSnapshot(snapshot).catch(error => {
+      console.warn('IndexedDB persistence failed; localStorage remains available:', error);
+    });
+  }, [storageReady, chargers, batteryProfiles, activeChargerId, activeSlots, history, settings, subscription, checkoutEmail]);
+
   const isSupporterValid = useMemo(() => {
     if (!subscription.isSupporter || !subscription.expiresAt) return false;
     return new Date().getTime() < subscription.expiresAt;
   }, [subscription]);
+
+  // --- Backup & Restore Implementation Handlers ---
+  const handleExportLocalBackup = (cloudProviderName = null) => {
+    try {
+      const backupPayload = {
+        version: "1.1",
+        app: "VoltGuard Pro",
+        timestamp: new Date().toISOString(),
+        payload: {
+          batteryProfiles,
+          chargers,
+          activeChargerId,
+          settings,
+          subscription,
+          checkoutEmail,
+          activeSlots,
+          history: includeStatsInBackup ? history : []
+        }
+      };
+
+      const backupBlob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+      const objectUrl = URL.createObjectURL(backupBlob);
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.href = objectUrl;
+      downloadAnchor.download = `voltguard_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+
+      setBackupFeedbackMsg({
+        type: 'success',
+        text: cloudProviderName
+          ? `A JSON backup was downloaded. Upload it to ${cloudProviderName} using its official app or file picker. Direct account sync is not configured in this build.`
+          : t('backupSuccess')
+      });
+      setTimeout(() => setBackupFeedbackMsg({ type: '', text: '' }), cloudProviderName ? 7000 : 4000);
+    } catch (err) {
+      setBackupFeedbackMsg({ type: 'error', text: t('backupError') });
+      setTimeout(() => setBackupFeedbackMsg({ type: '', text: '' }), 4000);
+    }
+  };
+
+  const handleCloudExportSync = (providerName) => {
+    // Direct provider APIs require OAuth configuration and a backend/native
+    // provider plugin. Download a real backup instead of simulating an upload.
+    handleExportLocalBackup(providerName);
+  };
+
+  const handleCloudImportRestore = (providerName) => {
+    setBackupFeedbackMsg({
+      type: 'success',
+      text: `Choose a VoltGuard JSON backup downloaded from ${providerName}. Direct account browsing requires provider OAuth integration.`
+    });
+    fileInputRef.current?.click();
+  };
+
+  const validateAndRestoreBackupData = (parsedData) => {
+    if (!parsedData || typeof parsedData !== 'object') {
+      throw new Error("Invalid root object structure");
+    }
+
+    const payload = parsedData.payload || parsedData; // Support both wrapped & direct raw backups
+    
+    if (!payload.batteryProfiles || !Array.isArray(payload.batteryProfiles)) {
+      throw new Error("Missing or invalid batteryProfiles array");
+    }
+    if (!payload.chargers || !Array.isArray(payload.chargers)) {
+      throw new Error("Missing or invalid chargers array");
+    }
+
+    // Safely apply state updates with fallback defaults
+    setBatteryProfiles(payload.batteryProfiles);
+    setChargers(payload.chargers);
+    if (payload.settings && typeof payload.settings === 'object') {
+      setSettings(prev => ({ ...prev, ...payload.settings }));
+    }
+    if (payload.history && Array.isArray(payload.history)) {
+      setHistory(payload.history);
+    }
+    if (typeof payload.activeChargerId === 'string') setActiveChargerId(payload.activeChargerId);
+    if (Array.isArray(payload.activeSlots)) setActiveSlots(payload.activeSlots);
+    if (payload.subscription && typeof payload.subscription === 'object') setSubscription(prev => ({ ...prev, ...payload.subscription }));
+    if (typeof payload.checkoutEmail === 'string') setCheckoutEmail(payload.checkoutEmail);
+
+    setBackupFeedbackMsg({ type: 'success', text: t('restoreSuccess') });
+    setTimeout(() => setBackupFeedbackMsg({ type: '', text: '' }), 4000);
+  };
+
+  const handleFileImportUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const jsonContent = JSON.parse(event.target.result);
+        validateAndRestoreBackupData(jsonContent);
+      } catch (err) {
+        setBackupFeedbackMsg({ type: 'error', text: t('backupError') });
+        setTimeout(() => setBackupFeedbackMsg({ type: '', text: '' }), 4000);
+      } finally {
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
+    reader.readAsText(file);
+  };
 
   // --- Charger Change Validation ---
   const handleAttemptChangeCharger = (newChargerId) => {
@@ -948,14 +1457,17 @@ export default function App() {
     setActiveChargerId(newChargerId);
   };
 
-  // --- Charger Edit & Delete Validation (Active vs Inactive Check) ---
+  // --- Charger Edit & Delete Validation ---
   const handleAttemptEditCharger = (charger) => {
     if (activeSlots.length > 0 && charger.id === activeChargerId) {
       setGlobalErrorMsg(t('errorChargerInUse'));
       setTimeout(() => setGlobalErrorMsg(''), 4000);
       return;
     }
-    setEditingCharger(charger);
+    setEditingCharger({
+      ...charger,
+      supported_slot_types: charger.supported_slot_types || ['AA/AAA Combined']
+    });
     setChargerErrors({});
     setIsChargerModalOpen(true);
   };
@@ -969,7 +1481,7 @@ export default function App() {
     setChargers(prev => prev.filter(item => item.id !== chargerId));
   };
 
-  // --- Battery Profile Edit & Delete Validation (Per-Profile Check) ---
+  // --- Battery Profile Edit & Delete Validation ---
   const handleAttemptEditProfile = (profile) => {
     const isCharging = activeSlots.some(slot => 
       (slot.profileId === profile.id || slot.label === profile.name) && slot.status !== 'completed'
@@ -1045,51 +1557,47 @@ export default function App() {
     setTimeout(() => setSelectedJiggleLogo(null), 800);
   };
 
-  // Global Timer Tick for Active Slots
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = Date.now();
-      setActiveSlots(prevSlots => {
-        let changed = false;
-        const updated = prevSlots.map(slot => {
-          if (slot.status !== 'charging') return slot;
+  // Continuous Audio Looping Alarm Controller
+  const stopContinuousAlarmSound = () => {
+    alarmShouldBePlayingRef.current = false;
+    if (activeAlarmLoopIntervalRef.current) {
+      clearInterval(activeAlarmLoopIntervalRef.current);
+      activeAlarmLoopIntervalRef.current = null;
+    }
+    if (alarmAudioRef.current) {
+      alarmAudioRef.current.pause();
+      try { alarmAudioRef.current.currentTime = 0; } catch (error) {}
+    }
+  };
 
-          const elapsedSec = Math.floor((now - slot.startTime) / 1000);
-          const totalDurationSec = slot.totalSec;
-          const remainingSec = Math.max(0, totalDurationSec - elapsedSec);
-          const overchargeSec = Math.max(0, elapsedSec - totalDurationSec);
-          
-          let newStatus = slot.status;
-          let alertTriggered = slot.alertTriggered;
-
-          if (elapsedSec >= totalDurationSec && !slot.alertTriggered) {
-            alertTriggered = true;
-            newStatus = 'completed';
-            triggerAlarmSound(settings.selectedAlarmId);
-            if (settings.pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
-              new Notification('🔋 Battery Fully Charged!', {
-                body: `${slot.size} battery (${slot.capacity}mAh) has reached target charge time.`
-              });
-            }
-          }
-
-          if (elapsedSec !== slot.elapsedSec || newStatus !== slot.status) {
-            changed = true;
-            return { ...slot, elapsedSec, remainingSec, overchargeSec, status: newStatus, alertTriggered };
-          }
-          return slot;
-        });
-
-        return changed ? updated : prevSlots;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [settings.pushNotifications, settings.selectedAlarmId]);
-
-  // Alarm Sound Generator
-  const triggerAlarmSound = (alarmId = 'chime') => {
+  const triggerContinuousAlarmSound = (alarmId = 'chime') => {
     if (!settings.audioAlerts) return;
+    stopContinuousAlarmSound();
+    alarmShouldBePlayingRef.current = true;
+
+    const startFallbackTone = () => {
+      if (!alarmShouldBePlayingRef.current || activeAlarmLoopIntervalRef.current) return;
+      playSingleAlarmBurst(alarmId);
+      activeAlarmLoopIntervalRef.current = setInterval(() => {
+        if (alarmShouldBePlayingRef.current) playSingleAlarmBurst(alarmId);
+      }, 1500);
+    };
+
+    // Use public/alarm.mp4 as the primary looping alarm; Web Audio is the fallback.
+    const alarmAudio = alarmAudioRef.current;
+    if (alarmAudio) {
+      alarmAudio.loop = true;
+      try { alarmAudio.currentTime = 0; } catch (error) {}
+      const playback = alarmAudio.play();
+      if (playback && typeof playback.catch === 'function') {
+        playback.catch(() => startFallbackTone());
+      }
+    } else {
+      startFallbackTone();
+    }
+  };
+
+  const playSingleAlarmBurst = (alarmId = 'chime') => {
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -1120,6 +1628,68 @@ export default function App() {
     }
   };
 
+  // Global Timer Tick for Active Slots
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = Date.now();
+      setActiveSlots(prevSlots => {
+        let changed = false;
+        let alarmNeeded = false;
+
+        const updated = prevSlots.map(slot => {
+          if (slot.status !== 'charging') return slot;
+
+          const elapsedSec = Math.floor((now - slot.startTime) / 1000);
+          const totalDurationSec = slot.totalSec;
+          const remainingSec = Math.max(0, totalDurationSec - elapsedSec);
+          const overchargeSec = Math.max(0, elapsedSec - totalDurationSec);
+          
+          let newStatus = slot.status;
+          let alertTriggered = slot.alertTriggered;
+
+          if (elapsedSec >= totalDurationSec && !slot.alertTriggered) {
+            alertTriggered = true;
+            newStatus = 'completed';
+            alarmNeeded = true;
+
+            if (settings.pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
+              const notificationOptions = {
+                body: `${slot.size} battery (${slot.capacity}mAh) has reached target charge time.`,
+                icon: '/icon-192.png',
+                badge: '/icon-192.png',
+                vibrate: [200, 100, 200, 100, 200],
+                tag: 'charge-complete-' + slot.id,
+                renotify: true,
+                data: { url: '/' }
+              };
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready
+                  .then(registration => registration.showNotification('🔋 Battery Fully Charged!', notificationOptions))
+                  .catch(() => new Notification('🔋 Battery Fully Charged!', notificationOptions));
+              } else {
+                new Notification('🔋 Battery Fully Charged!', notificationOptions);
+              }
+            }
+          }
+
+          if (elapsedSec !== slot.elapsedSec || newStatus !== slot.status) {
+            changed = true;
+            return { ...slot, elapsedSec, remainingSec, overchargeSec, status: newStatus, alertTriggered };
+          }
+          return slot;
+        });
+
+        if (alarmNeeded) {
+          triggerContinuousAlarmSound(settings.selectedAlarmId);
+        }
+
+        return changed ? updated : prevSlots;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [settings.pushNotifications, settings.selectedAlarmId, settings.audioAlerts]);
+
   const requestNotificationPermission = (enableState) => {
     if (enableState) {
       if ('Notification' in window) {
@@ -1145,12 +1715,29 @@ export default function App() {
     return { totalSec: Math.round(decimalHours * 3600), effectiveCurrentMa: baseCurrent };
   };
 
-  // --- Add Battery Slot Profile Selection & Two-Way Sync ---
-  const handleOpenAddSlotModal = () => {
+  const handleOpenAddSlotModal = (slotIndex = null) => {
     setSelectedBatteryProfileId('');
+    setTargetSlotIndex(typeof slotIndex === 'number' ? slotIndex : null);
+    
+    let initialSize = 'AA';
+    if (currentCharger.supported_slot_types && currentCharger.supported_slot_types.length > 0) {
+      const types = currentCharger.supported_slot_types;
+      if (types.includes('AA/AAA Combined') || types.includes('AA')) {
+        initialSize = 'AA';
+      } else if (types.includes('AAA')) {
+        initialSize = 'AAA';
+      } else if (types.includes('18650')) {
+        initialSize = '18650';
+      } else if (types.includes('C')) {
+        initialSize = 'C';
+      } else if (types.includes('D')) {
+        initialSize = 'D';
+      }
+    }
+
     setNewSlotForm({
       slotLabel: '',
-      size: 'AA',
+      size: initialSize,
       type: 'NiMH',
       capacity: '',
       voltage: '',
@@ -1162,6 +1749,13 @@ export default function App() {
     setIsAddModalOpen(true);
   };
 
+  const compatibleBatteryProfiles = useMemo(() => {
+    if (!currentCharger.supported_slot_types || currentCharger.supported_slot_types.length === 0) {
+      return batteryProfiles;
+    }
+    return batteryProfiles.filter(p => isBatteryCompatibleWithSlot(p.size, currentCharger.supported_slot_types));
+  }, [batteryProfiles, currentCharger]);
+
   const handleBatteryProfileSelect = (e) => {
     const pId = e.target.value;
     setSelectedBatteryProfileId(pId);
@@ -1172,6 +1766,9 @@ export default function App() {
     }
     const p = batteryProfiles.find(item => item.id === pId);
     if (p) {
+      if (!isBatteryCompatibleWithSlot(p.size, currentCharger.supported_slot_types)) {
+        setAddSlotError(t('errorIncompatibleBattery'));
+      }
       setNewSlotForm(prev => ({
         ...prev,
         slotLabel: p.name,
@@ -1186,6 +1783,13 @@ export default function App() {
   const handleSlotFormChange = (field, val) => {
     setNewSlotForm(prev => {
       const updated = { ...prev, [field]: val };
+      if (field === 'size') {
+        if (!isBatteryCompatibleWithSlot(val, currentCharger.supported_slot_types)) {
+          setAddSlotError(t('errorIncompatibleBattery'));
+        } else {
+          setAddSlotError('');
+        }
+      }
       if (selectedBatteryProfileId) {
         setBatteryProfiles(profiles => profiles.map(p => {
           if (p.id === selectedBatteryProfileId) {
@@ -1220,17 +1824,26 @@ export default function App() {
       return;
     }
 
-    // FIX: Find the first available slotIndex (0 to slotCount - 1)
+    if (!isBatteryCompatibleWithSlot(newSlotForm.size, currentCharger.supported_slot_types)) {
+      setAddSlotError(t('errorIncompatibleBattery'));
+      return;
+    }
+
     const slotCount = currentCharger.slotCount || 4;
     const occupiedIndices = activeSlots.map(s => s.slotIndex);
-    let assignedIndex = -1;
-    for (let i = 0; i < slotCount; i++) {
-      if (!occupiedIndices.includes(i)) {
-        assignedIndex = i;
-        break;
+    let assignedIndex = targetSlotIndex;
+    
+    if (assignedIndex === null || occupiedIndices.includes(assignedIndex)) {
+      assignedIndex = -1;
+      for (let i = 0; i < slotCount; i++) {
+        if (!occupiedIndices.includes(i)) {
+          assignedIndex = i;
+          break;
+        }
       }
     }
-    if (assignedIndex === -1) {
+
+    if (assignedIndex === -1 || assignedIndex >= slotCount) {
       setAddSlotError('All charging slots are currently full.');
       return;
     }
@@ -1287,6 +1900,7 @@ export default function App() {
     setActiveSlots(prev => [...prev, newSlot]);
     setIsAddModalOpen(false);
     setSelectedBatteryProfileId('');
+    setTargetSlotIndex(null);
     setAddSlotError('');
   };
 
@@ -1302,6 +1916,8 @@ export default function App() {
   };
 
   const handleRemoveSlot = (id, saveToHistory = false) => {
+    const remainingCompletedSlots = activeSlots.filter(slot => slot.id !== id && slot.status === 'completed');
+    if (remainingCompletedSlots.length === 0) stopContinuousAlarmSound();
     const targetSlot = activeSlots.find(s => s.id === id);
     if (saveToHistory && targetSlot) {
       const historyItem = { 
@@ -1316,13 +1932,14 @@ export default function App() {
   };
 
   const handleResetSlot = (id) => {
+    const otherCompletedSlots = activeSlots.some(slot => slot.id !== id && slot.status === 'completed');
+    if (!otherCompletedSlots) stopContinuousAlarmSound();
     setActiveSlots(prev => prev.map(slot => {
       if (slot.id !== id) return slot;
       return { ...slot, startTime: Date.now(), elapsedSec: 0, remainingSec: slot.totalSec, overchargeSec: 0, status: 'charging', alertTriggered: false };
     }));
   };
 
-  // --- Battery Profile Editor & Duplicate Validation ---
   const handleSaveBatteryProfile = (e) => {
     e.preventDefault();
     if (!editingBatteryProfile) return;
@@ -1369,7 +1986,6 @@ export default function App() {
     setEditingBatteryProfile(null);
   };
 
-  // --- Charger Profile New, Edit & Duplicate Validation ---
   const handleOpenNewCharger = () => {
     setEditingCharger({
       name: '',
@@ -1382,10 +1998,24 @@ export default function App() {
       aaaCurrentMa: '',
       slotCount: 4,
       isPaired: false,
+      supported_slot_types: ['AA/AAA Combined'],
       notes: ''
     });
     setChargerErrors({});
     setIsChargerModalOpen(true);
+  };
+
+  const handleToggleChargerSlotType = (slotType) => {
+    setEditingCharger(prev => {
+      const currentTypes = prev.supported_slot_types || [];
+      let updatedTypes;
+      if (currentTypes.includes(slotType)) {
+        updatedTypes = currentTypes.filter(t => t !== slotType);
+      } else {
+        updatedTypes = [...currentTypes, slotType];
+      }
+      return { ...prev, supported_slot_types: updatedTypes };
+    });
   };
 
   const handleSaveCharger = (e) => {
@@ -1396,6 +2026,9 @@ export default function App() {
     if (!editingCharger.aaCurrentMa || editingCharger.aaCurrentMa <= 0) errors.aaCurrentMa = 'AA output current must be > 0 mA.';
     if (!editingCharger.aaaCurrentMa || editingCharger.aaaCurrentMa <= 0) errors.aaaCurrentMa = 'AAA output current must be > 0 mA.';
     if (!editingCharger.slotCount || editingCharger.slotCount <= 0) errors.slotCount = 'Slot count must be at least 1.';
+    if (!editingCharger.supported_slot_types || editingCharger.supported_slot_types.length === 0) {
+      errors.supported_slot_types = 'At least one supported slot type must be selected.';
+    }
 
     if (Object.keys(errors).length === 0) {
       const isDuplicate = chargers.some(c => {
@@ -1439,7 +2072,6 @@ export default function App() {
     return `${pad(hrs)}h ${pad(mins)}m ${pad(secs)}s`;
   };
 
-  // --- Statistics & Battery Health Analytics calculations ---
   const statisticsAnalytics = useMemo(() => {
     const totalCycles = history.length;
     const overchargeCount = history.filter(h => h.overchargeSec > 0 || h.overcharged).length;
@@ -1449,12 +2081,11 @@ export default function App() {
         ? (p.priorUsageUnit === 'Years' ? (Number(p.priorUsageValue) || 0) * 12 : (Number(p.priorUsageValue) || 0)) 
         : 0;
       const pCycles = history.filter(h => h.profileId === p.id || h.label === p.name).length;
-      // SoH estimation algorithm: Base 100% minus aging months and charge cycles degradation
       const soh = Math.max(15, Math.round(100 - (priorMonths * 0.65) - (pCycles * 0.18)));
       const currentCapacity = Math.round(p.capacity * (soh / 100));
-      const fullRuntimeHours = ((currentCapacity / 500)).toFixed(1); // assuming 500mA discharge load
+      const fullRuntimeHours = ((currentCapacity / 500)).toFixed(1);
       const halfRuntimeHours = ((currentCapacity * 0.5 / 500)).toFixed(1);
-      const heatLossIndex = Math.round(12 + (100 - soh) * 0.45); // % efficiency heat loss
+      const heatLossIndex = Math.round(12 + (100 - soh) * 0.45);
 
       return {
         ...p,
@@ -1482,8 +2113,8 @@ export default function App() {
 
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased pb-36 selection:bg-blue-500 selection:text-white pt-[env(safe-area-inset-top)]">
+      <audio ref={alarmAudioRef} src="/alarm.mp4" preload="auto" loop playsInline />
       
-      {/* Custom Jiggle & Wavey Liquid Keyframe Animation Styles */}
       <style>{`
         @keyframes jiggle {
           0% { transform: rotate(0deg) scale(1); }
@@ -1503,38 +2134,47 @@ export default function App() {
         .animate-wave {
           animation: wave 3s linear infinite;
         }
+        @keyframes pulse-blue {
+          0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.35); }
+          50% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.7); }
+        }
+        .timer-active-glow {
+          animation: pulse-blue 2s infinite;
+        }
       `}</style>
 
-      {/* GLOBAL ERROR BANNER FOR CHARGER & PROFILE LOCK */}
       {globalErrorMsg && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 animate-bounce border border-red-400">
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 rtl:space-x-reverse animate-bounce border border-red-400">
           <ShieldAlert className="w-5 h-5 shrink-0" />
           <span>{globalErrorMsg}</span>
         </div>
       )}
 
       {/* HEADER BAR */}
-      <header className="sticky top-0 z-40 bg-slate-900/40 backdrop-blur-2xl border-b border-slate-800/60 px-4 py-3.5 sm:px-8 shadow-2xl">
+      <header className="sticky top-0 z-40 bg-slate-900/60 backdrop-blur-2xl border-b border-slate-800/80 px-4 py-3.5 sm:px-8 shadow-2xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-            <div className="bg-gradient-to-tr from-blue-600/80 to-cyan-400/80 p-3 rounded-3xl shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-all duration-300 backdrop-blur-md border border-cyan-400/30">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-all duration-300 border border-cyan-400/30">
               <Zap className="w-6 h-6 text-white animate-pulse" />
             </div>
             <div>
-              <h1 className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tight">
-                {t('title')}
-              </h1>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <h1 className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tight">
+                  {t('title')}
+                </h1>
+                <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">PRO</span>
+              </div>
               <p className="text-xs text-slate-400 font-medium">{t('subtitle')}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
-            <div className="flex items-center space-x-1.5 rtl:space-x-reverse bg-slate-900/60 backdrop-blur-xl px-3 py-2 rounded-full border border-slate-700/60 shadow-lg hover:border-cyan-500/50 transition-colors">
+            <div className="flex items-center space-x-1.5 rtl:space-x-reverse bg-slate-900/80 backdrop-blur-xl px-3 py-2 rounded-2xl border border-slate-700/80 shadow-lg hover:border-cyan-500/50 transition-colors">
               <Globe className="w-4 h-4 text-cyan-400" />
               <select
                 value={settings.language}
                 onChange={(e) => setSettings({ ...settings, language: e.target.value })}
-                className="bg-transparent text-xs text-cyan-300 font-bold border-0 focus:ring-0 cursor-pointer"
+                className="bg-transparent text-xs text-cyan-300 font-bold border-0 focus:ring-0 cursor-pointer outline-none"
               >
                 <option value="en" className="bg-slate-900">EN (English)</option>
                 <option value="fa" className="bg-slate-900">FA (فارسی)</option>
@@ -1551,8 +2191,8 @@ export default function App() {
             </div>
 
             <button 
-              onClick={handleOpenAddSlotModal}
-              className="hidden sm:flex items-center space-x-2 rtl:space-x-reverse bg-gradient-to-r from-blue-600/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-lg shadow-blue-500/25 backdrop-blur-xl border border-blue-400/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer"
+              onClick={() => handleOpenAddSlotModal(null)}
+              className="hidden sm:flex items-center space-x-2 rtl:space-x-reverse bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-500/30 backdrop-blur-xl border border-blue-400/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{t('addSlot')}</span>
@@ -1565,7 +2205,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-6">
         
         {/* FLOATING MAIN TAB NAVIGATION */}
-        <div className="sticky top-[73px] z-30 bg-slate-950/70 backdrop-blur-2xl py-3 mb-6 border-b border-slate-800/60 shadow-xl overflow-x-auto scrollbar-none">
+        <div className="sticky top-[73px] z-30 bg-slate-950/80 backdrop-blur-2xl py-3 mb-6 border-b border-slate-800/80 shadow-xl overflow-x-auto scrollbar-none">
           <div className="flex items-center space-x-2.5 rtl:space-x-reverse">
             {[
               { id: 'dashboard', label: t('dashboard'), icon: BatteryCharging, count: activeSlots.length },
@@ -1583,16 +2223,16 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 rtl:space-x-reverse px-5 py-3 rounded-full font-medium text-sm transition-all duration-300 whitespace-nowrap cursor-pointer backdrop-blur-xl ${
+                  className={`flex items-center space-x-2 rtl:space-x-reverse px-4 py-2.5 rounded-2xl font-semibold text-xs transition-all duration-300 whitespace-nowrap cursor-pointer backdrop-blur-xl ${
                     isActive 
-                      ? 'bg-gradient-to-r from-blue-600/30 to-cyan-500/20 text-blue-300 border border-blue-500/40 shadow-xl shadow-blue-500/10 transform scale-[1.03]' 
-                      : 'bg-slate-900/40 text-slate-400 border border-slate-800/40 hover:text-slate-200 hover:bg-slate-900/60'
+                      ? 'bg-gradient-to-r from-blue-600/40 to-cyan-500/30 text-blue-200 border border-blue-500/50 shadow-xl shadow-blue-500/20 transform scale-[1.02]' 
+                      : 'bg-slate-900/60 text-slate-400 border border-slate-800/80 hover:text-slate-200 hover:bg-slate-900/90'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'text-blue-400 scale-110' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'text-cyan-400 scale-110' : 'text-slate-400'}`} />
                   <span>{tab.label}</span>
                   {tab.count !== undefined && tab.count > 0 && (
-                    <span className="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-slate-950 animate-pulse">{tab.count}</span>
+                    <span className="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-blue-500 text-slate-950 animate-pulse">{tab.count}</span>
                   )}
                 </button>
               );
@@ -1603,20 +2243,24 @@ export default function App() {
         {/* TAB 1: DASHBOARD */}
         {activeTab === 'dashboard' && (
           <div className="space-y-6 animate-fade-in">
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl">
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl">
               <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                <div className="p-3.5 bg-slate-800/70 backdrop-blur-xl rounded-2xl text-blue-400 border border-slate-700/60 shadow-inner">
+                <div className="p-3.5 bg-slate-800/90 backdrop-blur-xl rounded-2xl text-blue-400 border border-slate-700/80 shadow-inner">
                   <Zap className="w-6 h-6 animate-pulse" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <h2 className="font-bold text-slate-100 text-base">{currentCharger.name}</h2>
+                    <h2 className="font-extrabold text-slate-100 text-sm sm:text-base">{currentCharger.name}</h2>
                     <span className={`text-[10px] uppercase font-extrabold px-3 py-0.5 rounded-full ${currentCharger.isPaired ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'}`}>
                       {currentCharger.isPaired ? 'Paired' : 'Independent'} ({currentCharger.slotCount || 4} Slots)
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    {t('activeCharger')} <span className="text-blue-400 font-semibold">AA: {currentCharger.aaCurrentMa}mA</span> | <span className="text-amber-400 font-semibold">AAA: {currentCharger.aaaCurrentMa}mA</span>
+                  <p className="text-xs text-slate-400 mt-1 flex flex-wrap items-center gap-1.5">
+                    <span>{t('activeCharger')} <strong className="text-blue-400">AA: {currentCharger.aaCurrentMa}mA</strong> | <strong className="text-amber-400">AAA: {currentCharger.aaaCurrentMa}mA</strong></span>
+                    <span className="text-slate-600">•</span>
+                    <span className="text-cyan-400 font-semibold">
+                      Supported: {(currentCharger.supported_slot_types || ['AA/AAA Combined']).join(', ')}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -1625,14 +2269,13 @@ export default function App() {
                 <select 
                   value={activeChargerId}
                   onChange={(e) => handleAttemptChangeCharger(e.target.value)}
-                  className="bg-slate-950/70 backdrop-blur-xl border border-slate-700/60 text-xs text-blue-300 font-medium rounded-2xl p-3 w-full sm:w-auto focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer"
+                  className="bg-slate-950/90 backdrop-blur-xl border border-slate-700/80 text-xs text-cyan-300 font-bold rounded-2xl p-3 w-full sm:w-auto focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer outline-none"
                 >
                   {chargers.map(c => <option key={c.id} value={c.id} className="bg-slate-900">{c.name} ({c.slotCount || 4} Slots)</option>)}
                 </select>
               </div>
             </div>
 
-            {/* FIXED SLOT INDEX RENDERING */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {Array.from({ length: currentCharger.slotCount || 4 }).map((_, index) => {
                 const slot = activeSlots.find(s => s.slotIndex === index);
@@ -1640,10 +2283,13 @@ export default function App() {
 
                 if (!slot) {
                   return (
-                    <div key={`empty-slot-${index}`} className={`rounded-3xl bg-slate-900/40 backdrop-blur-2xl border-2 border-dashed ${slotColor.border} shadow-2xl p-6 flex flex-col items-center justify-between min-h-[380px] transform hover:scale-[1.02] transition-all duration-300`}>
+                    <div key={`empty-slot-${index}`} className={`rounded-3xl bg-slate-900/40 backdrop-blur-2xl border-2 border-dashed ${slotColor.border} shadow-2xl p-6 flex flex-col items-center justify-between min-h-[380px] transform hover:scale-[1.01] transition-all duration-300`}>
                       <div className="flex items-center justify-between w-full">
-                        <span className={`text-xs font-black uppercase px-3 py-1 rounded-full ${slotColor.badge}`}>
+                        <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${slotColor.badge}`}>
                           Slot {index + 1} (Empty)
+                        </span>
+                        <span className="text-[10px] font-semibold text-cyan-400/80 bg-cyan-950/40 px-2 py-0.5 rounded-md border border-cyan-500/20">
+                          {(currentCharger.supported_slot_types || ['AA/AAA Combined']).join(', ')}
                         </span>
                       </div>
 
@@ -1654,8 +2300,8 @@ export default function App() {
                       </div>
 
                       <button 
-                        onClick={handleOpenAddSlotModal}
-                        className={`w-full py-3 px-4 rounded-2xl font-bold text-xs bg-gradient-to-r ${slotColor.bar} text-slate-950 shadow-lg shadow-cyan-500/20 hover:opacity-90 transition flex items-center justify-center space-x-2 cursor-pointer`}
+                        onClick={() => handleOpenAddSlotModal(index)}
+                        className={`w-full py-3 px-4 rounded-2xl font-bold text-xs bg-gradient-to-r ${slotColor.bar} text-slate-950 shadow-lg shadow-cyan-500/20 hover:opacity-90 transition flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer`}
                       >
                         <Plus className="w-4 h-4" />
                         <span>{t('addSlot')}</span>
@@ -1668,12 +2314,13 @@ export default function App() {
                 const pct = Math.min(100, Math.floor((slot.elapsedSec / slot.totalSec) * 100));
                 const isOvercharging = slot.elapsedSec > slot.totalSec;
                 const isCompleted = slot.status === 'completed' || pct >= 100;
+                const isRunning = slot.status === 'charging';
 
                 return (
-                  <div key={slot.id} className={`rounded-3xl bg-slate-900/50 backdrop-blur-2xl border-2 ${slotColor.border} ${slotColor.ring} shadow-2xl p-6 flex flex-col justify-between transform hover:-translate-y-1 transition-all duration-300 relative overflow-hidden`}>
+                  <div key={slot.id} className={`rounded-3xl bg-slate-900/70 backdrop-blur-2xl border-2 ${slotColor.border} ${isRunning ? 'timer-active-glow' : slotColor.ring} shadow-2xl p-6 flex flex-col justify-between transform hover:-translate-y-1 transition-all duration-300 relative overflow-hidden`}>
                     
                     {isCompleted && (
-                      <div className="absolute inset-0 z-20 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-fade-in space-y-3">
+                      <div className="absolute inset-0 z-20 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-fade-in space-y-3">
                         <div className="w-14 h-24 bg-red-600/90 border-4 border-red-400 rounded-2xl flex flex-col items-center justify-center shadow-2xl animate-pulse ring-8 ring-red-500/40">
                           <div className="w-3 h-2 bg-red-400 rounded-t-sm -mt-2 mb-1" />
                           <Zap className="w-6 h-6 text-white animate-bounce" />
@@ -1703,15 +2350,14 @@ export default function App() {
                     <div>
                       <div className="flex justify-between items-start mb-5">
                         <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-                          
                           <div className={`relative flex items-center justify-center rounded-2xl overflow-hidden mt-1.5 shadow-xl ${isAA ? 'w-11 h-18 bg-blue-950/70 backdrop-blur-md border-2 border-blue-500/80 text-blue-200' : 'w-9 h-15 bg-amber-950/70 backdrop-blur-md border-2 border-amber-500/80 text-amber-200'}`}>
                             <div className={`absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-2 rounded-t-full ${isAA ? 'bg-blue-500' : 'bg-amber-500'}`} />
                             
                             <div 
-                              className={`absolute bottom-0 left-0 right-0 overflow-hidden transition-all duration-700 ease-linear ${isOvercharging ? 'bg-red-500 animate-pulse' : slotColor.bar.includes('blue') ? 'bg-blue-500/80' : slotColor.bar.includes('emerald') ? 'bg-emerald-500/80' : slotColor.bar.includes('purple') ? 'bg-purple-500/80' : slotColor.bar.includes('amber') ? 'bg-amber-500/80' : 'bg-cyan-500/80'}`}
+                              className={`absolute bottom-0 left-0 right-0 overflow-hidden transition-all duration-700 ease-linear ${isOvercharging ? 'bg-red-500 animate-pulse' : slotColor.bar.includes('blue') ? 'bg-blue-500/90' : slotColor.bar.includes('emerald') ? 'bg-emerald-500/90' : slotColor.bar.includes('purple') ? 'bg-purple-500/90' : slotColor.bar.includes('amber') ? 'bg-amber-500/90' : 'bg-cyan-500/90'}`}
                               style={{ height: `${pct}%` }}
                             >
-                              <div className="absolute w-[200%] h-3 -top-1.5 left-0 bg-white/30 rounded-full animate-wave" />
+                              <div className="absolute w-[200%] h-3 -top-1.5 left-0 bg-white/40 rounded-full animate-wave" />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                             </div>
 
@@ -1719,7 +2365,7 @@ export default function App() {
                           </div>
 
                           <div>
-                            <div className="flex items-center space-x-1.5">
+                            <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
                               <span className={`text-[10px] font-black px-2 py-0.5 rounded-md ${slotColor.badge}`}>Slot {index + 1}</span>
                               <h3 className="font-extrabold text-slate-100 text-sm tracking-tight">{slot.label}</h3>
                             </div>
@@ -1729,12 +2375,12 @@ export default function App() {
                           </div>
                         </div>
 
-                        <span className={`text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-sm ${isOvercharging ? 'bg-red-950/80 text-red-400 border border-red-500/50 animate-bounce' : isCompleted ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/50' : 'bg-blue-950/80 text-blue-400 border border-blue-500/50'}`}>
+                        <span className={`text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-sm ${isOvercharging ? 'bg-red-950/90 text-red-400 border border-red-500/60 animate-bounce' : isCompleted ? 'bg-emerald-950/90 text-emerald-400 border border-emerald-500/60' : 'bg-blue-950/90 text-blue-400 border border-blue-500/60'}`}>
                           {isOvercharging ? t('overcharging') : isCompleted ? t('done') : `${pct}%`}
                         </span>
                       </div>
 
-                      <div className="relative w-full bg-slate-950/80 backdrop-blur-2xl rounded-3xl p-6 border-2 border-slate-700/80 mb-5 overflow-hidden shadow-2xl flex flex-col items-center justify-center min-h-[140px]">
+                      <div className="relative w-full bg-slate-950/90 backdrop-blur-2xl rounded-3xl p-6 border-2 border-slate-700/80 mb-5 overflow-hidden shadow-2xl flex flex-col items-center justify-center min-h-[140px]">
                         <div className={`absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-3.5 rounded-t-lg ${isOvercharging ? 'bg-red-500' : slotColor.border.replace('border-', 'bg-').split('/')[0]}`} />
                         
                         <div 
@@ -1755,24 +2401,24 @@ export default function App() {
                       </div>
 
                       <div className="space-y-2 mb-6">
-                        <div className="flex justify-between text-xs font-medium">
+                        <div className="flex justify-between text-xs font-semibold">
                           <span className="text-slate-400">{t('progress')}</span>
-                          <span className={slotColor.text + ' font-bold'}>{pct}%</span>
+                          <span className={slotColor.text + ' font-bold font-mono'}>{pct}%</span>
                         </div>
-                        <div className="w-full bg-slate-950/60 rounded-full h-3 overflow-hidden border border-slate-800/60 p-0.5 shadow-inner backdrop-blur-md">
+                        <div className="w-full bg-slate-950/80 rounded-full h-3 overflow-hidden border border-slate-800/80 p-0.5 shadow-inner backdrop-blur-md">
                           <div className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${slotColor.bar} shadow-lg`} style={{ width: `${pct}%` }} />
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2.5 rtl:space-x-reverse pt-3 border-t border-slate-800/60">
-                      <button onClick={() => handleTogglePause(slot.id)} className="flex-1 bg-slate-800/60 hover:bg-slate-700/80 backdrop-blur-xl text-slate-200 font-semibold text-xs py-2.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-98 cursor-pointer shadow border border-slate-700/40">
+                    <div className="flex items-center space-x-2.5 rtl:space-x-reverse pt-3 border-t border-slate-800/80">
+                      <button onClick={() => handleTogglePause(slot.id)} className="flex-1 bg-slate-800/80 hover:bg-slate-700/90 backdrop-blur-xl text-slate-200 font-semibold text-xs py-2.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-98 cursor-pointer shadow border border-slate-700/50">
                         {slot.status === 'charging' ? t('pause') : t('resume')}
                       </button>
-                      <button onClick={() => handleResetSlot(slot.id)} title="Reset Timer" className="p-2.5 bg-slate-800/60 hover:bg-slate-700/80 backdrop-blur-xl text-slate-300 rounded-2xl transition-all hover:rotate-45 cursor-pointer shadow border border-slate-700/40">
+                      <button onClick={() => handleResetSlot(slot.id)} title="Reset Timer" className="p-2.5 bg-slate-800/80 hover:bg-slate-700/90 backdrop-blur-xl text-slate-300 rounded-2xl transition-all hover:rotate-45 cursor-pointer shadow border border-slate-700/50">
                         <RefreshCw className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleRemoveSlot(slot.id, true)} className="flex-1 bg-slate-800/60 hover:bg-red-950/80 backdrop-blur-xl text-emerald-400 hover:text-red-300 font-semibold text-xs py-2.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-98 cursor-pointer shadow border border-slate-700/40">
+                      <button onClick={() => handleRemoveSlot(slot.id, true)} className="flex-1 bg-slate-800/80 hover:bg-red-950/90 backdrop-blur-xl text-emerald-400 hover:text-red-300 font-semibold text-xs py-2.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-98 cursor-pointer shadow border border-slate-700/50">
                         {t('stopCharge')}
                       </button>
                     </div>
@@ -1783,10 +2429,10 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB: STATISTICS & BATTERY HEALTH ANALYTICS */}
+        {/* TAB: STATISTICS */}
         {activeTab === 'statistics' && (
           <div className="space-y-6 animate-fade-in max-w-6xl mx-auto">
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h2 className="text-xl font-extrabold text-slate-100 flex items-center space-x-2.5 rtl:space-x-reverse">
                   <TrendingUp className="text-cyan-400 w-6 h-6 animate-pulse" />
@@ -1794,17 +2440,16 @@ export default function App() {
                 </h2>
                 <p className="text-xs text-slate-400 mt-1">Real-world electrochemistry degradation tracking, SoH estimation, and RUL runtime projections.</p>
               </div>
-              <div className="px-5 py-3 rounded-2xl bg-slate-950/80 border border-slate-700/60 shadow-inner flex items-center space-x-3">
+              <div className="px-5 py-3 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-inner flex items-center space-x-3 rtl:space-x-reverse">
                 <span className="text-xs text-slate-400 font-semibold">Average Fleet SoH:</span>
-                <span className={`text-lg font-black ${statisticsAnalytics.avgSoH >= 80 ? 'text-emerald-400' : statisticsAnalytics.avgSoH >= 50 ? 'text-amber-400' : 'text-red-400'}`}>
+                <span className={`text-lg font-black font-mono ${statisticsAnalytics.avgSoH >= 80 ? 'text-emerald-400' : statisticsAnalytics.avgSoH >= 50 ? 'text-amber-400' : 'text-red-400'}`}>
                   {statisticsAnalytics.avgSoH}%
                 </span>
               </div>
             </div>
 
-            {/* RUL NOTIFICATION POPUP ALERTS IF FLEET OR PROFILES DROP <= 50% OR <= 30% */}
             {statisticsAnalytics.profileStats.some(p => p.soh <= 50) && (
-              <div className={`p-5 rounded-3xl border shadow-2xl flex items-start space-x-4 rtl:space-x-reverse ${statisticsAnalytics.profileStats.some(p => p.soh <= 30) ? 'bg-red-950/80 border-red-500/80 text-red-200 animate-pulse' : 'bg-amber-950/80 border-amber-500/80 text-amber-200'}`}>
+              <div className={`p-5 rounded-3xl border shadow-2xl flex items-start space-x-4 rtl:space-x-reverse ${statisticsAnalytics.profileStats.some(p => p.soh <= 30) ? 'bg-red-950/90 border-red-500/80 text-red-200 animate-pulse' : 'bg-amber-950/90 border-amber-500/80 text-amber-200'}`}>
                 {statisticsAnalytics.profileStats.some(p => p.soh <= 30) ? (
                   <ShieldAlert className="w-7 h-7 text-red-400 shrink-0 mt-0.5" />
                 ) : (
@@ -1821,28 +2466,27 @@ export default function App() {
               </div>
             )}
 
-            {/* METRICS CARDS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-semibold uppercase">{t('chargeCycles')}</span>
+              <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('chargeCycles')}</span>
                 <div className="text-3xl font-black text-cyan-400 font-mono">{statisticsAnalytics.totalCycles}</div>
                 <p className="text-[11px] text-slate-500">Cumulative completed charge cycles recorded across history logs.</p>
               </div>
 
-              <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-semibold uppercase">{t('overchargeInstances')}</span>
+              <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('overchargeInstances')}</span>
                 <div className="text-3xl font-black text-rose-400 font-mono">{statisticsAnalytics.overchargeCount}</div>
                 <p className="text-[11px] text-slate-500">Instances where batteries remained connected past 100% completion.</p>
               </div>
 
-              <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-semibold uppercase">{t('sohTitle')}</span>
+              <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('sohTitle')}</span>
                 <div className="text-3xl font-black text-emerald-400 font-mono">{statisticsAnalytics.avgSoH}%</div>
                 <p className="text-[11px] text-slate-500">Calculated state of health based on electrochemical wear models.</p>
               </div>
 
-              <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-semibold uppercase">{t('heatLoss')}</span>
+              <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('heatLoss')}</span>
                 <div className="text-3xl font-black text-amber-400 font-mono">
                   {statisticsAnalytics.profileStats.length > 0 ? Math.round(statisticsAnalytics.profileStats.reduce((a, b) => a + b.heatLossIndex, 0) / statisticsAnalytics.profileStats.length) : 12}%
                 </div>
@@ -1850,16 +2494,15 @@ export default function App() {
               </div>
             </div>
 
-            {/* PROFILE HEALTH & RUNTIME PROJECTIONS TABLE */}
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-              <h3 className="font-bold text-slate-100 text-base flex items-center space-x-2">
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+              <h3 className="font-bold text-slate-100 text-base flex items-center space-x-2 rtl:space-x-reverse">
                 <BatteryFull className="w-5 h-5 text-blue-400" />
                 <span>Profile-Specific Health & Estimated Runtime Projections</span>
               </h3>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left rtl:text-right text-xs">
-                  <thead className="bg-slate-950/80 text-slate-400 uppercase font-bold border-b border-slate-800">
+                  <thead className="bg-slate-950/90 text-slate-400 uppercase font-bold border-b border-slate-800">
                     <tr>
                       <th className="p-4">Profile Name / Size</th>
                       <th className="p-4">Condition</th>
@@ -1869,9 +2512,9 @@ export default function App() {
                       <th className="p-4">Half Charge Runtime (50%)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-800/80">
                     {statisticsAnalytics.profileStats.map(p => (
-                      <tr key={p.id} className="hover:bg-slate-800/30 transition-colors">
+                      <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
                         <td className="p-4 font-bold text-slate-200">
                           {p.name} <span className="text-[10px] text-cyan-400 font-normal">({p.size})</span>
                         </td>
@@ -1895,20 +2538,19 @@ export default function App() {
               </div>
             </div>
 
-            {/* HEALTH TREND GRAPH & DEGRADATION VISUALIZATION */}
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-              <h3 className="font-bold text-slate-100 text-base flex items-center space-x-2">
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+              <h3 className="font-bold text-slate-100 text-base flex items-center space-x-2 rtl:space-x-reverse">
                 <TrendingUp className="w-5 h-5 text-cyan-400" />
                 <span>{t('healthTrend')}</span>
               </h3>
               <p className="text-xs text-slate-400">Comparing expected theoretical capacity retention curve vs. actual battery fleet utilization wear.</p>
 
-              <div className="bg-slate-950/80 rounded-2xl p-6 border border-slate-800/80 space-y-4 shadow-inner">
+              <div className="bg-slate-950/90 rounded-3xl p-6 border border-slate-800/90 space-y-4 shadow-inner">
                 {statisticsAnalytics.profileStats.map(p => (
                   <div key={p.id} className="space-y-1.5">
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-slate-300">{p.name}</span>
-                      <span className={p.soh >= 80 ? 'text-emerald-400' : p.soh >= 50 ? 'text-amber-400' : 'text-red-400'}>{p.soh}% Capacity Retention</span>
+                      <span className={`font-mono font-bold ${p.soh >= 80 ? 'text-emerald-400' : p.soh >= 50 ? 'text-amber-400' : 'text-red-400'}`}>{p.soh}% Capacity Retention</span>
                     </div>
                     <div className="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800 p-0.5 shadow-inner">
                       <div 
@@ -1927,7 +2569,7 @@ export default function App() {
         {/* TAB 2: BATTERY PROFILES */}
         {activeTab === 'battery-profiles' && (
           <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 p-6 rounded-3xl shadow-2xl gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 p-6 rounded-3xl shadow-2xl gap-4">
               <div>
                 <h2 className="text-lg font-bold text-slate-100">{t('batteryProfiles')}</h2>
                 <p className="text-xs text-slate-400 mt-0.5">Save, manage, and customize battery chemistry profiles, age condition, and thermal limits.</p>
@@ -1949,7 +2591,7 @@ export default function App() {
                   setBatteryProfileErrors({}); 
                   setIsBatteryProfileModalOpen(true); 
                 }} 
-                className="bg-gradient-to-r from-blue-600/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-400 text-white text-xs px-6 py-3 rounded-full font-bold shadow-lg shadow-blue-500/25 flex items-center space-x-2 rtl:space-x-reverse transform hover:scale-105 active:scale-95 transition-all cursor-pointer backdrop-blur-xl border border-cyan-400/30"
+                className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/30 flex items-center space-x-2 rtl:space-x-reverse transform hover:scale-105 active:scale-95 transition-all cursor-pointer backdrop-blur-xl border border-cyan-400/30"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Battery Profile</span>
@@ -1958,32 +2600,32 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {batteryProfiles.map(p => (
-                <div key={p.id} className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 flex flex-col justify-between shadow-2xl hover:border-blue-500/40 transition-all duration-300">
+                <div key={p.id} className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-2xl hover:border-blue-500/50 transition-all duration-300">
                   <div>
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-bold text-slate-100 text-sm tracking-tight">{p.name}</h3>
+                      <h3 className="font-extrabold text-slate-100 text-sm tracking-tight">{p.name}</h3>
                       <span className="text-[10px] font-extrabold px-3 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">{p.size}</span>
                     </div>
-                    <div className="text-xs text-slate-400 space-y-2 mt-4 bg-slate-950/40 backdrop-blur-xl p-4 rounded-2xl border border-slate-800/40">
+                    <div className="text-xs text-slate-400 space-y-2 mt-4 bg-slate-950/60 backdrop-blur-xl p-4 rounded-2xl border border-slate-800/80">
                       <div className="flex justify-between"><span>Chemistry:</span> <strong className="text-slate-200">{p.type}</strong></div>
-                      <div className="flex justify-between"><span>Capacity:</span> <strong className="text-slate-200">{p.capacity} mAh</strong></div>
-                      <div className="flex justify-between"><span>Nominal Voltage:</span> <strong className="text-slate-200">{p.voltage}V</strong></div>
+                      <div className="flex justify-between"><span>Capacity:</span> <strong className="text-cyan-300 font-mono">{p.capacity} mAh</strong></div>
+                      <div className="flex justify-between"><span>Nominal Voltage:</span> <strong className="text-slate-200 font-mono">{p.voltage}V</strong></div>
                       <div className="flex justify-between"><span>Condition:</span> <strong className={p.condition === 'Used' ? 'text-amber-400' : 'text-emerald-400'}>{p.condition} {p.condition === 'Used' ? `(${p.priorUsageValue || 0} ${p.priorUsageUnit || 'Months'})` : ''}</strong></div>
-                      <div className="flex justify-between"><span>Thermal Limit:</span> <strong className="text-red-400">{p.thermalLimitC}°C</strong></div>
+                      <div className="flex justify-between"><span>Thermal Limit:</span> <strong className="text-red-400 font-mono">{p.thermalLimitC}°C</strong></div>
                     </div>
                   </div>
                   
-                  <div className="flex space-x-2.5 rtl:space-x-reverse mt-5 pt-4 border-t border-slate-800/60">
+                  <div className="flex space-x-2.5 rtl:space-x-reverse mt-5 pt-4 border-t border-slate-800/80">
                     <button 
                       onClick={() => handleAttemptEditProfile(p)} 
-                      className="flex-1 bg-slate-800/60 hover:bg-slate-700/80 backdrop-blur-xl font-semibold text-xs py-2.5 rounded-2xl text-slate-200 transition-all hover:scale-[1.02] cursor-pointer shadow border border-slate-700/40"
+                      className="flex-1 bg-slate-800/80 hover:bg-slate-700/90 backdrop-blur-xl font-semibold text-xs py-2.5 rounded-2xl text-slate-200 transition-all hover:scale-[1.02] cursor-pointer shadow border border-slate-700/50"
                     >
                       Edit
                     </button>
                     {batteryProfiles.length > 1 && (
                       <button 
                         onClick={() => handleAttemptDeleteProfile(p.id)} 
-                        className="p-2.5 bg-slate-800/60 hover:bg-red-950/80 backdrop-blur-xl text-red-400 rounded-2xl transition-all hover:scale-105 cursor-pointer shadow border border-slate-700/40"
+                        className="p-2.5 bg-slate-800/80 hover:bg-red-950/90 backdrop-blur-xl text-red-400 rounded-2xl transition-all hover:scale-105 cursor-pointer shadow border border-slate-700/50"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -1998,14 +2640,14 @@ export default function App() {
         {/* TAB 3: CHARGERS */}
         {activeTab === 'chargers' && (
           <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 p-6 rounded-3xl shadow-2xl gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 p-6 rounded-3xl shadow-2xl gap-4">
               <div>
                 <h2 className="text-lg font-bold text-slate-100">{t('chargers')}</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Configure charger channel output currents, slot count capacity, and circuit pairing.</p>
+                <p className="text-xs text-slate-400 mt-0.5">Configure charger channel output currents, slot count capacity, dynamic slot types, and circuit pairing.</p>
               </div>
               <button 
                 onClick={handleOpenNewCharger} 
-                className="bg-gradient-to-r from-blue-600/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-400 text-white text-xs px-6 py-3 rounded-full font-bold shadow-lg shadow-blue-500/25 transform hover:scale-105 active:scale-95 transition-all cursor-pointer backdrop-blur-xl border border-cyan-400/30"
+                className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/30 transform hover:scale-105 active:scale-95 transition-all cursor-pointer backdrop-blur-xl border border-cyan-400/30"
               >
                 <Plus className="w-4 h-4 inline mr-1" /> Add Charger
               </button>
@@ -2013,24 +2655,38 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {chargers.map(c => {
                 const isActive = c.id === activeChargerId;
+                const slotTypes = c.supported_slot_types || ['AA/AAA Combined'];
                 return (
-                  <div key={c.id} className={`bg-slate-900/50 backdrop-blur-2xl border ${isActive ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-800/60'} rounded-3xl p-6 flex flex-col justify-between shadow-2xl`}>
+                  <div key={c.id} className={`bg-slate-900/70 backdrop-blur-2xl border ${isActive ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-800/80'} rounded-3xl p-6 flex flex-col justify-between shadow-2xl`}>
                     <div>
                       <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-bold text-slate-100 text-sm tracking-tight">{c.name}</h3>
-                        {isActive && <span className="bg-blue-500/80 text-slate-950 font-black text-[10px] px-3 py-0.5 rounded-full shadow backdrop-blur-md">Active</span>}
+                        <h3 className="font-extrabold text-slate-100 text-sm tracking-tight">{c.name}</h3>
+                        {isActive && <span className="bg-blue-500 text-slate-950 font-black text-[10px] px-3 py-0.5 rounded-full shadow backdrop-blur-md">Active</span>}
                       </div>
                       <p className="text-xs text-slate-400 mb-4">{c.notes}</p>
-                      <div className="bg-slate-950/50 backdrop-blur-xl p-4 rounded-2xl border border-slate-800/60 text-xs text-slate-300 space-y-2 shadow-inner">
-                        <div className="flex justify-between"><span>Slot Capacity:</span> <strong className="text-cyan-400">{c.slotCount || 4} Slots</strong></div>
-                        <div className="flex justify-between"><span>AA Current:</span> <strong className="text-blue-400">{c.aaCurrentMa}mA</strong></div>
-                        <div className="flex justify-between"><span>AAA Current:</span> <strong className="text-amber-400">{c.aaaCurrentMa}mA</strong></div>
+                      
+                      <div className="bg-slate-950/80 backdrop-blur-xl p-4 rounded-2xl border border-slate-800/80 text-xs text-slate-300 space-y-2.5 shadow-inner">
+                        <div className="flex justify-between"><span>Slot Capacity:</span> <strong className="text-cyan-400 font-mono">{c.slotCount || 4} Slots</strong></div>
+                        <div className="flex justify-between"><span>AA Current:</span> <strong className="text-blue-400 font-mono">{c.aaCurrentMa}mA</strong></div>
+                        <div className="flex justify-between"><span>AAA Current:</span> <strong className="text-amber-400 font-mono">{c.aaaCurrentMa}mA</strong></div>
+                        
+                        <div className="pt-2 border-t border-slate-800/80">
+                          <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">Supported Slot Compatibility:</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {slotTypes.map((type, idx) => (
+                              <span key={idx} className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-500/15 text-cyan-300 border border-cyan-500/30">
+                                {type}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
                       </div>
                     </div>
-                    <div className="flex space-x-2.5 rtl:space-x-reverse mt-5 pt-4 border-t border-slate-800/60">
-                      {!isActive && <button onClick={() => handleAttemptChangeCharger(c.id)} className="flex-1 bg-slate-800/60 hover:bg-slate-700/80 backdrop-blur-xl text-xs py-2.5 rounded-2xl text-blue-400 font-semibold transition hover:scale-[1.02] cursor-pointer shadow border border-slate-700/40">Set Active</button>}
-                      <button onClick={() => handleAttemptEditCharger(c)} className="p-2.5 bg-slate-800/60 hover:bg-slate-700/80 backdrop-blur-xl text-slate-200 rounded-2xl transition hover:scale-105 cursor-pointer shadow border border-slate-700/40"><Edit3 className="w-4 h-4" /></button>
-                      {chargers.length > 1 && <button onClick={() => handleAttemptDeleteCharger(c.id)} className="p-2.5 bg-slate-800/60 hover:bg-red-950/80 backdrop-blur-xl text-red-400 rounded-2xl transition hover:scale-105 cursor-pointer shadow border border-slate-700/40"><Trash2 className="w-4 h-4" /></button>}
+                    <div className="flex space-x-2.5 rtl:space-x-reverse mt-5 pt-4 border-t border-slate-800/80">
+                      {!isActive && <button onClick={() => handleAttemptChangeCharger(c.id)} className="flex-1 bg-slate-800/80 hover:bg-slate-700/90 backdrop-blur-xl text-xs py-2.5 rounded-2xl text-blue-400 font-semibold transition hover:scale-[1.02] cursor-pointer shadow border border-slate-700/50">Set Active</button>}
+                      <button onClick={() => handleAttemptEditCharger(c)} className="p-2.5 bg-slate-800/80 hover:bg-slate-700/90 backdrop-blur-xl text-slate-200 rounded-2xl transition hover:scale-105 cursor-pointer shadow border border-slate-700/50"><Edit3 className="w-4 h-4" /></button>
+                      {chargers.length > 1 && <button onClick={() => handleAttemptDeleteCharger(c.id)} className="p-2.5 bg-slate-800/80 hover:bg-red-950/90 backdrop-blur-xl text-red-400 rounded-2xl transition hover:scale-105 cursor-pointer shadow border border-slate-700/50"><Trash2 className="w-4 h-4" /></button>}
                     </div>
                   </div>
                 );
@@ -2041,20 +2697,20 @@ export default function App() {
 
         {/* TAB 4: SAFETY */}
         {activeTab === 'safety' && (
-          <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 space-y-6 max-w-4xl mx-auto shadow-2xl animate-fade-in">
+          <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6 max-w-4xl mx-auto shadow-2xl animate-fade-in">
             <h2 className="text-lg font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
               <ShieldCheck className="text-emerald-400 w-6 h-6 animate-pulse" />
               <span>{t('safety')} & Chemical Degradation Guide</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/40 backdrop-blur-xl p-5 rounded-2xl border border-slate-800/50 shadow-inner">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/60 backdrop-blur-xl p-5 rounded-2xl border border-slate-800/80 shadow-inner">
               Standard plug-in chargers often lack individual dynamic peak detection (-ΔV). Unplugging NiMH and Li-ion rechargeable batteries promptly upon reaching 100% prevents internal electrolyte venting, high thermal pressure, and permanent capacity degradation.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300">
-              <div className="p-6 bg-slate-950/60 backdrop-blur-xl rounded-3xl border border-slate-800/60 space-y-3 shadow-xl">
+              <div className="p-6 bg-slate-950/80 backdrop-blur-xl rounded-3xl border border-slate-800/80 space-y-3 shadow-xl">
                 <strong className="text-blue-400 text-sm block">NiMH Thermal Pressure Venting</strong>
                 <p className="leading-relaxed text-slate-400">Overcharging converts excess electrical energy directly into heat. Efficiency compensation (1.2x - 1.4x) accounts for internal electrical resistance and ambient dissipation.</p>
               </div>
-              <div className="p-6 bg-slate-950/60 backdrop-blur-xl rounded-3xl border border-slate-800/60 space-y-3 shadow-xl">
+              <div className="p-6 bg-slate-950/80 backdrop-blur-xl rounded-3xl border border-slate-800/80 space-y-3 shadow-xl">
                 <strong className="text-amber-400 text-sm block">Li-ion Voltage Cutoff</strong>
                 <p className="leading-relaxed text-slate-400">14500 and 10440 Li-ion cells must never exceed 4.20V nominal cutoff voltage to avoid severe thermal runaway and metallic lithium plating risks.</p>
               </div>
@@ -2065,30 +2721,30 @@ export default function App() {
         {/* TAB 5: HISTORY */}
         {activeTab === 'history' && (
           <div className="space-y-4 max-w-4xl mx-auto animate-fade-in">
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 p-5 rounded-3xl flex justify-between items-center shadow-2xl">
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 p-5 rounded-3xl flex justify-between items-center shadow-2xl">
               <h2 className="font-bold text-slate-100 text-sm">{t('history')}</h2>
-              {history.length > 0 && <button onClick={() => setHistory([])} className="text-xs font-semibold text-red-400 bg-red-950/60 hover:bg-red-900/80 backdrop-blur-xl px-4 py-2 rounded-2xl transition cursor-pointer shadow border border-red-500/30">Clear History</button>}
+              {history.length > 0 && <button onClick={() => setHistory([])} className="text-xs font-semibold text-red-400 bg-red-950/80 hover:bg-red-900/90 backdrop-blur-xl px-4 py-2 rounded-2xl transition cursor-pointer shadow border border-red-500/40">Clear History</button>}
             </div>
             {history.length === 0 ? (
-              <div className="text-center py-16 text-xs text-slate-500 bg-slate-900/20 backdrop-blur-xl border-2 border-dashed border-slate-800/80 rounded-3xl">No history logged yet.</div>
+              <div className="text-center py-16 text-xs text-slate-500 bg-slate-900/30 backdrop-blur-xl border-2 border-dashed border-slate-800/80 rounded-3xl">No history logged yet.</div>
             ) : (
               history.map((h, i) => (
-                <div key={i} className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-2xl p-5 flex justify-between text-xs items-center shadow-xl hover:border-slate-700 transition">
+                <div key={i} className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-2xl p-5 flex justify-between text-xs items-center shadow-xl hover:border-slate-700 transition">
                   <div>
-                    <div className="font-bold text-slate-200 text-sm">{h.label} ({h.size})</div>
+                    <div className="font-extrabold text-slate-200 text-sm">{h.label} ({h.size})</div>
                     <div className="text-[11px] text-slate-400 mt-0.5">{h.capacity}mAh • Mode: {h.targetMode === 'half' ? '50%' : '100%'} • {new Date(h.finishedAt).toLocaleString()}</div>
                   </div>
-                  <span className="text-emerald-400 font-extrabold bg-emerald-950/60 backdrop-blur-xl px-3.5 py-1 rounded-full border border-emerald-500/30 shadow">Completed</span>
+                  <span className="text-emerald-400 font-extrabold bg-emerald-950/80 backdrop-blur-xl px-3.5 py-1 rounded-full border border-emerald-500/40 shadow">Completed</span>
                 </div>
               ))
             )}
           </div>
         )}
 
-        {/* NEW TAB: CONTACT US */}
+        {/* TAB 6: CONTACT US */}
         {activeTab === 'contact' && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
               <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
                 <div className="p-3.5 bg-blue-600/20 text-blue-400 rounded-2xl border border-blue-500/30 backdrop-blur-xl shadow-inner">
                   <MessageSquare className="w-6 h-6 animate-pulse" />
@@ -2103,7 +2759,7 @@ export default function App() {
                 
                 <div 
                   onClick={() => triggerJiggle('telegram')}
-                  className="p-5 bg-slate-950/60 backdrop-blur-xl rounded-2xl border border-slate-800/80 flex items-center justify-between shadow-lg hover:border-blue-500/50 transition cursor-pointer group"
+                  className="p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/90 flex items-center justify-between shadow-lg hover:border-blue-500/50 transition cursor-pointer group"
                 >
                   <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
                     <div className={`w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 transition-transform ${selectedJiggleLogo === 'telegram' ? 'animate-jiggle' : 'group-hover:scale-110'}`}>
@@ -2119,7 +2775,7 @@ export default function App() {
 
                 <div 
                   onClick={() => triggerJiggle('whatsapp')}
-                  className="p-5 bg-slate-950/60 backdrop-blur-xl rounded-2xl border border-slate-800/80 flex items-center justify-between shadow-lg hover:border-emerald-500/50 transition cursor-pointer group"
+                  className="p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/90 flex items-center justify-between shadow-lg hover:border-emerald-500/50 transition cursor-pointer group"
                 >
                   <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
                     <div className={`w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 transition-transform ${selectedJiggleLogo === 'whatsapp' ? 'animate-jiggle' : 'group-hover:scale-110'}`}>
@@ -2135,7 +2791,7 @@ export default function App() {
 
                 <div 
                   onClick={() => triggerJiggle('email')}
-                  className="p-5 bg-slate-950/60 backdrop-blur-xl rounded-2xl border border-slate-800/80 flex items-center justify-between shadow-lg hover:border-purple-500/50 transition cursor-pointer group"
+                  className="p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/90 flex items-center justify-between shadow-lg hover:border-purple-500/50 transition cursor-pointer group"
                 >
                   <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
                     <div className={`w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 transition-transform ${selectedJiggleLogo === 'email' ? 'animate-jiggle' : 'group-hover:scale-110'}`}>
@@ -2154,21 +2810,22 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 6: SETTINGS, DONATION & ALARMS */}
+        {/* TAB 7: SETTINGS (INCLUDING BACKUP & RESTORE SECTION) */}
         {activeTab === 'settings' && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl">
+            {/* DONATION SECTION */}
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl">
               <h2 className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
                 <Heart className="w-5 h-5 text-rose-500 animate-pulse" />
                 <span>{t('donateTitle')}</span>
               </h2>
 
-              <div className="bg-slate-950/60 backdrop-blur-xl p-5 sm:p-6 rounded-3xl border border-slate-800/70 space-y-4 shadow-inner">
+              <div className="bg-slate-950/80 backdrop-blur-xl p-5 sm:p-6 rounded-3xl border border-slate-800/80 space-y-4 shadow-inner">
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">{t('donateDesc')}</p>
                 
                 {isSupporterValid ? (
-                  <div className="p-4 bg-emerald-950/80 backdrop-blur-xl border border-emerald-500/60 text-emerald-300 text-xs rounded-2xl flex items-center justify-between shadow-lg">
+                  <div className="p-4 bg-emerald-950/90 backdrop-blur-xl border border-emerald-500/70 text-emerald-300 text-xs rounded-2xl flex items-center justify-between shadow-lg">
                     <span className="flex items-center space-x-2 rtl:space-x-reverse font-semibold">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       <span>{t('supportActiveUntil')} {new Date(subscription.expiresAt).toLocaleDateString()}</span>
@@ -2178,7 +2835,7 @@ export default function App() {
                 ) : (
                   <button 
                     onClick={() => setIsPaymentModalOpen(true)}
-                    className="w-full bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-extrabold text-xs sm:text-sm py-4 rounded-full shadow-xl shadow-rose-500/25 transform hover:scale-[1.02] active:scale-98 transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer backdrop-blur-xl border border-rose-400/30"
+                    className="w-full bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-extrabold text-xs sm:text-sm py-4 rounded-2xl shadow-xl shadow-rose-500/30 transform hover:scale-[1.02] active:scale-98 transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer backdrop-blur-xl border border-rose-400/30"
                   >
                     <Heart className="w-4 h-4 fill-current" />
                     <span>{t('donateButton')}</span>
@@ -2187,7 +2844,8 @@ export default function App() {
               </div>
             </div>
 
-            <div className="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            {/* NOTIFICATIONS & ALARM SECTION */}
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
               <h2 className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
                 <Bell className="w-5 h-5 text-blue-400" />
                 <span>Audio Alarm & Push Notifications</span>
@@ -2195,7 +2853,7 @@ export default function App() {
 
               <div className="space-y-5 text-xs">
                 
-                <div className="flex items-center justify-between p-4 sm:p-5 bg-slate-950/60 backdrop-blur-xl rounded-2xl border border-slate-800/70 shadow-inner">
+                <div className="flex items-center justify-between p-4 sm:p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-inner">
                   <div>
                     <span className="font-semibold text-slate-200 text-sm block">Web Audio Completion Chime</span>
                     <span className="text-[11px] text-slate-400">Play synthetic tone when battery finishes charging.</span>
@@ -2206,21 +2864,21 @@ export default function App() {
                     onChange={(e) => { 
                       const val = e.target.checked;
                       setSettings({ ...settings, audioAlerts: val }); 
-                      if (val) triggerAlarmSound(settings.selectedAlarmId); 
+                      if (val) triggerContinuousAlarmSound(settings.selectedAlarmId); 
                     }} 
                     className="w-5 h-5 accent-blue-600 rounded cursor-pointer" 
                   />
                 </div>
 
-                <div className="p-4 sm:p-5 bg-slate-950/60 backdrop-blur-xl rounded-2xl border border-slate-800/70 space-y-3 shadow-inner">
+                <div className="p-4 sm:p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/80 space-y-3 shadow-inner">
                   <div className="flex justify-between items-center">
                     <div>
                       <span className="font-semibold text-slate-200 text-sm block">{t('alarmSoundLabel')}</span>
                       <span className="text-[11px] text-slate-400">Choose which alarm sound plays when the timer hits target.</span>
                     </div>
                     <button 
-                      onClick={() => triggerAlarmSound(settings.selectedAlarmId)}
-                      className="bg-blue-600/80 hover:bg-blue-500 backdrop-blur-xl text-white font-semibold text-[11px] px-4 py-2 rounded-full shadow transition flex items-center space-x-1 rtl:space-x-reverse cursor-pointer border border-blue-400/30"
+                      onClick={() => playSingleAlarmBurst(settings.selectedAlarmId)}
+                      className="bg-blue-600/90 hover:bg-blue-500 backdrop-blur-xl text-white font-semibold text-[11px] px-4 py-2 rounded-xl shadow transition flex items-center space-x-1 rtl:space-x-reverse cursor-pointer border border-blue-400/30"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                       <span>Test Sound</span>
@@ -2235,12 +2893,12 @@ export default function App() {
                           key={alarm.id}
                           onClick={() => {
                             setSettings({ ...settings, selectedAlarmId: alarm.id });
-                            triggerAlarmSound(alarm.id);
+                            playSingleAlarmBurst(alarm.id);
                           }}
                           className={`p-4 rounded-2xl border text-left rtl:text-right font-medium transition-all duration-200 flex items-center justify-between cursor-pointer backdrop-blur-xl ${
                             isSelected 
-                              ? 'bg-blue-600/25 border-blue-500 text-blue-200 shadow-lg shadow-blue-500/20' 
-                              : 'bg-slate-900/60 border-slate-800/60 text-slate-300 hover:border-slate-700'
+                              ? 'bg-blue-600/30 border-blue-500 text-blue-200 shadow-lg shadow-blue-500/20' 
+                              : 'bg-slate-900/80 border-slate-800/80 text-slate-300 hover:border-slate-700'
                           }`}
                         >
                           <span>{alarm.name}</span>
@@ -2251,7 +2909,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="p-4 sm:p-5 bg-slate-950/60 backdrop-blur-xl rounded-2xl border border-slate-800/70 space-y-3 shadow-inner">
+                <div className="p-4 sm:p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/80 space-y-3 shadow-inner">
                   <div>
                     <span className="font-semibold text-slate-200 text-sm block">{t('notificationsLabel')}</span>
                     <span className="text-[11px] text-slate-400">Receive alerts and push notifications when charging completes.</span>
@@ -2266,7 +2924,7 @@ export default function App() {
                       className={`py-3 px-4 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer shadow-lg backdrop-blur-xl ${
                         settings.pushNotifications 
                           ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white ring-2 ring-cyan-400/50 shadow-blue-500/30 scale-[1.02] border border-cyan-300/40' 
-                          : 'bg-slate-900/80 text-slate-400 border border-slate-800/80 hover:text-slate-200'
+                          : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200'
                       }`}
                     >
                       <Bell className="w-4 h-4" />
@@ -2282,7 +2940,7 @@ export default function App() {
                       className={`py-3 px-4 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer shadow-lg backdrop-blur-xl ${
                         !settings.pushNotifications 
                           ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-white ring-2 ring-slate-500/50 shadow-slate-900/50 scale-[1.02] border border-slate-500/40' 
-                          : 'bg-slate-900/80 text-slate-400 border border-slate-800/80 hover:text-slate-200'
+                          : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200'
                       }`}
                     >
                       <X className="w-4 h-4" />
@@ -2294,19 +2952,117 @@ export default function App() {
 
               </div>
             </div>
+            {/* BACKUP & RESTORE SECTION */}
+            <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl">
+              <h2 className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
+                <Cloud className="w-5 h-5 text-cyan-400 animate-pulse" />
+                <span>{t('backupRestoreTitle')}</span>
+              </h2>
+              <p className="text-xs text-slate-400 leading-relaxed">{t('backupRestoreDesc')}</p>
+
+              {backupFeedbackMsg.text && (
+                <div className={`p-4 rounded-2xl text-xs font-bold border flex items-center space-x-2 ${backupFeedbackMsg.type === 'error' ? 'bg-red-950/90 border-red-500 text-red-200' : 'bg-emerald-950/90 border-emerald-500 text-emerald-200'}`}>
+                  {backupFeedbackMsg.type === 'error' ? <ShieldAlert className="w-4 h-4 shrink-0 text-red-400" /> : <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />}
+                  <span>{backupFeedbackMsg.text}</span>
+                </div>
+              )}
+
+              <div className="bg-slate-950/80 backdrop-blur-xl p-5 sm:p-6 rounded-3xl border border-slate-800/80 space-y-4 shadow-inner">
+                
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                  <span className="text-xs font-semibold text-slate-300">{t('includeStats')}</span>
+                  <input 
+                    type="checkbox" 
+                    checked={includeStatsInBackup} 
+                    onChange={(e) => setIncludeStatsInBackup(e.target.checked)} 
+                    className="w-4 h-4 accent-blue-600 rounded cursor-pointer" 
+                  />
+                </div>
+
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileImportUpload} 
+                  accept=".json" 
+                  className="hidden" 
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <button 
+                    onClick={handleExportLocalBackup}
+                    className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs py-3 px-4 rounded-2xl shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer transition transform hover:scale-[1.02]"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>{t('exportLocal')}</span>
+                  </button>
+
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-3 px-4 rounded-2xl shadow-lg border border-slate-700 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer transition transform hover:scale-[1.02]"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>{t('importLocal')}</span>
+                  </button>
+                </div>
+
+                <div className="pt-3 border-t border-slate-800/80 space-y-2.5">
+                  <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider block">Cloud Sync (Google Drive & iCloud)</span>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => handleCloudExportSync('Google Drive')}
+                      className="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-cyan-300 font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-2 transition cursor-pointer shadow"
+                    >
+                      <CloudUpload className="w-3.5 h-3.5 text-blue-400" />
+                      <span>{t('exportGDrive')}</span>
+                    </button>
+
+                    <button 
+                      onClick={() => handleCloudImportRestore('Google Drive')}
+                      className="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-cyan-300 font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-2 transition cursor-pointer shadow"
+                    >
+                      <CloudDownload className="w-3.5 h-3.5 text-blue-400" />
+                      <span>{t('importGDrive')}</span>
+                    </button>
+
+                    <button 
+                      onClick={() => handleCloudExportSync('Apple iCloud')}
+                      className="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-cyan-300 font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-2 transition cursor-pointer shadow"
+                    >
+                      <CloudUpload className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>{t('exportICloud')}</span>
+                    </button>
+
+                    <button 
+                      onClick={() => handleCloudImportRestore('Apple iCloud')}
+                      className="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-cyan-300 font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-2 transition cursor-pointer shadow"
+                    >
+                      <CloudDownload className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>{t('importICloud')}</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
           </div>
         )}
 
       </main>
 
-      {/* --- MODAL: ADD BATTERY SLOT & TARGET CHARGE SELECTOR --- */}
+      {/* --- MODAL: ADD BATTERY SLOT --- */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/80 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <h2 className="text-base font-bold text-slate-100 mb-5">{t('addSlot')}</h2>
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/90 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <h2 className="text-base font-bold text-slate-100 mb-1">{t('addSlot')}</h2>
+            <p className="text-xs text-cyan-400 font-medium mb-5">
+              Charger Compatible Types: {(currentCharger.supported_slot_types || ['AA/AAA Combined']).join(', ')}
+            </p>
             
             {addSlotError && (
-              <div className="mb-4 p-3 bg-red-950/80 border border-red-500 text-red-300 text-xs rounded-2xl flex items-center space-x-2">
+              <div className="mb-4 p-3 bg-red-950/90 border border-red-500 text-red-300 text-xs rounded-2xl flex items-center space-x-2">
                 <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
                 <span>{addSlotError}</span>
               </div>
@@ -2314,10 +3070,10 @@ export default function App() {
 
             <form onSubmit={handleAddSlotSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Select from Saved Battery Profiles</label>
-                <select value={selectedBatteryProfileId} onChange={handleBatteryProfileSelect} className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                  <option value="">-- Choose Battery Profile --</option>
-                  {batteryProfiles.map(p => <option key={p.id} value={p.id}>{p.name} ({p.capacity}mAh)</option>)}
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Select from Compatible Saved Battery Profiles</label>
+                <select value={selectedBatteryProfileId} onChange={handleBatteryProfileSelect} className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                  <option value="">-- Choose Compatible Battery Profile --</option>
+                  {compatibleBatteryProfiles.map(p => <option key={p.id} value={p.id}>{p.name} ({p.size}, {p.capacity}mAh)</option>)}
                 </select>
               </div>
 
@@ -2327,27 +3083,26 @@ export default function App() {
                   type="text" 
                   value={newSlotForm.slotLabel} 
                   onChange={(e) => handleSlotFormChange('slotLabel', e.target.value)} 
-                  className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500" 
+                  className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
                   placeholder="e.g. Living Room Remote Battery"
                   required 
                 />
               </div>
 
-              {/* TARGET CHARGE SELECTOR (FULL VS HALF CHARGE MODE) */}
-              <div className="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-2">
+              <div className="p-4 bg-slate-950/80 border border-slate-800/90 rounded-2xl space-y-2">
                 <label className="block text-xs font-bold text-cyan-400">{t('targetChargeMode')}</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setNewSlotForm({ ...newSlotForm, targetMode: 'full' })}
-                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'full' ? 'bg-blue-600/30 border-blue-500 text-blue-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'full' ? 'bg-blue-600/35 border-blue-500 text-blue-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
                   >
                     <span>{t('fullCharge100')}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setNewSlotForm({ ...newSlotForm, targetMode: 'half' })}
-                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'half' ? 'bg-amber-600/30 border-amber-500 text-amber-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'half' ? 'bg-amber-600/35 border-amber-500 text-amber-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
                   >
                     <span>{t('halfCharge50')}</span>
                   </button>
@@ -2363,7 +3118,7 @@ export default function App() {
                     max="50000" 
                     value={newSlotForm.capacity} 
                     onChange={(e) => handleSlotFormChange('capacity', e.target.value)} 
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500" 
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
                     required 
                   />
                 </div>
@@ -2375,7 +3130,7 @@ export default function App() {
                     max="95" 
                     value={newSlotForm.initialCharge} 
                     onChange={(e) => handleSlotFormChange('initialCharge', Number(e.target.value))} 
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500" 
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
                   />
                 </div>
               </div>
@@ -2390,42 +3145,49 @@ export default function App() {
                     max="5.0" 
                     value={newSlotForm.voltage} 
                     onChange={(e) => handleSlotFormChange('voltage', e.target.value)} 
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500" 
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
                     required 
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Size</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Battery Size *</label>
                   <select 
                     value={newSlotForm.size} 
                     onChange={(e) => handleSlotFormChange('size', e.target.value)}
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-200"
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 outline-none"
                   >
                     <option value="AA">AA</option>
                     <option value="AAA">AAA</option>
+                    <option value="18650">18650</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
                   </select>
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/80">
-                <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-5 py-2.5 bg-slate-800/60 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/40">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Start Timer</button>
+              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/90">
+                <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-5 py-2.5 bg-slate-800/80 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/50">Cancel</button>
+                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Start Timer</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* --- MODAL: BATTERY PROFILE EDITOR WITH CONDITION & USAGE METADATA --- */}
+      {/* --- MODAL: BATTERY PROFILE EDITOR --- */}
       {isBatteryProfileModalOpen && editingBatteryProfile && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900/80 backdrop-blur-3xl border border-slate-800/80 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/90 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <h2 className="text-base font-bold text-slate-100 mb-5">
               {editingBatteryProfile.id ? 'Edit Battery Profile' : 'New Battery Profile'}
             </h2>
             
             <form onSubmit={handleSaveBatteryProfile} className="space-y-4">
-              
+              <input ref={batteryScanInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { handleProfileCameraScan(e.target.files?.[0], 'battery'); e.target.value = ''; }} />
+              <button type="button" onClick={() => { setProfileScanStatus({ type: '', message: '' }); batteryScanInputRef.current?.click(); }} className="w-full flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/40 bg-cyan-500/10 px-4 py-3 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 transition">
+                <ImageIcon className="w-4 h-4" /> Scan Battery Label with Camera
+              </button>
+              {profileScanStatus.message && <p role="status" className={`text-[11px] rounded-xl p-3 ${profileScanStatus.type === 'error' ? 'bg-red-950/50 text-red-300' : profileScanStatus.type === 'success' ? 'bg-emerald-950/50 text-emerald-300' : 'bg-slate-800 text-slate-300'}`}>{profileScanStatus.message}</p>}
               <div>
                 <label className="block text-xs font-semibold text-cyan-400 mb-1.5">Global Battery Preset Database (Searchable)</label>
                 <select 
@@ -2446,7 +3208,7 @@ export default function App() {
                       });
                     }
                   }}
-                  className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-cyan-300 focus:border-blue-500"
+                  className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-cyan-300 focus:border-blue-500 outline-none"
                 >
                   <option value="">-- Select from Global Standard Battery Database --</option>
                   {GLOBAL_BATTERY_PRESETS.map((p, idx) => (
@@ -2461,20 +3223,19 @@ export default function App() {
                   type="text" 
                   value={editingBatteryProfile.name} 
                   onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, name: e.target.value })} 
-                  className={`w-full bg-slate-950/80 backdrop-blur-xl border ${batteryProfileErrors.name ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500`} 
+                  className={`w-full bg-slate-950/90 backdrop-blur-xl border ${batteryProfileErrors.name ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none`} 
                   placeholder="e.g. Panasonic Eneloop"
                 />
                 {batteryProfileErrors.name && <span className="text-[10px] text-red-400 mt-1 block">{batteryProfileErrors.name}</span>}
               </div>
 
-              {/* MANDATORY BATTERY CONDITION & PRIOR USAGE METADATA */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">{t('condition')} *</label>
                   <select 
                     value={editingBatteryProfile.condition || 'New'} 
                     onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, condition: e.target.value })}
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200"
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none"
                   >
                     <option value="New">{t('newBattery')}</option>
                     <option value="Used">{t('usedBattery')}</option>
@@ -2491,7 +3252,7 @@ export default function App() {
                         max="120"
                         value={editingBatteryProfile.priorUsageValue || ''} 
                         onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, priorUsageValue: Number(e.target.value) })} 
-                        className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200" 
+                        className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none" 
                         placeholder="e.g. 12"
                       />
                     </div>
@@ -2500,7 +3261,7 @@ export default function App() {
                       <select 
                         value={editingBatteryProfile.priorUsageUnit || 'Months'} 
                         onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, priorUsageUnit: e.target.value })}
-                        className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200"
+                        className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none"
                       >
                         <option value="Months">{t('months')}</option>
                         <option value="Years">{t('years')}</option>
@@ -2516,7 +3277,7 @@ export default function App() {
                   <select 
                     value={editingBatteryProfile.size} 
                     onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, size: e.target.value })}
-                    className={`w-full bg-slate-950/80 backdrop-blur-xl border ${batteryProfileErrors.size ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`}
+                    className={`w-full bg-slate-950/90 backdrop-blur-xl border ${batteryProfileErrors.size ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`}
                   >
                     <option value="">-- Select Size --</option>
                     <option value="AA">AA</option>
@@ -2532,7 +3293,7 @@ export default function App() {
                   <select 
                     value={editingBatteryProfile.type} 
                     onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, type: e.target.value })}
-                    className={`w-full bg-slate-950/80 backdrop-blur-xl border ${batteryProfileErrors.type ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`}
+                    className={`w-full bg-slate-950/90 backdrop-blur-xl border ${batteryProfileErrors.type ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`}
                   >
                     <option value="">-- Select Chemistry --</option>
                     <option value="NiMH">NiMH</option>
@@ -2552,7 +3313,7 @@ export default function App() {
                     max="50000"
                     value={editingBatteryProfile.capacity} 
                     onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, capacity: Number(e.target.value) })} 
-                    className={`w-full bg-slate-950/80 backdrop-blur-xl border ${batteryProfileErrors.capacity ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`} 
+                    className={`w-full bg-slate-950/90 backdrop-blur-xl border ${batteryProfileErrors.capacity ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`} 
                     placeholder="e.g. 2000"
                   />
                   {batteryProfileErrors.capacity && <span className="text-[10px] text-red-400 mt-1 block">{batteryProfileErrors.capacity}</span>}
@@ -2566,7 +3327,7 @@ export default function App() {
                     max="5.0"
                     value={editingBatteryProfile.voltage} 
                     onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, voltage: Number(e.target.value) })} 
-                    className={`w-full bg-slate-950/80 backdrop-blur-xl border ${batteryProfileErrors.voltage ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`} 
+                    className={`w-full bg-slate-950/90 backdrop-blur-xl border ${batteryProfileErrors.voltage ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`} 
                     placeholder="e.g. 1.2"
                   />
                   {batteryProfileErrors.voltage && <span className="text-[10px] text-red-400 mt-1 block">{batteryProfileErrors.voltage}</span>}
@@ -2579,15 +3340,15 @@ export default function App() {
                     max="80"
                     value={editingBatteryProfile.thermalLimitC} 
                     onChange={(e) => setEditingBatteryProfile({ ...editingBatteryProfile, thermalLimitC: Number(e.target.value) })} 
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200" 
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none" 
                     placeholder="e.g. 50"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/80">
-                <button type="button" onClick={() => setIsBatteryProfileModalOpen(false)} className="px-5 py-2.5 bg-slate-800/60 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/40">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Save Profile</button>
+              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/90">
+                <button type="button" onClick={() => setIsBatteryProfileModalOpen(false)} className="px-5 py-2.5 bg-slate-800/80 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/50">Cancel</button>
+                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Save Profile</button>
               </div>
             </form>
           </div>
@@ -2596,14 +3357,18 @@ export default function App() {
 
       {/* --- MODAL: CHARGER EDITOR --- */}
       {isChargerModalOpen && editingCharger && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900/80 backdrop-blur-3xl border border-slate-800/80 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/90 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <h2 className="text-base font-bold text-slate-100 mb-5">
               {editingCharger.id ? 'Edit Charger Profile' : 'New Charger Profile'}
             </h2>
             
             <form onSubmit={handleSaveCharger} className="space-y-4">
-              
+              <input ref={chargerScanInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { handleProfileCameraScan(e.target.files?.[0], 'charger'); e.target.value = ''; }} />
+              <button type="button" onClick={() => { setProfileScanStatus({ type: '', message: '' }); chargerScanInputRef.current?.click(); }} className="w-full flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/40 bg-cyan-500/10 px-4 py-3 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 transition">
+                <ImageIcon className="w-4 h-4" /> Scan Charger Label / Bay Layout with Camera
+              </button>
+              {profileScanStatus.message && <p role="status" className={`text-[11px] rounded-xl p-3 ${profileScanStatus.type === 'error' ? 'bg-red-950/50 text-red-300' : profileScanStatus.type === 'success' ? 'bg-emerald-950/50 text-emerald-300' : 'bg-slate-800 text-slate-300'}`}>{profileScanStatus.message}</p>}
               <div>
                 <label className="block text-xs font-semibold text-cyan-400 mb-1.5">Global Charger Preset Database (Searchable)</label>
                 <select 
@@ -2617,11 +3382,12 @@ export default function App() {
                         aaaCurrentMa: preset.aaaCurrentMa,
                         slotCount: preset.slotCount,
                         isPaired: preset.isPaired,
+                        supported_slot_types: preset.supported_slot_types || ['AA/AAA Combined'],
                         notes: preset.notes
                       });
                     }
                   }}
-                  className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-cyan-300 focus:border-blue-500"
+                  className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-cyan-300 focus:border-blue-500 outline-none"
                 >
                   <option value="">-- Select from Global Standard Charger Database --</option>
                   {GLOBAL_CHARGER_PRESETS.map((c, idx) => (
@@ -2636,11 +3402,38 @@ export default function App() {
                   type="text" 
                   value={editingCharger.name} 
                   onChange={(e) => setEditingCharger({ ...editingCharger, name: e.target.value })} 
-                  className={`w-full bg-slate-950/80 backdrop-blur-xl border ${chargerErrors.name ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`} 
+                  className={`w-full bg-slate-950/90 backdrop-blur-xl border ${chargerErrors.name ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`} 
                   placeholder="e.g. Universal Smart Charger"
                   required 
                 />
                 {chargerErrors.name && <span className="text-[10px] text-red-400 mt-1 block">{chargerErrors.name}</span>}
+              </div>
+
+              <div className="p-4 bg-slate-950/80 border border-slate-800/90 rounded-2xl space-y-2.5">
+                <label className="block text-xs font-bold text-cyan-400">Supported Slot Compatibility Types *</label>
+                <p className="text-[11px] text-slate-400">Select supported battery form factors (dedicated sizes or hybrid AA/AAA combined).</p>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                  {AVAILABLE_SLOT_TYPES.map((slotType) => {
+                    const isSelected = (editingCharger.supported_slot_types || []).includes(slotType);
+                    return (
+                      <button
+                        type="button"
+                        key={slotType}
+                        onClick={() => handleToggleChargerSlotType(slotType)}
+                        className={`p-2.5 rounded-xl border text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+                          isSelected 
+                            ? 'bg-blue-600/35 border-blue-500 text-cyan-200 shadow-md' 
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                        }`}
+                      >
+                        <span className="truncate">{slotType}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 ml-1" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                {chargerErrors.supported_slot_types && <span className="text-[10px] text-red-400 mt-1 block">{chargerErrors.supported_slot_types}</span>}
               </div>
 
               <div className="grid grid-cols-3 gap-3">
@@ -2652,7 +3445,7 @@ export default function App() {
                     max="16"
                     value={editingCharger.slotCount || 4} 
                     onChange={(e) => setEditingCharger({ ...editingCharger, slotCount: Number(e.target.value) })} 
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200" 
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none" 
                     required 
                   />
                 </div>
@@ -2664,7 +3457,7 @@ export default function App() {
                     max="3000"
                     value={editingCharger.aaCurrentMa} 
                     onChange={(e) => setEditingCharger({ ...editingCharger, aaCurrentMa: Number(e.target.value) })} 
-                    className={`w-full bg-slate-950/80 backdrop-blur-xl border ${chargerErrors.aaCurrentMa ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`} 
+                    className={`w-full bg-slate-950/90 backdrop-blur-xl border ${chargerErrors.aaCurrentMa ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`} 
                     placeholder="e.g. 500"
                     required 
                   />
@@ -2677,7 +3470,7 @@ export default function App() {
                     max="2000"
                     value={editingCharger.aaaCurrentMa} 
                     onChange={(e) => setEditingCharger({ ...editingCharger, aaaCurrentMa: Number(e.target.value) })} 
-                    className={`w-full bg-slate-950/80 backdrop-blur-xl border ${chargerErrors.aaaCurrentMa ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200`} 
+                    className={`w-full bg-slate-950/90 backdrop-blur-xl border ${chargerErrors.aaaCurrentMa ? 'border-red-500' : 'border-slate-800'} rounded-2xl p-3 text-xs text-slate-200 outline-none`} 
                     placeholder="e.g. 250"
                     required 
                   />
@@ -2690,7 +3483,7 @@ export default function App() {
                   <select 
                     value={editingCharger.isPaired ? 'paired' : 'independent'} 
                     onChange={(e) => setEditingCharger({ ...editingCharger, isPaired: e.target.value === 'paired' })}
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200"
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none"
                   >
                     <option value="independent">Independent Slots</option>
                     <option value="paired">Paired Channels (1&2, 3&4)</option>
@@ -2702,15 +3495,15 @@ export default function App() {
                     type="text" 
                     value={editingCharger.notes || ''} 
                     onChange={(e) => setEditingCharger({ ...editingCharger, notes: e.target.value })} 
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200" 
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 outline-none" 
                     placeholder="e.g. Smart peak detection"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/80">
-                <button type="button" onClick={() => setIsChargerModalOpen(false)} className="px-5 py-2.5 bg-slate-800/60 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/40">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Save Charger</button>
+              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/90">
+                <button type="button" onClick={() => setIsChargerModalOpen(false)} className="px-5 py-2.5 bg-slate-800/80 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/50">Cancel</button>
+                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Save Charger</button>
               </div>
             </form>
           </div>
@@ -2719,11 +3512,11 @@ export default function App() {
 
       {/* --- SECURE DONATION PAYMENT MODAL --- */}
       {isPaymentModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/80 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-5 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-slate-900/95 backdrop-blur-3xl border border-slate-800/90 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-5 max-h-[90vh] overflow-y-auto">
             <button 
               onClick={() => setIsPaymentModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-full bg-slate-800/60 backdrop-blur-xl cursor-pointer transition border border-slate-700/40"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-full bg-slate-800/80 backdrop-blur-xl cursor-pointer transition border border-slate-700/50"
             >
               <X className="w-4 h-4" />
             </button>
@@ -2739,7 +3532,7 @@ export default function App() {
             </div>
 
             {paymentSuccessMsg ? (
-              <div className="p-5 bg-emerald-950/80 backdrop-blur-xl border border-emerald-500 text-emerald-300 rounded-2xl text-center text-xs space-y-2 shadow-lg">
+              <div className="p-5 bg-emerald-950/90 backdrop-blur-xl border border-emerald-500 text-emerald-300 rounded-2xl text-center text-xs space-y-2 shadow-lg">
                 <CheckCircle2 className="w-9 h-9 text-emerald-400 mx-auto animate-bounce" />
                 <p className="font-bold text-sm">{t('paymentSuccess')}</p>
                 <p className="text-[10px] text-emerald-400">Receipt sent to {checkoutEmail}</p>
@@ -2757,7 +3550,7 @@ export default function App() {
                     value={checkoutEmail} 
                     onChange={(e) => setCheckoutEmail(e.target.value)} 
                     placeholder="user@example.com"
-                    className="w-full bg-slate-950/80 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 shadow-inner"
+                    className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 shadow-inner"
                     required 
                   />
                 </div>
@@ -2765,7 +3558,7 @@ export default function App() {
                 <div className="space-y-2.5 pt-2">
                   <button 
                     onClick={() => handlePaymentRedirect('paypal')}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs py-3.5 rounded-full shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer transform hover:scale-[1.02] backdrop-blur-xl border border-blue-400/30"
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs py-3.5 rounded-2xl shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer transform hover:scale-[1.02] backdrop-blur-xl border border-blue-400/30"
                   >
                     <DollarSign className="w-4 h-4" />
                     <span>{t('payWithPaypal')}</span>
@@ -2773,19 +3566,19 @@ export default function App() {
 
                   <button 
                     onClick={() => handlePaymentRedirect('revolut')}
-                    className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs py-3.5 rounded-full shadow-lg shadow-cyan-500/25 flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer transform hover:scale-[1.02] backdrop-blur-xl border border-cyan-400/30"
+                    className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs py-3.5 rounded-2xl shadow-lg shadow-cyan-500/30 flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer transform hover:scale-[1.02] backdrop-blur-xl border border-cyan-400/30"
                   >
                     <CreditCard className="w-4 h-4" />
                     <span>{t('payWithRevolut')}</span>
                   </button>
                 </div>
 
-                <div className="pt-2 space-y-3 border-t border-slate-800/80">
+                <div className="pt-2 space-y-3 border-t border-slate-800/90">
                   <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Cryptocurrency Donation</div>
                   
                   <div 
                     onClick={() => triggerJiggle('btc')}
-                    className="p-3.5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800 flex items-center justify-between text-xs shadow-inner"
+                    className="p-3.5 bg-slate-950/90 backdrop-blur-xl rounded-2xl border border-slate-800 flex items-center justify-between text-xs shadow-inner"
                   >
                     <div className="flex items-center space-x-3 rtl:space-x-reverse overflow-hidden">
                       <div className={`w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black shrink-0 ${selectedJiggleLogo === 'btc' ? 'animate-jiggle' : ''}`}>
@@ -2806,7 +3599,7 @@ export default function App() {
 
                   <div 
                     onClick={() => triggerJiggle('usdt')}
-                    className="p-3.5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800 flex items-center justify-between text-xs shadow-inner"
+                    className="p-3.5 bg-slate-950/90 backdrop-blur-xl rounded-2xl border border-slate-800 flex items-center justify-between text-xs shadow-inner"
                   >
                     <div className="flex items-center space-x-3 rtl:space-x-reverse overflow-hidden">
                       <div className={`w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-black shrink-0 ${selectedJiggleLogo === 'usdt' ? 'animate-jiggle' : ''}`}>
