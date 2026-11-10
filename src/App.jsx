@@ -1574,6 +1574,17 @@ export default function App() {
   );
   
   const currentCharger = useMemo(() => chargers.find(c => c.id === activeChargerId) || chargers[0], [chargers, activeChargerId]);
+  const chargerCurrentConfigs = useMemo(() => {
+    if (!editingCharger) return [];
+    return (editingCharger.supported_battery_types || []).flatMap(chemistry =>
+      (editingCharger.supported_slot_types || []).flatMap(slotType => {
+        const sizes = slotType === 'AA/AAA Combined' ? ['AA', 'AAA'] : [slotType];
+        return sizes
+          .filter(size => !(['NiMH', 'NiCd'].includes(chemistry) && ['AA', 'AAA'].includes(size)))
+          .map(size => ({ chemistry, size, key: `${chemistry}:${size}` }));
+      })
+    );
+  }, [editingCharger]);
 
   useEffect(() => {
     document.documentElement.lang = settings.language;
@@ -2351,6 +2362,7 @@ export default function App() {
       outputV: 1.5,
       aaCurrentMa: '',
       aaaCurrentMa: '',
+      slotCurrentsMa: {},
       slotCount: 4,
       isPaired: false,
       supported_slot_types: ['AA/AAA Combined'],
@@ -2407,7 +2419,18 @@ export default function App() {
           Number(c.aaCurrentMa) === Number(editingCharger.aaCurrentMa) &&
           Number(c.aaaCurrentMa) === Number(editingCharger.aaaCurrentMa) &&
           Number(c.outputV) === Number(editingCharger.outputV) &&
-          Boolean(c.isPaired) === Boolean(editingCharger.isPaired)
+          Number(c.inputV) === Number(editingCharger.inputV) &&
+          Number(c.inputVMax) === Number(editingCharger.inputVMax) &&
+          Number(c.inputA) === Number(editingCharger.inputA) &&
+          c.inputHz === editingCharger.inputHz &&
+          Number(c.slotCount) === Number(editingCharger.slotCount) &&
+          Boolean(c.isPaired) === Boolean(editingCharger.isPaired) &&
+          JSON.stringify([...(c.supported_slot_types || [])].sort()) ===
+            JSON.stringify([...(editingCharger.supported_slot_types || [])].sort()) &&
+          JSON.stringify([...getSupportedBatteryChemistries(c)].sort()) ===
+            JSON.stringify([...getSupportedBatteryChemistries(editingCharger)].sort()) &&
+          JSON.stringify(Object.entries(c.slotCurrentsMa || {}).sort()) ===
+            JSON.stringify(Object.entries(editingCharger.slotCurrentsMa || {}).sort())
         );
       });
       if (isDuplicate) {
@@ -3919,6 +3942,7 @@ export default function App() {
                         name: preset.name,
                         aaCurrentMa: preset.aaCurrentMa,
                         aaaCurrentMa: preset.aaaCurrentMa,
+                        slotCurrentsMa: preset.slotCurrentsMa || {},
                         slotCount: preset.slotCount,
                         isPaired: preset.isPaired,
                         supported_slot_types: preset.supported_slot_types || ['AA/AAA Combined'],
@@ -4043,6 +4067,40 @@ export default function App() {
                   />
                 </div>
               </div>
+
+              {chargerCurrentConfigs.length > 0 && (
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3">
+                  <div>
+                    <h3 className="text-xs font-bold text-cyan-300">Other per-slot charging currents</h3>
+                    <p className="mt-1 text-[11px] leading-relaxed text-slate-400">
+                      Enter only the per-slot output current specified by the charger manufacturer for each chemistry and size. Leave a field blank to disable time estimates for that combination.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {chargerCurrentConfigs.map(({ chemistry, size, key }) => (
+                      <label key={key} className="block text-xs font-semibold text-slate-300">
+                        {chemistry} {size} output (mA)
+                        <input
+                          type="number"
+                          min="1"
+                          max="5000"
+                          step="1"
+                          value={editingCharger.slotCurrentsMa?.[key] ?? ''}
+                          onChange={event => setEditingCharger({
+                            ...editingCharger,
+                            slotCurrentsMa: {
+                              ...editingCharger.slotCurrentsMa,
+                              [key]: event.target.value === '' ? '' : Number(event.target.value)
+                            }
+                          })}
+                          className="mt-1.5 w-full rounded-2xl border border-slate-800 bg-slate-950/90 p-3 text-xs text-slate-200 outline-none"
+                          placeholder="From charger manual"
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
