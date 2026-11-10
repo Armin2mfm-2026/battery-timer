@@ -1146,6 +1146,16 @@ const getSupportedBatteryChemistries = (charger) => {
   return ['NiMH'];
 };
 
+const getChargerCurrentMa = (charger, battery) => {
+  const configuredCurrent = Number(charger?.slotCurrentsMa?.[`${battery.type}:${battery.size}`]);
+  if (Number.isFinite(configuredCurrent) && configuredCurrent > 0) return configuredCurrent;
+  if (['NiMH', 'NiCd'].includes(battery.type)) {
+    if (battery.size === 'AA') return Number(charger.aaCurrentMa);
+    if (battery.size === 'AAA') return Number(charger.aaaCurrentMa);
+  }
+  return null;
+};
+
 const getNominalVoltageRange = (chemistry) =>
   chemistry === 'Li-ion' ? { min: 2.5, max: 4.25, defaultValue: 3.7 } : { min: 0.8, max: 2, defaultValue: 1.2 };
 
@@ -2004,10 +2014,10 @@ export default function App() {
   };
 
   const calculateChargeTime = (size, capacity, initialCharge, efficiency, targetMode) => {
-    const baseCurrent = size === 'AAA' ? currentCharger.aaaCurrentMa : currentCharger.aaCurrentMa;
+    const baseCurrent = getChargerCurrentMa(currentCharger, { size, type: newSlotForm.type });
     const targetPct = targetMode === 'half' ? 50 : 100;
     const netCapacityNeeded = capacity * Math.max(0.05, (targetPct / 100) - (initialCharge / 100));
-    if (baseCurrent <= 0) return { totalSec: 3600, effectiveCurrentMa: baseCurrent };
+    if (!baseCurrent) return null;
     const decimalHours = (netCapacityNeeded / baseCurrent) * efficiency;
     return { totalSec: Math.round(decimalHours * 3600), effectiveCurrentMa: baseCurrent };
   };
@@ -2152,10 +2162,18 @@ export default function App() {
       setAddSlotError(t('errorIncompatibleBattery'));
       return;
     }
+    if (!getChargerCurrentMa(currentCharger, newSlotForm)) {
+      setAddSlotError(t('errorChargerCurrentMissing'));
+      return;
+    }
     if (selectedBatteryProfileId) {
       const selectedProfile = batteryProfiles.find(profile => profile.id === selectedBatteryProfileId);
       if (!isBatteryCompatibleWithCharger(selectedProfile, currentCharger)) {
         setAddSlotError(t('errorIncompatibleBattery'));
+        return;
+      }
+      if (!getChargerCurrentMa(currentCharger, selectedProfile)) {
+        setAddSlotError(t('errorChargerCurrentMissing'));
         return;
       }
     }
@@ -2214,6 +2232,10 @@ export default function App() {
     }
 
     const calc = calculateChargeTime(size, Number(capacity), initialCharge, efficiency, targetMode);
+    if (!calc) {
+      setAddSlotError(t('errorChargerCurrentMissing'));
+      return;
+    }
 
     const newSlot = {
       id: 'slot-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
@@ -3549,6 +3571,11 @@ export default function App() {
               {copy.chargerCompatible}: {(currentCharger.supported_slot_types || ['AA/AAA Combined']).join(', ')} · {getSupportedBatteryChemistries(currentCharger).join(', ')}
             </p>
             <p id="battery-safety-notice" role="note" className="mb-4 rounded-xl border border-amber-500/40 bg-amber-950/40 p-3 text-[11px] leading-relaxed text-amber-100">{copy.safetyNotice}</p>
+            {!getChargerCurrentMa(currentCharger, newSlotForm) && (
+              <p role="status" className="mb-4 rounded-xl border border-amber-500/40 bg-amber-950/40 p-3 text-[11px] leading-relaxed text-amber-100">
+                {t('errorChargerCurrentMissing')}
+              </p>
+            )}
             
             {addSlotError && (
               <div role="alert" className="mb-4 p-3 bg-red-950/90 border border-red-500 text-red-300 text-xs rounded-2xl flex items-center space-x-2">
