@@ -4,34 +4,67 @@
  */
 const CACHE_NAME = 'voltguard-pro-runtime-v1';
 
-const arePushNotificationsEnabled = () => new Promise((resolve, reject) => {
-  const request = indexedDB.open('VoltGuardProDB', 1);
-  request.onupgradeneeded = () => {
-    if (!request.result.objectStoreNames.contains('appState')) {
-      request.result.createObjectStore('appState', { keyPath: 'id' });
-    }
-  };
-  request.onerror = () => reject(request.error || new Error('Could not read notification preferences.'));
-  request.onsuccess = () => {
-    const db = request.result;
-    if (!db.objectStoreNames.contains('appState')) {
+let settingsDatabasePromise;
+
+const getSettingsDatabase = () => {
+  if (!settingsDatabasePromise) {
+    settingsDatabasePromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open('VoltGuardProDB', 1);
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains('appState')) {
+          request.result.createObjectStore('appState', { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = () => {
+        const db = request.result;
+        db.onversionchange = () => {
+          db.close();
+          settingsDatabasePromise = undefined;
+        };
+        resolve(db);
+      };
+      request.onerror = () => {
+        settingsDatabasePromise = undefined;
+        reject(request.error || new Error('Could not open notification preferences.'));
+      };
+    });
+  }
+  return settingsDatabasePromise;
+};
+
+const arePushNotificationsEnabled = async () => {
+  const db = await getSettingsDatabase();
+  if (!db.objectStoreNames.contains('appState')) return false;
+
+  return new Promise((resolve, reject) => {
+    let enabled = false;
+    let transaction;
+    let settled = false;
+    const fail = (error) => {
+      if (settled) return;
+      settled = true;
       db.close();
-      resolve(false);
-      return;
-    }
-    const transaction = db.transaction('appState', 'readonly');
-    const snapshotRequest = transaction.objectStore('appState').get('main');
-    snapshotRequest.onsuccess = () => {
-      const enabled = snapshotRequest.result?.data?.settings?.pushNotifications === true;
-      db.close();
-      resolve(enabled);
+      settingsDatabasePromise = undefined;
+      reject(error);
     };
-    snapshotRequest.onerror = () => {
-      db.close();
-      reject(snapshotRequest.error || new Error('Could not read notification preferences.'));
-    };
-  };
-});
+    try {
+      transaction = db.transaction('appState', 'readonly');
+      const snapshotRequest = transaction.objectStore('appState').get('main');
+      snapshotRequest.onsuccess = () => {
+        enabled = snapshotRequest.result?.data?.settings?.pushNotifications === true;
+      };
+      snapshotRequest.onerror = () => fail(snapshotRequest.error || new Error('Could not read notification preferences.'));
+      transaction.oncomplete = () => {
+        settled = true;
+        resolve(enabled);
+      };
+      transaction.onerror = () => fail(transaction.error || new Error('Could not read notification preferences.'));
+      transaction.onabort = () => fail(transaction.error || new Error('Reading notification preferences was aborted.'));
+    } catch (error) {
+      fail(error);
+    }
+  });
+};
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
