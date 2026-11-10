@@ -24,7 +24,7 @@ const TRANSLATIONS = {
     activeCharger: "Active Charger:",
     addSlot: "Add Battery Slot",
     noSlotsTitle: "No Active Battery Charging Slots",
-    noSlotsDesc: "Add an AA or AAA rechargeable battery slot to calculate exact charging times, monitor chemical heat dissipation, and receive notifications.",
+    noSlotsDesc: "Add a battery profile to estimate charge time. The app does not directly monitor or control batteries or chargers; supervise charging and follow manufacturer guidance.",
     insertFirst: "Insert First Battery Slot",
     timeRemaining: "Time Remaining",
     timeExceeded: "Time Exceeded",
@@ -106,7 +106,7 @@ const TRANSLATIONS = {
     activeCharger: "شارژر فعال:",
     addSlot: "افزودن اسلات باتری",
     noSlotsTitle: "هیچ اسلات شارژ فعالی وجود ندارد",
-    noSlotsDesc: "برای محاسبه زمان دقیق شارژ، پایش حرارت و دریافت هشدار، یک باتری AA یا AAA اضافه کنید.",
+    noSlotsDesc: "برای تخمین زمان شارژ، یک پروفایل باتری اضافه کنید. برنامه باتری یا شارژر را مستقیماً پایش یا کنترل نمی‌کند؛ هنگام شارژ نظارت کنید و دستورالعمل سازنده را دنبال کنید.",
     insertFirst: "افزودن اولین باتری",
     timeRemaining: "زمان باقی‌مانده",
     timeExceeded: "زمان اضافه شارژ",
@@ -188,7 +188,7 @@ const TRANSLATIONS = {
     activeCharger: "Caricatore Attivo:",
     addSlot: "Aggiungi Slot",
     noSlotsTitle: "Nessuno slot di ricarica attivo",
-    noSlotsDesc: "Aggiungi una batteria AA o AAA per calcolare i tempi di carica.",
+    noSlotsDesc: "Aggiungi un profilo per stimare il tempo di ricarica. L’app non monitora né controlla direttamente batteria o caricatore; sorveglia la ricarica e segui le istruzioni del produttore.",
     insertFirst: "Inserisci prima batteria",
     timeRemaining: "Tempo Rimanente",
     timeExceeded: "Tempo Superato",
@@ -270,7 +270,7 @@ const TRANSLATIONS = {
     activeCharger: "Cargador Activo:",
     addSlot: "Añadir Ranura",
     noSlotsTitle: "No hay ranuras activas",
-    noSlotsDesc: "Añade una batería AA o AAA para calcular tiempos de carga precisos.",
+    noSlotsDesc: "Añade un perfil para estimar el tiempo de carga. La aplicación no supervisa ni controla directamente la batería o el cargador; vigila la carga y sigue las instrucciones del fabricante.",
     insertFirst: "Insertar Primera Batería",
     timeRemaining: "Tiempo Restante",
     timeExceeded: "Tiempo Excedido",
@@ -352,7 +352,7 @@ const TRANSLATIONS = {
     activeCharger: "当前充电器：",
     addSlot: "添加电池槽",
     noSlotsTitle: "暂无激活的充电槽",
-    noSlotsDesc: "添加AA或AAA电池槽以计算精确充电时间。",
+    noSlotsDesc: "添加电池配置以估算充电时间。本应用不会直接监测或控制电池或充电器；请监督充电并遵循制造商说明。",
     insertFirst: "添加第一个电池槽",
     timeRemaining: "剩余时间",
     timeExceeded: "超出时间",
@@ -434,7 +434,7 @@ const TRANSLATIONS = {
     activeCharger: "Chargeur Actif:",
     addSlot: "Ajouter un emplacement",
     noSlotsTitle: "Aucun emplacement actif",
-    noSlotsDesc: "Ajoutez une pile AA ou AAA pour calculer les temps de charge précis.",
+    noSlotsDesc: "Ajoutez un profil pour estimer le temps de charge. L’application ne surveille ni ne contrôle directement la batterie ou le chargeur ; surveillez la charge et suivez les consignes du fabricant.",
     insertFirst: "Insérer une pile",
     timeRemaining: "Temps Restant",
     timeExceeded: "Temps Dépassé",
@@ -516,7 +516,7 @@ const TRANSLATIONS = {
     activeCharger: "Aktives Ladegerät:",
     addSlot: "Slot Hinzufügen",
     noSlotsTitle: "Keine aktiven Ladeslots",
-    noSlotsDesc: "Fügen Sie AA- oder AAA-Akkus hinzu, um Ladezeiten zu berechnen.",
+    noSlotsDesc: "Fügen Sie ein Profil hinzu, um die Ladezeit zu schätzen. Die App überwacht oder steuert weder Akku noch Ladegerät direkt; beaufsichtigen Sie den Ladevorgang und beachten Sie die Herstellerangaben.",
     insertFirst: "Ersten Slot einfügen",
     timeRemaining: "Verbleibende Zeit",
     timeExceeded: "Zeit überschritten",
@@ -597,7 +597,7 @@ const TRANSLATIONS = {
     activeCharger: "الشاحن النشط:",
     addSlot: "إضافة فتحة",
     noSlotsTitle: "لا توجد فتحات شحن نشطة",
-    noSlotsDesc: "أضف بطارية AA أو AAA لحساب أوقات الشحن بدقة.",
+    noSlotsDesc: "أضف ملفاً لتقدير وقت الشحن. لا يراقب التطبيق البطارية أو الشاحن أو يتحكم بهما مباشرة؛ راقب الشحن واتبع تعليمات الشركة المصنّعة.",
     insertFirst: "إضافة أول بطارية",
     timeRemaining: "الوقت المتبقي",
     timeExceeded: "الوقت المنقضي",
@@ -679,7 +679,7 @@ const TRANSLATIONS = {
     activeCharger: "アクティブ充電器：",
     addSlot: "スロット追加",
     noSlotsTitle: "アクティブなスロットがありません",
-    noSlotsDesc: "AAまたはAAAバッテリーを追加して充電時間を計算します。",
+    noSlotsDesc: "充電時間を推定するには電池プロファイルを追加してください。アプリは電池や充電器を直接監視・制御しません。充電を監視し、メーカーの指示に従ってください。",
     insertFirst: "最初のバッテリーを追加",
     timeRemaining: "残り時間",
     timeExceeded: "超過時間",
@@ -761,7 +761,7 @@ const TRANSLATIONS = {
     activeCharger: "Carregador Ativo:",
     addSlot: "Adicionar Slot",
     noSlotsTitle: "Nenhum slot de carga ativo",
-    noSlotsDesc: "Adicione uma bateria AA ou AAA para calcular o tempo de carga.",
+    noSlotsDesc: "Adicione um perfil para estimar o tempo de carga. O aplicativo não monitora nem controla diretamente a bateria ou o carregador; supervisione a carga e siga as instruções do fabricante.",
     insertFirst: "Inserir primeira bateria",
     timeRemaining: "Tempo Restante",
     timeExceeded: "Tempo Excedido",
@@ -843,7 +843,7 @@ const TRANSLATIONS = {
     activeCharger: "Активное ЗУ:",
     addSlot: "Добавить слот",
     noSlotsTitle: "Нет активных слотов зарядки",
-    noSlotsDesc: "Добавьте батарейку AA или AAA для расчета времени.",
+    noSlotsDesc: "Добавьте профиль батареи для оценки времени зарядки. Приложение не контролирует батарею или зарядное устройство напрямую; следите за зарядкой и соблюдайте инструкции производителя.",
     insertFirst: "Добавить батарею",
     timeRemaining: "Осталось времени",
     timeExceeded: "Время превышено",
@@ -921,17 +921,185 @@ const ALARM_SOUND_OPTIONS = [
   { id: 'urgent', name: '⚡ Urgent Voltage Alert', frequencies: [987.77, 932.33, 880, 830.61] }
 ];
 
+const APP_COPY = {
+  en: {
+    chargerCompatible: 'Compatible with this charger',
+    selectProfile: 'Select a saved battery profile',
+    chooseProfile: '-- Choose a compatible battery profile --',
+    slotLabel: 'Battery label',
+    chemistry: 'Battery chemistry',
+    capacity: 'Capacity (mAh)',
+    initialCharge: 'Initial charge (%)',
+    voltage: 'Nominal voltage (V)',
+    batterySize: 'Battery size',
+    cancel: 'Cancel',
+    startTimer: 'Start estimate',
+    safetyNotice: 'This app only estimates charge time. It cannot measure battery charge or temperature, control or disconnect a charger, or guarantee an alarm. The timer may pause when this app is backgrounded or the device sleeps. Follow the battery and charger manufacturers’ instructions and supervise charging.',
+    stopTimer: 'Stop timer',
+    dismiss: 'Dismiss',
+    completed: 'Estimate reached',
+    stopped: 'Stopped',
+    notificationHeading: 'Completion notifications',
+    notificationDescription: 'Optional device notifications when an estimated timer reaches its target. This is not remote push delivery, and background timers may be paused by your device.',
+    notificationUnavailable: 'Notifications are not available in this browser or app. The timer and sound alert can still be used while this screen is open.',
+    completedTimerEstimates: 'Completed timer estimates',
+    stoppedTimerEstimates: 'Stopped timer sessions',
+    modeledHealth: 'Modeled battery health',
+    modeledHealthDescription: 'Rough estimate based on entered battery age and completed timer estimates; not measured by the device.',
+    runtimeEstimateDescription: 'Rough runtime assumes a 500mA load; actual runtime varies with device use and battery condition. It is not measured.',
+    profilesStoredDescription: 'Saved profile count only; this app receives no live battery telemetry.'
+  },
+  fa: {
+    chargerCompatible: 'سازگار با این شارژر', selectProfile: 'انتخاب پروفایل باتری ذخیره‌شده', chooseProfile: '-- انتخاب پروفایل سازگار --',
+    slotLabel: 'نام باتری', chemistry: 'شیمی باتری', capacity: 'ظرفیت (mAh)', initialCharge: 'شارژ اولیه (%)', voltage: 'ولتاژ اسمی (V)', batterySize: 'اندازه باتری',
+    cancel: 'لغو', startTimer: 'شروع برآورد', stopTimer: 'توقف زمان‌سنج', dismiss: 'بستن', completed: 'رسیدن به زمان تخمینی', stopped: 'متوقف‌شده',
+    safetyNotice: 'این برنامه فقط زمان شارژ را تخمین می‌زند. میزان شارژ یا دمای باتری را اندازه‌گیری نمی‌کند، شارژر را کنترل یا قطع نمی‌کند و عملکرد هشدار را تضمین نمی‌کند. هنگام رفتن برنامه به پس‌زمینه یا خواب دستگاه، زمان‌سنج ممکن است متوقف شود. دستورالعمل سازنده باتری و شارژر را دنبال کنید و شارژ را زیر نظر داشته باشید.',
+    notificationHeading: 'اعلان‌های پایان زمان‌سنج', notificationDescription: 'اعلان اختیاری دستگاه هنگام رسیدن زمان‌سنج تخمینی به هدف. این اعلان پوش از راه دور نیست و دستگاه ممکن است زمان‌سنج پس‌زمینه را متوقف کند.',
+    notificationUnavailable: 'اعلان در این مرورگر یا برنامه در دسترس نیست. تا زمانی که این صفحه باز است، زمان‌سنج و هشدار صوتی قابل استفاده‌اند.',
+    completedTimerEstimates: 'برآوردهای تکمیل‌شده زمان‌سنج', stoppedTimerEstimates: 'جلسه‌های متوقف‌شده زمان‌سنج',
+    modeledHealth: 'سلامت مدل‌سازی‌شده باتری', modeledHealthDescription: 'برآورد تقریبی بر اساس عمر واردشده باتری و زمان‌سنج‌های تکمیل‌شده؛ دستگاه آن را اندازه‌گیری نمی‌کند.',
+    runtimeEstimateDescription: 'برآورد زمان کار بر پایه بار ۵۰۰ میلی‌آمپر است؛ زمان واقعی به مصرف دستگاه و وضعیت باتری بستگی دارد و اندازه‌گیری نمی‌شود.',
+    profilesStoredDescription: 'فقط تعداد پروفایل‌های ذخیره‌شده است؛ برنامه داده زنده‌ای از باتری دریافت نمی‌کند.'
+  },
+  it: {
+    chargerCompatible: 'Compatibile con questo caricatore', selectProfile: 'Seleziona un profilo batteria salvato', chooseProfile: '-- Scegli un profilo compatibile --',
+    slotLabel: 'Nome batteria', chemistry: 'Chimica della batteria', capacity: 'Capacità (mAh)', initialCharge: 'Carica iniziale (%)', voltage: 'Tensione nominale (V)', batterySize: 'Formato batteria',
+    cancel: 'Annulla', startTimer: 'Avvia stima', stopTimer: 'Ferma timer', dismiss: 'Chiudi', completed: 'Stima raggiunta', stopped: 'Interrotto',
+    safetyNotice: 'Questa app stima solo il tempo di ricarica. Non misura carica o temperatura, non controlla né scollega il caricatore e non garantisce un allarme. Il timer può fermarsi se l’app è in background o il dispositivo è in sospensione. Segui le istruzioni dei produttori e sorveglia la ricarica.',
+    notificationHeading: 'Notifiche di completamento', notificationDescription: 'Notifiche facoltative del dispositivo al raggiungimento del tempo stimato. Non è un servizio push remoto; il dispositivo può sospendere i timer in background.',
+    notificationUnavailable: 'Le notifiche non sono disponibili in questo browser o app. Timer e avviso audio funzionano mentre questa schermata è aperta.',
+    completedTimerEstimates: 'Stime timer completate', stoppedTimerEstimates: 'Sessioni timer interrotte',
+    modeledHealth: 'Salute batteria modellata', modeledHealthDescription: 'Stima approssimativa basata sull’età inserita e sulle stime completate; non è misurata dal dispositivo.',
+    runtimeEstimateDescription: 'La stima presume un carico di 500 mA; l’autonomia reale varia in base all’uso e alla batteria e non viene misurata.',
+    profilesStoredDescription: 'Solo il numero di profili salvati; l’app non riceve dati in tempo reale dalla batteria.'
+  },
+  es: {
+    chargerCompatible: 'Compatible con este cargador', selectProfile: 'Seleccionar perfil de batería guardado', chooseProfile: '-- Elegir perfil compatible --',
+    slotLabel: 'Nombre de la batería', chemistry: 'Química de la batería', capacity: 'Capacidad (mAh)', initialCharge: 'Carga inicial (%)', voltage: 'Voltaje nominal (V)', batterySize: 'Tamaño de batería',
+    cancel: 'Cancelar', startTimer: 'Iniciar estimación', stopTimer: 'Detener temporizador', dismiss: 'Cerrar', completed: 'Estimación alcanzada', stopped: 'Detenido',
+    safetyNotice: 'Esta aplicación solo estima el tiempo de carga. No mide la carga ni la temperatura, no controla ni desconecta el cargador y no garantiza una alarma. El temporizador puede pausarse si la aplicación pasa a segundo plano o el dispositivo duerme. Sigue las instrucciones del fabricante y supervisa la carga.',
+    notificationHeading: 'Notificaciones de finalización', notificationDescription: 'Notificaciones opcionales del dispositivo al alcanzar el objetivo estimado. No son notificaciones push remotas y el dispositivo puede pausar temporizadores en segundo plano.',
+    notificationUnavailable: 'Las notificaciones no están disponibles en este navegador o aplicación. El temporizador y la alarma de sonido funcionan con esta pantalla abierta.',
+    completedTimerEstimates: 'Estimaciones de temporizador completadas', stoppedTimerEstimates: 'Sesiones de temporizador detenidas',
+    modeledHealth: 'Salud estimada por modelo', modeledHealthDescription: 'Estimación aproximada basada en la antigüedad indicada y las estimaciones completadas; el dispositivo no la mide.',
+    runtimeEstimateDescription: 'La estimación supone una carga de 500 mA; la autonomía real varía según el uso y la batería y no se mide.',
+    profilesStoredDescription: 'Solo cuenta perfiles guardados; la aplicación no recibe datos de batería en tiempo real.'
+  },
+  zh: {
+    chargerCompatible: '与此充电器兼容', selectProfile: '选择已保存的电池配置', chooseProfile: '-- 选择兼容的电池配置 --',
+    slotLabel: '电池名称', chemistry: '电池化学类型', capacity: '容量 (mAh)', initialCharge: '初始电量 (%)', voltage: '标称电压 (V)', batterySize: '电池尺寸',
+    cancel: '取消', startTimer: '开始估算', stopTimer: '停止计时器', dismiss: '关闭', completed: '已达到估算时间', stopped: '已停止',
+    safetyNotice: '此应用仅估算充电时间，不会测量电池电量或温度，也不能控制或断开充电器，且不保证闹钟一定响起。应用进入后台或设备休眠时，计时器可能暂停。请遵循电池和充电器制造商的说明并监护充电过程。',
+    notificationHeading: '完成通知', notificationDescription: '估算计时达到目标时发送可选的设备通知。这不是远程推送，设备可能会暂停后台计时器。',
+    notificationUnavailable: '此浏览器或应用不支持通知。保持此页面打开时仍可使用计时器和声音提醒。',
+    completedTimerEstimates: '已完成的计时估算', stoppedTimerEstimates: '已停止的计时会话',
+    modeledHealth: '模型估算的电池健康度', modeledHealthDescription: '根据输入的电池使用时间和已完成计时估算得出，并非设备测量值。',
+    runtimeEstimateDescription: '续航估算按 500mA 负载计算；实际续航因设备使用和电池状况而异，且不会被测量。',
+    profilesStoredDescription: '仅显示已保存的配置数量；应用不会接收实时电池数据。'
+  },
+  fr: {
+    chargerCompatible: 'Compatible avec ce chargeur', selectProfile: 'Sélectionner un profil de batterie enregistré', chooseProfile: '-- Choisir un profil compatible --',
+    slotLabel: 'Nom de la batterie', chemistry: 'Chimie de la batterie', capacity: 'Capacité (mAh)', initialCharge: 'Charge initiale (%)', voltage: 'Tension nominale (V)', batterySize: 'Format de la batterie',
+    cancel: 'Annuler', startTimer: 'Lancer l’estimation', stopTimer: 'Arrêter le minuteur', dismiss: 'Fermer', completed: 'Estimation atteinte', stopped: 'Arrêté',
+    safetyNotice: 'Cette application estime uniquement le temps de charge. Elle ne mesure ni la charge ni la température, ne contrôle ni ne débranche le chargeur et ne garantit pas une alarme. Le minuteur peut s’interrompre en arrière-plan ou lorsque l’appareil se met en veille. Suivez les instructions du fabricant et surveillez la charge.',
+    notificationHeading: 'Notifications de fin', notificationDescription: 'Notifications facultatives lorsque le minuteur estimé atteint son objectif. Il ne s’agit pas de notifications push à distance ; l’appareil peut suspendre les minuteurs en arrière-plan.',
+    notificationUnavailable: 'Les notifications ne sont pas disponibles dans ce navigateur ou cette application. Le minuteur et l’alarme audio restent utilisables lorsque cet écran est ouvert.',
+    completedTimerEstimates: 'Estimations de minuterie terminées', stoppedTimerEstimates: 'Sessions de minuterie arrêtées',
+    modeledHealth: 'État de santé modélisé', modeledHealthDescription: 'Estimation approximative fondée sur l’âge saisi et les estimations terminées ; elle n’est pas mesurée par l’appareil.',
+    runtimeEstimateDescription: 'L’estimation suppose une charge de 500 mA ; l’autonomie réelle varie selon l’utilisation et la batterie et n’est pas mesurée.',
+    profilesStoredDescription: 'Nombre de profils enregistrés uniquement ; l’application ne reçoit aucune télémétrie de batterie.'
+  },
+  de: {
+    chargerCompatible: 'Mit diesem Ladegerät kompatibel', selectProfile: 'Gespeichertes Batterieprofil auswählen', chooseProfile: '-- Kompatibles Profil auswählen --',
+    slotLabel: 'Batteriebezeichnung', chemistry: 'Batteriechemie', capacity: 'Kapazität (mAh)', initialCharge: 'Anfangsladung (%)', voltage: 'Nennspannung (V)', batterySize: 'Batteriegröße',
+    cancel: 'Abbrechen', startTimer: 'Schätzung starten', stopTimer: 'Timer stoppen', dismiss: 'Schließen', completed: 'Schätzwert erreicht', stopped: 'Gestoppt',
+    safetyNotice: 'Diese App schätzt nur die Ladezeit. Sie misst weder Ladestand noch Temperatur, steuert oder trennt kein Ladegerät und garantiert keinen Alarm. Im Hintergrund oder im Ruhezustand kann der Timer pausieren. Beachten Sie die Herstellerangaben und beaufsichtigen Sie den Ladevorgang.',
+    notificationHeading: 'Abschlussbenachrichtigungen', notificationDescription: 'Optionale Gerätebenachrichtigung beim Erreichen des geschätzten Ziels. Dies ist kein Remote-Push; das Gerät kann Hintergrund-Timer anhalten.',
+    notificationUnavailable: 'Benachrichtigungen sind in diesem Browser oder dieser App nicht verfügbar. Timer und Signalton funktionieren bei geöffnetem Bildschirm.',
+    completedTimerEstimates: 'Abgeschlossene Timer-Schätzungen', stoppedTimerEstimates: 'Gestoppte Timer-Sitzungen',
+    modeledHealth: 'Modellierter Batteriezustand', modeledHealthDescription: 'Grobe Schätzung anhand des eingegebenen Batteriealters und abgeschlossener Timer-Schätzungen; nicht vom Gerät gemessen.',
+    runtimeEstimateDescription: 'Die Schätzung nimmt eine Last von 500 mA an; die tatsächliche Laufzeit hängt von Nutzung und Akku ab und wird nicht gemessen.',
+    profilesStoredDescription: 'Nur die Anzahl gespeicherter Profile; die App erhält keine Live-Batteriedaten.'
+  },
+  ar: {
+    chargerCompatible: 'متوافق مع هذا الشاحن', selectProfile: 'اختر ملف بطارية محفوظاً', chooseProfile: '-- اختر ملفاً متوافقاً --',
+    slotLabel: 'اسم البطارية', chemistry: 'تركيب البطارية الكيميائي', capacity: 'السعة (mAh)', initialCharge: 'الشحن الأولي (%)', voltage: 'الجهد الاسمي (V)', batterySize: 'حجم البطارية',
+    cancel: 'إلغاء', startTimer: 'بدء التقدير', stopTimer: 'إيقاف المؤقت', dismiss: 'إغلاق', completed: 'تم بلوغ الوقت التقديري', stopped: 'متوقف',
+    safetyNotice: 'يقدّر هذا التطبيق وقت الشحن فقط. لا يقيس شحن البطارية أو حرارتها، ولا يتحكم بالشاحن أو يفصله، ولا يضمن صدور التنبيه. قد يتوقف المؤقت عند تشغيل التطبيق في الخلفية أو دخول الجهاز في وضع السكون. اتبع تعليمات الشركة المصنّعة وراقب الشحن.',
+    notificationHeading: 'إشعارات اكتمال المؤقت', notificationDescription: 'إشعارات اختيارية من الجهاز عند بلوغ المؤقت التقديري هدفه. هذه ليست إشعارات دفع عن بُعد، وقد يوقف الجهاز المؤقت في الخلفية.',
+    notificationUnavailable: 'الإشعارات غير متاحة في هذا المتصفح أو التطبيق. يمكن استخدام المؤقت والتنبيه الصوتي عند بقاء هذه الشاشة مفتوحة.',
+    completedTimerEstimates: 'تقديرات المؤقت المكتملة', stoppedTimerEstimates: 'جلسات المؤقت المتوقفة',
+    modeledHealth: 'صحة البطارية المقدّرة بالنموذج', modeledHealthDescription: 'تقدير تقريبي حسب عمر البطارية المدخل وتقديرات المؤقت المكتملة؛ لا يقيسه الجهاز.',
+    runtimeEstimateDescription: 'يفترض تقدير وقت التشغيل حملاً قدره ٥٠٠ mA؛ يختلف الوقت الفعلي حسب استخدام الجهاز وحالة البطارية ولا يتم قياسه.',
+    profilesStoredDescription: 'عدد الملفات المحفوظة فقط؛ لا يتلقى التطبيق بيانات حية من البطارية.'
+  },
+  ja: {
+    chargerCompatible: 'この充電器に対応', selectProfile: '保存済みの電池プロファイルを選択', chooseProfile: '-- 対応プロファイルを選択 --',
+    slotLabel: '電池ラベル', chemistry: '電池の化学系', capacity: '容量 (mAh)', initialCharge: '初期充電率 (%)', voltage: '公称電圧 (V)', batterySize: '電池サイズ',
+    cancel: 'キャンセル', startTimer: '時間を推定', stopTimer: 'タイマーを停止', dismiss: '閉じる', completed: '推定時間に到達', stopped: '停止',
+    safetyNotice: 'このアプリは充電時間を推定するだけです。電池残量や温度の測定、充電器の制御・切断、アラームの保証はできません。アプリがバックグラウンドにある場合や端末がスリープすると、タイマーが停止することがあります。メーカーの指示に従い、充電中は監視してください。',
+    notificationHeading: '完了通知', notificationDescription: '推定タイマーが目標に達した際の任意の端末通知です。リモートプッシュではなく、バックグラウンドタイマーは端末により停止される場合があります。',
+    notificationUnavailable: 'このブラウザーまたはアプリでは通知を利用できません。この画面を開いている間はタイマーと音声アラームを使用できます。',
+    completedTimerEstimates: '完了したタイマー推定', stoppedTimerEstimates: '停止したタイマーセッション',
+    modeledHealth: 'モデルによる電池の健康度', modeledHealthDescription: '入力された使用期間と完了したタイマー推定に基づく概算であり、端末による測定値ではありません。',
+    runtimeEstimateDescription: '500mA の負荷を想定した概算です。実際の稼働時間は端末の使用状況と電池の状態により異なり、測定値ではありません。',
+    profilesStoredDescription: '保存済みプロファイル数のみです。アプリは電池のリアルタイムデータを受信しません。'
+  },
+  pt: {
+    chargerCompatible: 'Compatível com este carregador', selectProfile: 'Selecionar perfil de bateria salvo', chooseProfile: '-- Escolha um perfil compatível --',
+    slotLabel: 'Identificação da bateria', chemistry: 'Química da bateria', capacity: 'Capacidade (mAh)', initialCharge: 'Carga inicial (%)', voltage: 'Tensão nominal (V)', batterySize: 'Tamanho da bateria',
+    cancel: 'Cancelar', startTimer: 'Iniciar estimativa', stopTimer: 'Parar temporizador', dismiss: 'Fechar', completed: 'Estimativa atingida', stopped: 'Parado',
+    safetyNotice: 'Este aplicativo apenas estima o tempo de carga. Não mede carga ou temperatura, não controla nem desconecta o carregador e não garante um alarme. O temporizador pode pausar quando o aplicativo fica em segundo plano ou o dispositivo entra em repouso. Siga as instruções do fabricante e supervisione a carga.',
+    notificationHeading: 'Notificações de conclusão', notificationDescription: 'Notificações opcionais do dispositivo quando o temporizador estimado atinge o objetivo. Não é envio push remoto e o dispositivo pode pausar temporizadores em segundo plano.',
+    notificationUnavailable: 'As notificações não estão disponíveis neste navegador ou aplicativo. O temporizador e o alerta sonoro funcionam com esta tela aberta.',
+    completedTimerEstimates: 'Estimativas de temporizador concluídas', stoppedTimerEstimates: 'Sessões de temporizador interrompidas',
+    modeledHealth: 'Saúde estimada por modelo', modeledHealthDescription: 'Estimativa aproximada com base na idade informada e nas estimativas concluídas; não é medida pelo dispositivo.',
+    runtimeEstimateDescription: 'A estimativa considera uma carga de 500 mA; a autonomia real varia conforme o uso e a bateria e não é medida.',
+    profilesStoredDescription: 'Apenas a quantidade de perfis salvos; o aplicativo não recebe dados da bateria em tempo real.'
+  },
+  ru: {
+    chargerCompatible: 'Совместимо с этим зарядным устройством', selectProfile: 'Выбрать сохранённый профиль батареи', chooseProfile: '-- Выберите совместимый профиль --',
+    slotLabel: 'Название батареи', chemistry: 'Химический тип батареи', capacity: 'Ёмкость (мА·ч)', initialCharge: 'Начальный заряд (%)', voltage: 'Номинальное напряжение (В)', batterySize: 'Размер батареи',
+    cancel: 'Отмена', startTimer: 'Начать оценку', stopTimer: 'Остановить таймер', dismiss: 'Закрыть', completed: 'Расчётное время достигнуто', stopped: 'Остановлено',
+    safetyNotice: 'Приложение только оценивает время зарядки. Оно не измеряет заряд или температуру батареи, не управляет зарядным устройством и не отключает его, а также не гарантирует срабатывание сигнала. Таймер может приостановиться в фоне или во время сна устройства. Следуйте инструкциям производителей и контролируйте зарядку.',
+    notificationHeading: 'Уведомления о завершении', notificationDescription: 'Необязательные уведомления устройства при достижении расчётной цели. Это не удалённые push-уведомления; устройство может приостанавливать фоновые таймеры.',
+    notificationUnavailable: 'Уведомления недоступны в этом браузере или приложении. Таймер и звуковой сигнал работают, пока экран открыт.',
+    completedTimerEstimates: 'Завершённые расчёты таймера', stoppedTimerEstimates: 'Остановленные сеансы таймера',
+    modeledHealth: 'Расчётное состояние батареи', modeledHealthDescription: 'Приблизительная оценка по введённому сроку использования и завершённым расчётам; устройство её не измеряет.',
+    runtimeEstimateDescription: 'Оценка рассчитана для нагрузки 500 мА; фактическое время зависит от использования и состояния батареи и не измеряется.',
+    profilesStoredDescription: 'Только количество сохранённых профилей; приложение не получает данные батареи в реальном времени.'
+  }
+};
+
 // --- SUPPORTED SLOT COMPATIBILITY TYPES ---
 const AVAILABLE_SLOT_TYPES = ['AA', 'AAA', '18650', 'C', 'D', 'AA/AAA Combined'];
+const AVAILABLE_BATTERY_CHEMISTRIES = ['NiMH', 'NiCd', 'Li-ion'];
 
-const isBatteryCompatibleWithSlot = (batterySize, supportedSlotTypes) => {
-  if (!supportedSlotTypes || supportedSlotTypes.length === 0) return true;
-  return supportedSlotTypes.some(type => {
+const getSupportedBatteryChemistries = (charger) => {
+  if (Array.isArray(charger?.supported_battery_types)) return charger.supported_battery_types;
+  if (charger?.id === 'ch-3' || charger?.name?.includes('Nitecore D4')) return ['NiMH', 'NiCd', 'Li-ion'];
+  return ['NiMH'];
+};
+
+const getNominalVoltageRange = (chemistry) =>
+  chemistry === 'Li-ion' ? { min: 2.5, max: 4.25, defaultValue: 3.7 } : { min: 0.8, max: 2, defaultValue: 1.2 };
+
+const getAppAssetUrl = (assetPath) =>
+  new URL(assetPath, new URL(import.meta.env.BASE_URL, window.location.origin)).href;
+
+const isBatteryCompatibleWithCharger = (battery, charger) => {
+  if (!battery || !charger || typeof battery.type !== 'string' || ['alkaline', 'primary'].includes(battery.type.toLowerCase())) return false;
+  const voltage = Number(battery.voltage);
+  const voltageRange = getNominalVoltageRange(battery.type);
+  if (!Number.isFinite(voltage) || voltage < voltageRange.min || voltage > voltageRange.max) return false;
+  const supportedSlotTypes = charger.supported_slot_types;
+  const supportedSize = !supportedSlotTypes || supportedSlotTypes.length === 0 || supportedSlotTypes.some(type => {
     if (type === 'AA/AAA Combined') {
-      return batterySize === 'AA' || batterySize === 'AAA';
+      return battery.size === 'AA' || battery.size === 'AAA';
     }
-    return type === batterySize;
+    return type === battery.size;
   });
+  return supportedSize && getSupportedBatteryChemistries(charger).includes(battery.type);
 };
 
 // --- GLOBAL PRESET DATABASES ---
@@ -1275,8 +1443,14 @@ export default function App() {
   // RTL Direction check for Persian & Arabic
   const isRTL = useMemo(() => settings.language === 'fa' || settings.language === 'ar', [settings.language]);
   const t = (key) => TRANSLATIONS[settings.language]?.[key] || TRANSLATIONS['en'][key] || key;
+  const copy = APP_COPY[settings.language] || APP_COPY.en;
   
   const currentCharger = useMemo(() => chargers.find(c => c.id === activeChargerId) || chargers[0], [chargers, activeChargerId]);
+
+  useEffect(() => {
+    document.documentElement.lang = settings.language;
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+  }, [settings.language, isRTL]);
 
   // Hydrate the IndexedDB snapshot once. Existing localStorage values remain the
   // synchronous fallback for first launch, private browsing, or unavailable IndexedDB.
@@ -2272,6 +2446,11 @@ export default function App() {
               </div>
             </div>
 
+            <div role="note" className="rounded-2xl border border-amber-500/40 bg-amber-950/40 p-4 text-xs leading-relaxed text-amber-100">
+              <ShieldAlert className="mr-2 inline h-4 w-4 align-text-bottom text-amber-300" />
+              {copy.safetyNotice}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {Array.from({ length: currentCharger.slotCount || 4 }).map((_, index) => {
                 const slot = activeSlots.find(s => s.slotIndex === index);
@@ -2698,6 +2877,7 @@ export default function App() {
               <ShieldCheck className="text-emerald-400 w-6 h-6 animate-pulse" />
               <span>{t('safety')} & Chemical Degradation Guide</span>
             </h2>
+            <p role="note" className="text-xs sm:text-sm text-amber-100 leading-relaxed bg-amber-950/50 p-5 rounded-2xl border border-amber-500/40 shadow-inner">{copy.safetyNotice}</p>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/60 backdrop-blur-xl p-5 rounded-2xl border border-slate-800/80 shadow-inner">
               Standard plug-in chargers often lack individual dynamic peak detection (-ΔV). Unplugging NiMH and Li-ion rechargeable batteries promptly upon reaching 100% prevents internal electrolyte venting, high thermal pressure, and permanent capacity degradation.
             </p>
