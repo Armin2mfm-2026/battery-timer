@@ -1,0 +1,4 @@
+{
+  "version": "1.3.0",
+  "summary": "This release includes the following improvements: PayPal donation support; Telegram, email, and WhatsApp contact links; notification permission onboarding and app update checks; native completion notifications; and configurable repeating timer alarms."
+}

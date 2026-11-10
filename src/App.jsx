@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import packageJson from '../package.json';
 import { APP_LINKS, getContactUrl, getPaymentUrl } from './config/links.js';
+import { APP_RELEASE_HISTORY } from './config/appReleases.js';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { 
@@ -18,31 +19,32 @@ const TERMS_EFFECTIVE_DATE = '2026-11-10';
 const TERMS_STORAGE_KEY = 'voltguard_terms_acceptance';
 const APP_VERSION = packageJson.version;
 const APP_VERSION_STORAGE_KEY = 'voltguard_app_version_seen';
-// For each release, bump package.json and add its notes here while retaining older entries.
-const APP_RELEASES = [
-  {
-    version: '1.1.0',
-    summary: 'Added app version history and a one-time update notice, with PWA reload and mobile store links.'
-  },
-  {
-    version: '1.0.0',
-    summary: 'Initial release with battery and charger profiles, charge-time estimates, history, safety guidance, and PWA support.'
-  }
-];
-const CURRENT_RELEASE = APP_RELEASES.find(release => release.version === APP_VERSION) || {
+const NOTIFICATION_ONBOARDING_STORAGE_KEY = 'voltguard_notification_onboarding_done';
+const APP_UPDATE_NOTIFIED_VERSION_STORAGE_KEY = 'voltguard_app_update_notified_version';
+const APP_UPDATE_MANIFEST_URL = import.meta.env.VITE_APP_UPDATE_MANIFEST_URL?.trim() || '';
+const TIMER_NOTIFICATION_CHANNEL_ID = 'timer-completion';
+const CURRENT_RELEASE = APP_RELEASE_HISTORY.find(release => release.version === APP_VERSION) || {
   version: APP_VERSION,
   summary: 'Open Settings to review the latest release information.'
 };
-const APP_RELEASE_HISTORY = [
-  CURRENT_RELEASE,
-  ...APP_RELEASES.filter(release => release.version !== APP_VERSION)
-];
 const getNativeNotificationId = (slotId) => {
   let hash = 2166136261;
   for (let index = 0; index < slotId.length; index++) {
     hash = Math.imul(hash ^ slotId.charCodeAt(index), 16777619);
   }
   return hash & 0x7fffffff;
+};
+const compareAppVersions = (left, right) => {
+  const leftParts = String(left).split('.').map(Number);
+  const rightParts = String(right).split('.').map(Number);
+  if (leftParts.length !== 3 || rightParts.length !== 3 ||
+      [...leftParts, ...rightParts].some(part => !Number.isInteger(part) || part < 0)) {
+    return null;
+  }
+  for (let index = 0; index < 3; index++) {
+    if (leftParts[index] !== rightParts[index]) return leftParts[index] > rightParts[index] ? 1 : -1;
+  }
+  return 0;
 };
 
 const TERMS_SECTIONS = [
@@ -155,6 +157,7 @@ const TRANSLATIONS = {
     donateTitle: "Keep VoltGuard Pro Running & Online",
     donateDesc: "Your voluntary contribution directly supports server maintenance, continuous battery profile updates, and keeps this tool free. Donate whatever you want!",
     donateButton: "Support via PayPal, Revolut or Crypto",
+    donateOptionsButton: "More donation options",
     supportActiveUntil: "Supporter Status Active Until:",
     emailLabel: "Your Email Address (for Receipt & Supporter Badge):",
     payWithPaypal: "Donate with PayPal",
@@ -201,6 +204,11 @@ const TRANSLATIONS = {
     appUpdateFailed: "Could not check for the update. Please try again.",
     appUpdatePwaHint: "The PWA will reload and fetch the latest deployed version.",
     appUpdateNativeHint: "Continue to your device’s app store to update.",
+    notificationOnboardingTitle: "Enable notifications?",
+    notificationOnboardingDescription: "Allow notifications for battery timer reminders and important app update alerts. You can change this anytime in Settings.",
+    notificationOnboardingEnable: "Enable notifications",
+    notificationOnboardingLater: "Not now",
+    appUpdateNotificationTitle: "VoltGuard Pro update available",
     nativeNotificationsDescription: "Optional device reminders are scheduled for estimated timer completion. Delivery can still be delayed or disabled by device settings; this app does not monitor the battery."
   },
   fa: {
@@ -1399,6 +1407,10 @@ export default function App() {
   const [termsStorageError, setTermsStorageError] = useState(false);
   const [termsExpanded, setTermsExpanded] = useState(false);
   const [updateHistoryExpanded, setUpdateHistoryExpanded] = useState(false);
+  const [notificationOnboardingVisible, setNotificationOnboardingVisible] = useState(false);
+  const [notificationOnboardingBusy, setNotificationOnboardingBusy] = useState(false);
+  const [latestAvailableRelease, setLatestAvailableRelease] = useState(null);
+  const updateNotificationSentRef = useRef(false);
   const termsAccepted = termsAcceptance?.version === TERMS_VERSION;
   const termsCheckboxRef = useRef(null);
   const termsReviewButtonRef = useRef(null);
@@ -1603,7 +1615,6 @@ export default function App() {
   });
 
   const audioCtxRef = useRef(null);
-  const alarmAudioRef = useRef(null);
   const alarmShouldBePlayingRef = useRef(false);
   const activeAlarmLoopIntervalRef = useRef(null);
   const wakeLockRef = useRef(null);
@@ -1999,6 +2010,19 @@ export default function App() {
     }, 1500);
   };
 
+  const handleDirectPaypalDonation = () => {
+    let paymentLink;
+    try {
+      paymentLink = getPaymentUrl('paypal');
+    } catch (error) {
+      console.error('Invalid PayPal donation URL configuration:', error);
+      showGlobalError(error.message);
+      return;
+    }
+    if (!paymentLink) return;
+    window.open(paymentLink, '_blank', 'noopener,noreferrer');
+  };
+
   const handleCopyCrypto = (address, key) => {
     navigator.clipboard.writeText(address);
     setCopiedCrypto(key);
@@ -2017,40 +2041,22 @@ export default function App() {
       clearInterval(activeAlarmLoopIntervalRef.current);
       activeAlarmLoopIntervalRef.current = null;
     }
-    if (alarmAudioRef.current) {
-      alarmAudioRef.current.pause();
-      try { alarmAudioRef.current.currentTime = 0; } catch (error) {}
-    }
   };
 
   const triggerContinuousAlarmSound = (alarmId = 'chime') => {
     if (!settings.audioAlerts) return;
     stopContinuousAlarmSound();
     alarmShouldBePlayingRef.current = true;
-
-    const startFallbackTone = () => {
-      if (!alarmShouldBePlayingRef.current || activeAlarmLoopIntervalRef.current) return;
+    const playAlarm = () => {
+      if (!alarmShouldBePlayingRef.current) return;
       playSingleAlarmBurst(alarmId);
-      activeAlarmLoopIntervalRef.current = setInterval(() => {
-        if (alarmShouldBePlayingRef.current) playSingleAlarmBurst(alarmId);
-      }, 1500);
     };
-
-    // Use the bundled alarm audio first, with Web Audio as a fallback.
-    const alarmAudio = alarmAudioRef.current;
-    if (alarmAudio) {
-      alarmAudio.loop = true;
-      try { alarmAudio.currentTime = 0; } catch (error) {}
-      const playback = alarmAudio.play();
-      if (playback && typeof playback.catch === 'function') {
-        playback.catch(() => startFallbackTone());
-      }
-    } else {
-      startFallbackTone();
-    }
+    playAlarm();
+    activeAlarmLoopIntervalRef.current = setInterval(playAlarm, 1500);
   };
 
   const playSingleAlarmBurst = (alarmId = 'chime') => {
+    if (!settings.audioAlerts) return;
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -2081,9 +2087,23 @@ export default function App() {
     }
   };
 
+  const completedAlarmKey = activeSlots
+    .filter(slot => slot.status === 'completed')
+    .map(slot => slot.id)
+    .sort()
+    .join('|');
+
+  useEffect(() => {
+    if (completedAlarmKey && settings.audioAlerts) {
+      triggerContinuousAlarmSound(settings.selectedAlarmId);
+    } else {
+      stopContinuousAlarmSound();
+    }
+    return stopContinuousAlarmSound;
+  }, [completedAlarmKey, settings.audioAlerts, settings.selectedAlarmId]);
+
   const nativeNotificationScheduleKey = activeSlots
-    .filter(slot => slot.status === 'charging')
-    .map(slot => `${slot.id}:${slot.startTime}:${slot.totalSec}`)
+    .map(slot => `${slot.id}:${slot.status}:${slot.startTime}:${slot.totalSec}`)
     .join('|');
 
   useEffect(() => {
@@ -2096,23 +2116,44 @@ export default function App() {
         notification.extra?.voltGuardNotification === 'charge-estimate'
       );
       if (!active) return;
-      if (ownedNotifications.length) {
+      const currentSlots = new Map(activeSlots.map(slot => [slot.id, slot]));
+      const notificationsToCancel = ownedNotifications.filter(notification => {
+        const slot = currentSlots.get(notification.extra?.slotId);
+        if (!settings.pushNotifications || nativeNotificationsGranted !== 'granted' || !slot) return true;
+        if (slot.status === 'completed') return false;
+        return true;
+      });
+      if (notificationsToCancel.length) {
         await LocalNotifications.cancel({
-          notifications: ownedNotifications.map(({ id }) => ({ id }))
+          notifications: notificationsToCancel.map(({ id }) => ({ id }))
         });
       }
       if (!active || !settings.pushNotifications || nativeNotificationsGranted !== 'granted') return;
+
+      const platform = window.Capacitor?.getPlatform?.();
+      if (platform === 'android') {
+        await LocalNotifications.createChannel({
+          id: TIMER_NOTIFICATION_CHANNEL_ID,
+          name: 'Timer completions',
+          description: 'Alerts when a battery timer estimate reaches its target.',
+          importance: 4,
+          visibility: 1,
+          vibration: true
+        });
+      }
 
       const notifications = activeSlots
         .filter(slot => slot.status === 'charging')
         .map(slot => ({
           id: getNativeNotificationId(slot.id),
           title: 'Battery Timer Estimate Reached',
-          body: `${slot.size} battery timer estimate reached its target. Check the battery and charger; this app cannot detect actual charge.`,
+          body: `${slot.label}: timer estimate reached its target. Check the battery and charger; this app cannot detect actual charge.`,
           schedule: {
             at: new Date(Math.max(slot.startTime + (slot.totalSec * 1000), Date.now() + 1000)),
-            isExactNotification: false
+            isExactNotification: false,
+            allowWhileIdle: true
           },
+          ...(platform === 'android' ? { channelId: TIMER_NOTIFICATION_CHANNEL_ID } : {}),
           extra: { voltGuardNotification: 'charge-estimate', slotId: slot.id }
         }));
 
@@ -2133,7 +2174,6 @@ export default function App() {
       const now = Date.now();
       setActiveSlots(prevSlots => {
         let changed = false;
-        let alarmNeeded = false;
 
         const updated = prevSlots.map(slot => {
           if (slot.status !== 'charging') return slot;
@@ -2149,7 +2189,6 @@ export default function App() {
           if (elapsedSec >= totalDurationSec && !slot.alertTriggered) {
             alertTriggered = true;
             newStatus = 'completed';
-            alarmNeeded = true;
 
             if (!isNativeApp && settings.pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
               const notificationOptions = {
@@ -2186,10 +2225,6 @@ export default function App() {
           return slot;
         });
 
-        if (alarmNeeded) {
-          triggerContinuousAlarmSound(settings.selectedAlarmId);
-        }
-
         return changed ? updated : prevSlots;
       });
     }, 1000);
@@ -2204,26 +2239,150 @@ export default function App() {
           const permission = await LocalNotifications.requestPermissions();
           setNativeNotificationsGranted(permission.display);
           setSettings(s => ({ ...s, pushNotifications: permission.display === 'granted' }));
+          return permission.display === 'granted';
         } catch (error) {
           console.error('Native notification permission request failed:', error);
           setSettings(s => ({ ...s, pushNotifications: false }));
+          return false;
         }
-        return;
       }
       if (notificationsAvailable) {
-        Notification.requestPermission().then(permission => {
+        try {
+          const permission = await Notification.requestPermission();
           setSettings(s => ({ ...s, pushNotifications: permission === 'granted' }));
-        }).catch(error => {
+          return permission === 'granted';
+        } catch (error) {
           console.error('Notification permission request failed:', error);
           setSettings(s => ({ ...s, pushNotifications: false }));
-        });
+          return false;
+        }
       } else {
         setSettings(s => ({ ...s, pushNotifications: false }));
       }
     } else {
       setSettings(s => ({ ...s, pushNotifications: false }));
     }
+    return false;
   };
+
+  const finishNotificationOnboarding = () => {
+    try {
+      localStorage.setItem(NOTIFICATION_ONBOARDING_STORAGE_KEY, 'true');
+    } catch (error) {
+      console.error('Could not save notification onboarding status:', error);
+    }
+    setNotificationOnboardingVisible(false);
+  };
+
+  const handleNotificationOnboardingEnable = async () => {
+    setNotificationOnboardingBusy(true);
+    try {
+      await requestNotificationPermission(true);
+    } finally {
+      finishNotificationOnboarding();
+      setNotificationOnboardingBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!termsAccepted || (isNativeApp && nativeNotificationsGranted === null)) return;
+    try {
+      if (localStorage.getItem(NOTIFICATION_ONBOARDING_STORAGE_KEY) === 'true') return;
+      if (notificationsGranted) {
+        localStorage.setItem(NOTIFICATION_ONBOARDING_STORAGE_KEY, 'true');
+        return;
+      }
+      setNotificationOnboardingVisible(true);
+    } catch (error) {
+      console.error('Could not read notification onboarding status:', error);
+      setNotificationOnboardingVisible(true);
+    }
+  }, [isNativeApp, nativeNotificationsGranted, notificationsGranted, termsAccepted]);
+
+  useEffect(() => {
+    if (!termsAccepted) return undefined;
+    let active = true;
+    const checkForHigherVersion = async () => {
+      try {
+        const manifestUrl = isNativeApp
+          ? APP_UPDATE_MANIFEST_URL
+          : getAppAssetUrl('app-version.json');
+        if (!manifestUrl) {
+          console.warn('Native update checks are unavailable until VITE_APP_UPDATE_MANIFEST_URL is configured.');
+          return;
+        }
+        const parsedManifestUrl = new URL(manifestUrl, window.location.href);
+        if (isNativeApp && parsedManifestUrl.protocol !== 'https:') {
+          throw new Error('The native app update manifest URL must use HTTPS.');
+        }
+        const response = await fetch(parsedManifestUrl.href, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Update manifest request failed with status ${response.status}.`);
+        const manifest = await response.json();
+        if (typeof manifest.version !== 'string' || typeof manifest.summary !== 'string') {
+          throw new Error('The app update manifest must include a version and summary.');
+        }
+        const comparison = compareAppVersions(manifest.version, APP_VERSION);
+        if (comparison === null) throw new Error('The app update manifest contains an invalid version.');
+        if (!active || comparison <= 0) return;
+
+        const release = { version: manifest.version, summary: manifest.summary };
+        setLatestAvailableRelease(release);
+        setAppUpdateNotice(current => {
+          const currentComparison = current ? compareAppVersions(current.version, release.version) : null;
+          return !current || currentComparison === null || currentComparison < 0 ? release : current;
+        });
+      } catch (error) {
+        console.error('Could not check the published app version:', error);
+      }
+    };
+    checkForHigherVersion();
+    return () => { active = false; };
+  }, [isNativeApp, termsAccepted]);
+
+  useEffect(() => {
+    if (!latestAvailableRelease || updateNotificationSentRef.current ||
+        !settings.pushNotifications || !notificationsGranted) return;
+    updateNotificationSentRef.current = true;
+    const notifyAboutUpdate = async () => {
+      try {
+        const notifiedVersion = localStorage.getItem(APP_UPDATE_NOTIFIED_VERSION_STORAGE_KEY);
+        const notifiedVersionComparison = compareAppVersions(notifiedVersion, latestAvailableRelease.version);
+        if (notifiedVersionComparison !== null && notifiedVersionComparison >= 0) return;
+
+        const title = t('appUpdateNotificationTitle');
+        if (isNativeApp) {
+          const result = await LocalNotifications.schedule({
+            notifications: [{
+              id: getNativeNotificationId(`app-update-${latestAvailableRelease.version}`),
+              title,
+              body: `${latestAvailableRelease.version}: ${latestAvailableRelease.summary}`,
+              schedule: { at: new Date(Date.now() + 1000), isExactNotification: false },
+              extra: { voltGuardNotification: 'app-update', version: latestAvailableRelease.version }
+            }]
+          });
+          if (result.warning) console.warn('The app update notification may be delayed:', result.warning.message);
+        } else {
+          const options = {
+            body: `${latestAvailableRelease.version}: ${latestAvailableRelease.summary}`,
+            icon: getAppAssetUrl('icons/icon-192.png'),
+            tag: `app-update-${latestAvailableRelease.version}`,
+            data: { url: getAppAssetUrl('') }
+          };
+          const registration = 'serviceWorker' in navigator
+            ? await navigator.serviceWorker.getRegistration()
+            : null;
+          if (registration) await registration.showNotification(title, options);
+          else new Notification(title, options);
+        }
+        localStorage.setItem(APP_UPDATE_NOTIFIED_VERSION_STORAGE_KEY, latestAvailableRelease.version);
+      } catch (error) {
+        updateNotificationSentRef.current = false;
+        console.error('Could not send the app update notification:', error);
+      }
+    };
+    notifyAboutUpdate();
+    return undefined;
+  }, [isNativeApp, latestAvailableRelease, notificationsGranted, settings.pushNotifications]);
 
   const calculateChargeTime = (size, capacity, initialCharge, efficiency, targetMode) => {
     const baseCurrent = getChargerCurrentMa(currentCharger, { size, type: newSlotForm.type });
@@ -2801,7 +2960,6 @@ export default function App() {
 
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased pb-36 selection:bg-blue-500 selection:text-white pt-[env(safe-area-inset-top)]">
-      <audio ref={alarmAudioRef} src={getAppAssetUrl('alarm.mp3')} preload="auto" loop playsInline />
       
       <style>{`
         @keyframes jiggle {
@@ -3500,7 +3658,7 @@ export default function App() {
                     </div>
                     <div>
                       <span className="font-bold text-slate-200 text-sm block">WhatsApp ID</span>
-                      <span className="text-slate-400 font-mono">{APP_LINKS.contact.whatsappPhone}</span>
+                      <span className="text-slate-400 font-mono">@{APP_LINKS.contact.whatsappUsername}</span>
                     </div>
                   </div>
                   <span className="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-full border border-emerald-500/30 font-semibold">Chat Now</span>
@@ -3551,13 +3709,25 @@ export default function App() {
                     <span className="font-black bg-emerald-500 text-slate-950 px-3 py-1 rounded-full text-[10px]">SUPPORTER</span>
                   </div>
                 ) : (
-                  <button 
-                    onClick={() => setIsPaymentModalOpen(true)}
-                    className="w-full bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-extrabold text-xs sm:text-sm py-4 rounded-2xl shadow-xl shadow-rose-500/30 transform hover:scale-[1.02] active:scale-98 transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer backdrop-blur-xl border border-rose-400/30"
-                  >
-                    <Heart className="w-4 h-4 fill-current" />
-                    <span>{t('donateButton')}</span>
-                  </button>
+                  <div className={`grid gap-3 ${APP_LINKS.payments.paypal ? 'sm:grid-cols-2' : ''}`}>
+                    {APP_LINKS.payments.paypal && (
+                      <button
+                        type="button"
+                        onClick={handleDirectPaypalDonation}
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs sm:text-sm py-4 rounded-2xl shadow-xl shadow-blue-500/30 transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer border border-blue-400/30"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                        <span>{t('payWithPaypal')}</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setIsPaymentModalOpen(true)}
+                      className="w-full bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-extrabold text-xs sm:text-sm py-4 rounded-2xl shadow-xl shadow-rose-500/30 transform hover:scale-[1.02] active:scale-98 transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer backdrop-blur-xl border border-rose-400/30"
+                    >
+                      <Heart className="w-4 h-4 fill-current" />
+                      <span>{t('donateOptionsButton')}</span>
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -3582,7 +3752,7 @@ export default function App() {
                     onChange={(e) => { 
                       const val = e.target.checked;
                       setSettings({ ...settings, audioAlerts: val }); 
-                      if (val) triggerContinuousAlarmSound(settings.selectedAlarmId); 
+                      if (!val) stopContinuousAlarmSound();
                     }} 
                     className="w-5 h-5 accent-blue-600 rounded cursor-pointer" 
                   />
@@ -3595,8 +3765,9 @@ export default function App() {
                       <span className="text-[11px] text-slate-400">Choose which alarm sound plays when the timer hits target.</span>
                     </div>
                     <button 
+                      disabled={!settings.audioAlerts}
                       onClick={() => playSingleAlarmBurst(settings.selectedAlarmId)}
-                      className="bg-blue-600/90 hover:bg-blue-500 backdrop-blur-xl text-white font-semibold text-[11px] px-4 py-2 rounded-xl shadow transition flex items-center space-x-1 rtl:space-x-reverse cursor-pointer border border-blue-400/30"
+                      className="bg-blue-600/90 hover:bg-blue-500 backdrop-blur-xl text-white font-semibold text-[11px] px-4 py-2 rounded-xl shadow transition flex items-center space-x-1 rtl:space-x-reverse cursor-pointer border border-blue-400/30 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                       <span>Test Sound</span>
@@ -3719,7 +3890,13 @@ export default function App() {
                     {APP_RELEASE_HISTORY.map(release => (
                       <li key={release.version} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
                         <p className="text-xs font-bold text-cyan-300">{release.version}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-slate-400">{release.summary}</p>
+                        {release.changes ? (
+                          <ul className="mt-1 list-disc space-y-1 pl-5 text-xs leading-relaxed text-slate-400">
+                            {release.changes.map(change => <li key={change}>{change}</li>)}
+                          </ul>
+                        ) : (
+                          <p className="mt-1 text-xs leading-relaxed text-slate-400">{release.summary}</p>
+                        )}
                       </li>
                     ))}
                   </ol>
@@ -3859,7 +4036,52 @@ export default function App() {
 
       </main>
 
-      {appUpdateNotice && (
+      {notificationOnboardingVisible && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-xl">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="notification-onboarding-title"
+            aria-describedby="notification-onboarding-description"
+            className="w-full max-w-lg space-y-5 rounded-3xl border border-blue-500/30 bg-slate-900 p-6 shadow-2xl sm:p-8"
+          >
+            <div className="flex items-start gap-3">
+              <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 p-3 text-blue-300">
+                <Bell className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 id="notification-onboarding-title" className="text-lg font-extrabold text-slate-100">
+                  {t('notificationOnboardingTitle')}
+                </h2>
+                <p id="notification-onboarding-description" className="mt-1 text-sm leading-relaxed text-slate-300">
+                  {t('notificationOnboardingDescription')}
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                autoFocus
+                disabled={notificationOnboardingBusy || !notificationsAvailable}
+                onClick={handleNotificationOnboardingEnable}
+                className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-500 disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+              >
+                {t('notificationOnboardingEnable')}
+              </button>
+              <button
+                type="button"
+                disabled={notificationOnboardingBusy}
+                onClick={finishNotificationOnboarding}
+                className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-bold text-slate-200 hover:bg-slate-700 disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+              >
+                {t('notificationOnboardingLater')}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {appUpdateNotice && !notificationOnboardingVisible && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-xl">
           <section
             role="dialog"

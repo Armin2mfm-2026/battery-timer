@@ -41,13 +41,31 @@ web-code update mechanism for the native binaries.
 
 ## Release checklist
 
-1. Update `version` in `package.json` (and let npm update the lockfile).
-2. Add the user-facing summary for that version to `APP_RELEASES` in
-   `src/App.jsx`.
+1. Update `version` in `package.json` and `package-lock.json`.
+2. Add the user-facing summary and any bullet-point changes for that version to
+   `APP_RELEASE_HISTORY` in
+   `src/config/appReleases.js` and update `public/app-version.json` to that
+   release. The settings page reads its version history from this file.
 3. Build and sync with `npm run build:native`. This maps the package version to
    the Android version name and both stores' build numbers.
 4. Build and test both native projects, sign, and upload the release binaries.
-5. Deploy the PWA from the same commit.
+5. Deploy the PWA and the version manifest from the same release.
+
+The PWA checks `public/app-version.json` on its own origin. Native builds need
+`VITE_APP_UPDATE_MANIFEST_URL` set to the publisher's HTTPS manifest URL before
+building; ensure that endpoint permits cross-origin reads if hosted on a
+different origin. When a higher version is found, the app shows an update
+dialog and, if notifications are enabled and permitted, sends a local device
+notification. This is not remote push delivery; remote push requires a
+separately configured push provider and backend.
+
+Native timer-completion notifications are scheduled with the operating system
+when a timer starts, so they can appear in the system notification center while
+the app is backgrounded or the screen is locked. Users must grant notification
+permission and leave notifications enabled. Android may still delay inexact
+alarms due to device power policies. A browser/PWA cannot schedule a local
+notification after its page is suspended; background PWA delivery requires a
+remote push service and backend.
 
 Set `VITE_IOS_APP_STORE_URL` and `VITE_ANDROID_PLAY_STORE_URL` to the published
 store listing URLs before building store binaries. Until then, the update action
