@@ -1117,11 +1117,11 @@ const GLOBAL_BATTERY_PRESETS = [
 ];
 
 const GLOBAL_CHARGER_PRESETS = [
-  { name: 'Panasonic BQ-CC55 Smart Fast Charger (4 Slots)', aaCurrentMa: 750, aaaCurrentMa: 375, slotCount: 4, isPaired: false, supported_slot_types: ['AA/AAA Combined'], notes: 'Smart individual slot peak detection' },
-  { name: 'Nitecore D4 Digital Super Charger (4 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 4, isPaired: false, supported_slot_types: ['AA', 'AAA', '18650', 'C', 'D'], notes: 'Multi-chemistry universal charger' },
-  { name: 'Xtar VC4SL USB-C Charger (4 Slots)', aaCurrentMa: 1000, aaaCurrentMa: 500, slotCount: 4, isPaired: false, supported_slot_types: ['AA', 'AAA', '18650'], notes: 'Quick charge support with capacity test' },
-  { name: 'Basic 4-Slot Paired NiMH Charger', aaCurrentMa: 300, aaaCurrentMa: 150, slotCount: 4, isPaired: true, supported_slot_types: ['AA/AAA Combined'], notes: 'Shares current across slot pairs (1&2, 3&4)' },
-  { name: 'EBL 8-Bay Universal Rapid Charger (8 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 8, isPaired: false, supported_slot_types: ['AA', 'AAA', 'C', 'D'], notes: 'Independent 8-bay multi-size charger' }
+  { name: 'Panasonic BQ-CC55 Smart Fast Charger (4 Slots)', aaCurrentMa: 750, aaaCurrentMa: 375, slotCount: 4, isPaired: false, supported_slot_types: ['AA/AAA Combined'], supported_battery_types: ['NiMH'], notes: 'Smart individual slot peak detection' },
+  { name: 'Nitecore D4 Digital Super Charger (4 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 4, isPaired: false, supported_slot_types: ['AA', 'AAA', '18650', 'C', 'D'], supported_battery_types: ['NiMH', 'NiCd', 'Li-ion'], notes: 'Multi-chemistry universal charger' },
+  { name: 'Xtar VC4SL USB-C Charger (4 Slots)', aaCurrentMa: 1000, aaaCurrentMa: 500, slotCount: 4, isPaired: false, supported_slot_types: ['AA', 'AAA', '18650'], supported_battery_types: ['NiMH', 'Li-ion'], notes: 'Quick charge support with capacity test' },
+  { name: 'Basic 4-Slot Paired NiMH Charger', aaCurrentMa: 300, aaaCurrentMa: 150, slotCount: 4, isPaired: true, supported_slot_types: ['AA/AAA Combined'], supported_battery_types: ['NiMH'], notes: 'Shares current across slot pairs (1&2, 3&4)' },
+  { name: 'EBL 8-Bay Universal Rapid Charger (8 Slots)', aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 8, isPaired: false, supported_slot_types: ['AA', 'AAA', 'C', 'D'], supported_battery_types: ['NiMH'], notes: 'Independent 8-bay multi-size charger' }
 ];
 
 // --- SLOT DISTINCT COLOR THEMES ---
@@ -1142,7 +1142,7 @@ const INITIAL_CHARGERS = [
     name: 'Panasonic BQ-CC55 (Smart Fast Charger)',
     inputV: 100, inputVMax: 240, inputA: 0.3, inputHz: '50/60Hz',
     outputV: 1.5, aaCurrentMa: 750, aaaCurrentMa: 375, slotCount: 4, isPaired: false,
-    supported_slot_types: ['AA/AAA Combined'],
+    supported_slot_types: ['AA/AAA Combined'], supported_battery_types: ['NiMH'],
     notes: 'Smart individual slot charging with peak detection'
   },
   {
@@ -1150,7 +1150,7 @@ const INITIAL_CHARGERS = [
     name: 'Basic 4-Slot Paired NiMH Charger',
     inputV: 120, inputVMax: 240, inputA: 0.15, inputHz: '60Hz',
     outputV: 2.8, aaCurrentMa: 300, aaaCurrentMa: 150, slotCount: 4, isPaired: true,
-    supported_slot_types: ['AA/AAA Combined'],
+    supported_slot_types: ['AA/AAA Combined'], supported_battery_types: ['NiMH'],
     notes: 'Shares current across slot pairs (1&2, 3&4)'
   },
   {
@@ -1158,7 +1158,7 @@ const INITIAL_CHARGERS = [
     name: 'Nitecore D4 Digital Super Charger',
     inputV: 100, inputVMax: 240, inputA: 0.5, inputHz: '50/60Hz',
     outputV: 4.2, aaCurrentMa: 500, aaaCurrentMa: 250, slotCount: 4, isPaired: false,
-    supported_slot_types: ['AA', 'AAA', '18650', 'C', 'D'],
+    supported_slot_types: ['AA', 'AAA', '18650', 'C', 'D'], supported_battery_types: ['NiMH', 'NiCd', 'Li-ion'],
     notes: 'Multi-chemistry universal charger'
   }
 ];
@@ -1633,13 +1633,13 @@ export default function App() {
   // --- Charger Edit & Delete Validation ---
   const handleAttemptEditCharger = (charger) => {
     if (activeSlots.length > 0 && charger.id === activeChargerId) {
-      setGlobalErrorMsg(t('errorChargerInUse'));
-      setTimeout(() => setGlobalErrorMsg(''), 4000);
+      showGlobalError(t('errorChargerInUse'));
       return;
     }
     setEditingCharger({
       ...charger,
-      supported_slot_types: charger.supported_slot_types || ['AA/AAA Combined']
+      supported_slot_types: charger.supported_slot_types || ['AA/AAA Combined'],
+      supported_battery_types: getSupportedBatteryChemistries(charger)
     });
     setChargerErrors({});
     setIsChargerModalOpen(true);
@@ -1886,12 +1886,15 @@ export default function App() {
   };
 
   const handleOpenAddSlotModal = (slotIndex = null) => {
+    addSlotTriggerRef.current = document.activeElement;
     setSelectedBatteryProfileId('');
     setTargetSlotIndex(typeof slotIndex === 'number' ? slotIndex : null);
     
+    const compatibleSizes = currentCharger.supported_slot_types || ['AA/AAA Combined'];
+    const supportedChemistries = getSupportedBatteryChemistries(currentCharger);
     let initialSize = 'AA';
-    if (currentCharger.supported_slot_types && currentCharger.supported_slot_types.length > 0) {
-      const types = currentCharger.supported_slot_types;
+    if (compatibleSizes.length > 0) {
+      const types = compatibleSizes;
       if (types.includes('AA/AAA Combined') || types.includes('AA')) {
         initialSize = 'AA';
       } else if (types.includes('AAA')) {
@@ -1908,7 +1911,7 @@ export default function App() {
     setNewSlotForm({
       slotLabel: '',
       size: initialSize,
-      type: 'NiMH',
+      type: supportedChemistries[0] || 'NiMH',
       capacity: '',
       voltage: '',
       initialCharge: 0,
@@ -1919,11 +1922,39 @@ export default function App() {
     setIsAddModalOpen(true);
   };
 
+  const handleCloseAddSlotModal = () => {
+    setIsAddModalOpen(false);
+    window.requestAnimationFrame(() => addSlotTriggerRef.current?.focus());
+  };
+
+  useEffect(() => {
+    if (!isAddModalOpen) return undefined;
+    const dialog = addSlotModalRef.current;
+    const focusable = dialog?.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    focusable?.[0]?.focus();
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handleCloseAddSlotModal();
+        return;
+      }
+      if (event.key !== 'Tab' || !focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isAddModalOpen]);
+
   const compatibleBatteryProfiles = useMemo(() => {
-    if (!currentCharger.supported_slot_types || currentCharger.supported_slot_types.length === 0) {
-      return batteryProfiles;
-    }
-    return batteryProfiles.filter(p => isBatteryCompatibleWithSlot(p.size, currentCharger.supported_slot_types));
+    return batteryProfiles.filter(profile => isBatteryCompatibleWithCharger(profile, currentCharger));
   }, [batteryProfiles, currentCharger]);
 
   const handleBatteryProfileSelect = (e) => {
@@ -1931,13 +1962,13 @@ export default function App() {
     setSelectedBatteryProfileId(pId);
     setAddSlotError('');
     if (!pId) {
-      setNewSlotForm(prev => ({ ...prev, slotLabel: '', capacity: '', voltage: '' }));
       return;
     }
     const p = batteryProfiles.find(item => item.id === pId);
     if (p) {
-      if (!isBatteryCompatibleWithSlot(p.size, currentCharger.supported_slot_types)) {
+      if (!isBatteryCompatibleWithCharger(p, currentCharger)) {
         setAddSlotError(t('errorIncompatibleBattery'));
+        return;
       }
       setNewSlotForm(prev => ({
         ...prev,
@@ -1953,27 +1984,23 @@ export default function App() {
   const handleSlotFormChange = (field, val) => {
     setNewSlotForm(prev => {
       const updated = { ...prev, [field]: val };
-      if (field === 'size') {
-        if (!isBatteryCompatibleWithSlot(val, currentCharger.supported_slot_types)) {
+      if (field === 'type' && !isBatteryCompatibleWithCharger(updated, currentCharger)) {
+        const voltageRange = getNominalVoltageRange(updated.type);
+        if (Number(updated.voltage) < voltageRange.min || Number(updated.voltage) > voltageRange.max) {
+          updated.voltage = voltageRange.defaultValue;
+        }
+        const nextCompatibleSize = AVAILABLE_SLOT_TYPES.find(size =>
+          size !== 'AA/AAA Combined' &&
+          isBatteryCompatibleWithCharger({ ...updated, size }, currentCharger)
+        );
+        if (nextCompatibleSize) updated.size = nextCompatibleSize;
+      }
+      if (field === 'size' || field === 'type') {
+        if (!isBatteryCompatibleWithCharger(updated, currentCharger)) {
           setAddSlotError(t('errorIncompatibleBattery'));
         } else {
           setAddSlotError('');
         }
-      }
-      if (selectedBatteryProfileId) {
-        setBatteryProfiles(profiles => profiles.map(p => {
-          if (p.id === selectedBatteryProfileId) {
-            return {
-              ...p,
-              name: field === 'slotLabel' ? val : p.name,
-              size: field === 'size' ? val : p.size,
-              type: field === 'type' ? val : p.type,
-              capacity: field === 'capacity' ? Number(val) || 0 : p.capacity,
-              voltage: field === 'voltage' ? Number(val) || 0 : p.voltage
-            };
-          }
-          return p;
-        }));
       }
       return updated;
     });
@@ -1994,9 +2021,16 @@ export default function App() {
       return;
     }
 
-    if (!isBatteryCompatibleWithSlot(newSlotForm.size, currentCharger.supported_slot_types)) {
+    if (!isBatteryCompatibleWithCharger(newSlotForm, currentCharger)) {
       setAddSlotError(t('errorIncompatibleBattery'));
       return;
+    }
+    if (selectedBatteryProfileId) {
+      const selectedProfile = batteryProfiles.find(profile => profile.id === selectedBatteryProfileId);
+      if (!isBatteryCompatibleWithCharger(selectedProfile, currentCharger)) {
+        setAddSlotError(t('errorIncompatibleBattery'));
+        return;
+      }
     }
 
     const slotCount = currentCharger.slotCount || 4;
@@ -2169,6 +2203,7 @@ export default function App() {
       slotCount: 4,
       isPaired: false,
       supported_slot_types: ['AA/AAA Combined'],
+      supported_battery_types: ['NiMH'],
       notes: ''
     });
     setChargerErrors({});
@@ -2188,6 +2223,16 @@ export default function App() {
     });
   };
 
+  const handleToggleChargerChemistry = (chemistry) => {
+    setEditingCharger(prev => {
+      const currentTypes = prev.supported_battery_types || [];
+      const supportedTypes = currentTypes.includes(chemistry)
+        ? currentTypes.filter(type => type !== chemistry)
+        : [...currentTypes, chemistry];
+      return { ...prev, supported_battery_types: supportedTypes };
+    });
+  };
+
   const handleSaveCharger = (e) => {
     e.preventDefault();
     if (!editingCharger) return;
@@ -2198,6 +2243,9 @@ export default function App() {
     if (!editingCharger.slotCount || editingCharger.slotCount <= 0) errors.slotCount = 'Slot count must be at least 1.';
     if (!editingCharger.supported_slot_types || editingCharger.supported_slot_types.length === 0) {
       errors.supported_slot_types = 'At least one supported slot type must be selected.';
+    }
+    if (!editingCharger.supported_battery_types || editingCharger.supported_battery_types.length === 0) {
+      errors.supported_battery_types = 'At least one rechargeable battery chemistry must be selected.';
     }
 
     if (Object.keys(errors).length === 0) {
@@ -2851,6 +2899,16 @@ export default function App() {
                             {slotTypes.map((type, idx) => (
                               <span key={idx} className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-500/15 text-cyan-300 border border-cyan-500/30">
                                 {type}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">Supported rechargeable chemistries:</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {getSupportedBatteryChemistries(c).map(chemistry => (
+                              <span key={chemistry} className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                {chemistry}
                               </span>
                             ))}
                           </div>
@@ -3559,6 +3617,7 @@ export default function App() {
                         slotCount: preset.slotCount,
                         isPaired: preset.isPaired,
                         supported_slot_types: preset.supported_slot_types || ['AA/AAA Combined'],
+                        supported_battery_types: preset.supported_battery_types || ['NiMH'],
                         notes: preset.notes
                       });
                     }
@@ -3610,6 +3669,33 @@ export default function App() {
                   })}
                 </div>
                 {chargerErrors.supported_slot_types && <span className="text-[10px] text-red-400 mt-1 block">{chargerErrors.supported_slot_types}</span>}
+              </div>
+
+              <div className="p-4 bg-slate-950/80 border border-slate-800/90 rounded-2xl space-y-2.5">
+                <label className="block text-xs font-bold text-cyan-400">Supported rechargeable chemistries *</label>
+                <p className="text-[11px] text-slate-400">Select only chemistries explicitly supported by the charger manufacturer. Primary/alkaline cells are never offered for charging.</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                  {AVAILABLE_BATTERY_CHEMISTRIES.map(chemistry => {
+                    const isSelected = (editingCharger.supported_battery_types || []).includes(chemistry);
+                    return (
+                      <button
+                        type="button"
+                        key={chemistry}
+                        onClick={() => handleToggleChargerChemistry(chemistry)}
+                        aria-pressed={isSelected}
+                        className={`p-2.5 rounded-xl border text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-600/35 border-blue-500 text-cyan-200 shadow-md'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                        }`}
+                      >
+                        <span>{chemistry}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                {chargerErrors.supported_battery_types && <span className="text-[10px] text-red-400 mt-1 block">{chargerErrors.supported_battery_types}</span>}
               </div>
 
               <div className="grid grid-cols-3 gap-3">
