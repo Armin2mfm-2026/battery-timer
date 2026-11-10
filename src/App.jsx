@@ -1399,6 +1399,19 @@ export default function App() {
   const [batteryProfileErrors, setBatteryProfileErrors] = useState({});
   const [chargerErrors, setChargerErrors] = useState({});
   const [globalErrorMsg, setGlobalErrorMsg] = useState('');
+  const globalErrorTimeoutRef = useRef(null);
+  const addSlotModalRef = useRef(null);
+  const addSlotTriggerRef = useRef(null);
+  const notificationsAvailable = typeof window !== 'undefined' && 'Notification' in window;
+
+  const showGlobalError = (message) => {
+    setGlobalErrorMsg(message);
+    if (globalErrorTimeoutRef.current) window.clearTimeout(globalErrorTimeoutRef.current);
+    globalErrorTimeoutRef.current = window.setTimeout(() => {
+      setGlobalErrorMsg('');
+      globalErrorTimeoutRef.current = null;
+    }, 4000);
+  };
 
   const [newSlotForm, setNewSlotForm] = useState({
     slotLabel: '',
@@ -2363,7 +2376,7 @@ export default function App() {
       `}</style>
 
       {globalErrorMsg && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 rtl:space-x-reverse animate-bounce border border-red-400">
+        <div role="alert" aria-live="assertive" className="fixed top-20 left-1/2 -translate-x-1/2 z-[60] bg-red-600 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 rtl:space-x-reverse animate-bounce border border-red-400">
           <ShieldAlert className="w-5 h-5 shrink-0" />
           <span>{globalErrorMsg}</span>
         </div>
@@ -2371,7 +2384,7 @@ export default function App() {
 
       {/* HEADER BAR */}
       <header className="sticky top-0 z-40 bg-slate-900/60 backdrop-blur-2xl border-b border-slate-800/80 px-4 py-3.5 sm:px-8 shadow-2xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-all duration-300 border border-cyan-400/30">
               <Zap className="w-6 h-6 text-white animate-pulse" />
@@ -2387,13 +2400,13 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 rtl:space-x-reverse">
-            <div className="flex items-center space-x-1.5 rtl:space-x-reverse bg-slate-900/80 backdrop-blur-xl px-3 py-2 rounded-2xl border border-slate-700/80 shadow-lg hover:border-cyan-500/50 transition-colors">
+          <div className="flex min-w-0 items-center justify-end space-x-3 rtl:space-x-reverse">
+            <div className="flex min-w-0 max-w-full items-center space-x-1.5 rtl:space-x-reverse bg-slate-900/80 backdrop-blur-xl px-3 py-2 rounded-2xl border border-slate-700/80 shadow-lg hover:border-cyan-500/50 transition-colors">
               <Globe className="w-4 h-4 text-cyan-400" />
               <select
                 value={settings.language}
                 onChange={(e) => setSettings({ ...settings, language: e.target.value })}
-                className="bg-transparent text-xs text-cyan-300 font-bold border-0 focus:ring-0 cursor-pointer outline-none"
+                className="min-w-0 max-w-full bg-transparent text-xs text-cyan-300 font-bold border-0 focus:ring-0 cursor-pointer outline-none"
               >
                 <option value="en" className="bg-slate-900">EN (English)</option>
                 <option value="fa" className="bg-slate-900">FA (فارسی)</option>
@@ -2559,13 +2572,13 @@ export default function App() {
 
                         <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
                           <span className="text-[10px] font-black uppercase bg-red-500/20 text-red-400 px-3 py-1 rounded-full border border-red-500/40 animate-pulse">
-                            Target Charge Reached
+                            {copy.completed}
                           </span>
                           <button 
                             onClick={() => handleRemoveSlot(slot.id, true)} 
                             className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 cursor-pointer border border-red-400/50"
                           >
-                            {t('stopCharge')}
+                            {copy.dismiss}
                           </button>
                         </div>
                       </div>
@@ -2643,7 +2656,7 @@ export default function App() {
                         <RefreshCw className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleRemoveSlot(slot.id, true)} className="flex-1 bg-slate-800/80 hover:bg-red-950/90 backdrop-blur-xl text-emerald-400 hover:text-red-300 font-semibold text-xs py-2.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-98 cursor-pointer shadow border border-slate-700/50">
-                        {t('stopCharge')}
+                        {copy.stopTimer}
                       </button>
                     </div>
                   </div>
@@ -3291,14 +3304,27 @@ export default function App() {
       {/* --- MODAL: ADD BATTERY SLOT --- */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/90 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <h2 className="text-base font-bold text-slate-100 mb-1">{t('addSlot')}</h2>
+          <div
+            ref={addSlotModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-battery-dialog-title"
+            aria-describedby="battery-safety-notice"
+            className="bg-slate-900/90 backdrop-blur-3xl border border-slate-800/90 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <h2 id="add-battery-dialog-title" className="text-base font-bold text-slate-100 mb-1">{t('addSlot')}</h2>
+              <button type="button" onClick={handleCloseAddSlotModal} aria-label={copy.cancel} className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
             <p className="text-xs text-cyan-400 font-medium mb-5">
-              Charger Compatible Types: {(currentCharger.supported_slot_types || ['AA/AAA Combined']).join(', ')}
+              {copy.chargerCompatible}: {(currentCharger.supported_slot_types || ['AA/AAA Combined']).join(', ')} · {getSupportedBatteryChemistries(currentCharger).join(', ')}
             </p>
+            <p id="battery-safety-notice" role="note" className="mb-4 rounded-xl border border-amber-500/40 bg-amber-950/40 p-3 text-[11px] leading-relaxed text-amber-100">{copy.safetyNotice}</p>
             
             {addSlotError && (
-              <div className="mb-4 p-3 bg-red-950/90 border border-red-500 text-red-300 text-xs rounded-2xl flex items-center space-x-2">
+              <div role="alert" className="mb-4 p-3 bg-red-950/90 border border-red-500 text-red-300 text-xs rounded-2xl flex items-center space-x-2">
                 <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
                 <span>{addSlotError}</span>
               </div>
@@ -3306,21 +3332,23 @@ export default function App() {
 
             <form onSubmit={handleAddSlotSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Select from Compatible Saved Battery Profiles</label>
-                <select value={selectedBatteryProfileId} onChange={handleBatteryProfileSelect} className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
-                  <option value="">-- Choose Compatible Battery Profile --</option>
+                <label htmlFor="saved-battery-profile" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.selectProfile}</label>
+                <select id="saved-battery-profile" value={selectedBatteryProfileId} onChange={handleBatteryProfileSelect} className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                  <option value="">{copy.chooseProfile}</option>
                   {compatibleBatteryProfiles.map(p => <option key={p.id} value={p.id}>{p.name} ({p.size}, {p.capacity}mAh)</option>)}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Slot Identification Label *</label>
+                <label htmlFor="battery-slot-label" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.slotLabel} *</label>
                 <input 
+                  id="battery-slot-label"
                   type="text" 
                   value={newSlotForm.slotLabel} 
                   onChange={(e) => handleSlotFormChange('slotLabel', e.target.value)} 
                   className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
                   placeholder="e.g. Living Room Remote Battery"
+                  readOnly={Boolean(selectedBatteryProfileId)}
                   required 
                 />
               </div>
@@ -3330,80 +3358,101 @@ export default function App() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
+                    disabled={Boolean(selectedBatteryProfileId)}
                     onClick={() => setNewSlotForm({ ...newSlotForm, targetMode: 'full' })}
-                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'full' ? 'bg-blue-600/35 border-blue-500 text-blue-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-60 ${newSlotForm.targetMode === 'full' ? 'bg-blue-600/35 border-blue-500 text-blue-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
                   >
                     <span>{t('fullCharge100')}</span>
                   </button>
                   <button
                     type="button"
+                    disabled={Boolean(selectedBatteryProfileId)}
                     onClick={() => setNewSlotForm({ ...newSlotForm, targetMode: 'half' })}
-                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'half' ? 'bg-amber-600/35 border-amber-500 text-amber-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-60 ${newSlotForm.targetMode === 'half' ? 'bg-amber-600/35 border-amber-500 text-amber-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
                   >
                     <span>{t('halfCharge50')}</span>
                   </button>
                 </div>
               </div>
 
+              <div>
+                <label htmlFor="battery-chemistry" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.chemistry} *</label>
+                <select
+                  id="battery-chemistry"
+                  value={newSlotForm.type}
+                  onChange={(e) => handleSlotFormChange('type', e.target.value)}
+                  disabled={Boolean(selectedBatteryProfileId)}
+                  className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 outline-none disabled:opacity-60"
+                >
+                  {getSupportedBatteryChemistries(currentCharger).map(chemistry => <option key={chemistry} value={chemistry}>{chemistry}</option>)}
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Capacity (mAh) *</label>
+                  <label htmlFor="battery-capacity" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.capacity} *</label>
                   <input 
+                    id="battery-capacity"
                     type="number" 
                     min="100" 
                     max="50000" 
                     value={newSlotForm.capacity} 
                     onChange={(e) => handleSlotFormChange('capacity', e.target.value)} 
                     className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
+                    readOnly={Boolean(selectedBatteryProfileId)}
                     required 
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Initial Charge %</label>
+                  <label htmlFor="battery-initial-charge" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.initialCharge}</label>
                   <input 
+                    id="battery-initial-charge"
                     type="number" 
                     min="0" 
                     max="95" 
                     value={newSlotForm.initialCharge} 
                     onChange={(e) => handleSlotFormChange('initialCharge', Number(e.target.value))} 
                     className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
+                    disabled={Boolean(selectedBatteryProfileId)}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Voltage (V) *</label>
+                  <label htmlFor="battery-voltage" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.voltage} *</label>
                   <input 
+                    id="battery-voltage"
                     type="number" 
                     step="0.1" 
-                    min="0.5" 
-                    max="5.0" 
+                    min={getNominalVoltageRange(newSlotForm.type).min}
+                    max={getNominalVoltageRange(newSlotForm.type).max}
                     value={newSlotForm.voltage} 
                     onChange={(e) => handleSlotFormChange('voltage', e.target.value)} 
                     className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
+                    readOnly={Boolean(selectedBatteryProfileId)}
                     required 
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Battery Size *</label>
+                  <label htmlFor="battery-size" className="block text-xs font-semibold text-slate-300 mb-1.5">{copy.batterySize} *</label>
                   <select 
+                    id="battery-size"
                     value={newSlotForm.size} 
                     onChange={(e) => handleSlotFormChange('size', e.target.value)}
+                    disabled={Boolean(selectedBatteryProfileId)}
                     className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 outline-none"
                   >
-                    <option value="AA">AA</option>
-                    <option value="AAA">AAA</option>
-                    <option value="18650">18650</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
+                    {AVAILABLE_SLOT_TYPES
+                      .filter(size => size !== 'AA/AAA Combined' && isBatteryCompatibleWithCharger({ size, type: newSlotForm.type, voltage: newSlotForm.voltage }, currentCharger))
+                      .map(size => <option key={size} value={size}>{size}</option>)}
                   </select>
                 </div>
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-slate-800/90">
-                <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-5 py-2.5 bg-slate-800/80 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/50">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">Start Timer</button>
+                <button type="button" onClick={handleCloseAddSlotModal} className="px-5 py-2.5 bg-slate-800/80 backdrop-blur-xl text-xs text-slate-300 font-semibold rounded-2xl hover:bg-slate-700 transition cursor-pointer border border-slate-700/50">{copy.cancel}</button>
+                <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-xs text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-cyan-400 transition cursor-pointer backdrop-blur-xl">{copy.startTimer}</button>
               </div>
             </form>
           </div>
