@@ -143,6 +143,7 @@ const TRANSLATIONS = {
     errorChargerExists: "Error: A charger with the same name and specifications already exists.",
     errorValidation: "Please fix all validation errors before submitting.",
     errorIncompatibleBattery: "Error: Selected battery size/type is incompatible with this charger slot.",
+    errorChargerCurrentMissing: "Add the per-slot charging current from the charger's manual to this charger profile before estimating this battery.",
     termsTitle: "Terms and Conditions",
     termsVersion: "Version",
     termsEffective: "Effective",
@@ -154,7 +155,7 @@ const TRANSLATIONS = {
     termsDeclinedTitle: "Terms not accepted",
     termsDeclinedMessage: "You cannot use the app without accepting the current Terms. Close this app or browser window, or review the Terms and choose again.",
     termsReview: "Review Terms",
-    termsStorageError: "Your acceptance could not be saved on this device. Enable browser storage and try again.",
+    termsStorageError: "Your acceptance could not be saved. You can continue this session, but these Terms will be shown again next time. Enable browser storage to remember your acceptance.",
     termsSettingsDescription: "Review the current terms and the version accepted on this device."
   },
   fa: {
@@ -1326,9 +1327,11 @@ export default function App() {
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [termsDeclined, setTermsDeclined] = useState(false);
   const [termsStorageError, setTermsStorageError] = useState(false);
+  const [termsExpanded, setTermsExpanded] = useState(false);
   const termsAccepted = termsAcceptance?.version === TERMS_VERSION;
   const termsCheckboxRef = useRef(null);
   const termsReviewButtonRef = useRef(null);
+  const termsSectionRef = useRef(null);
 
   // --- Backup & Restore UI States ---
   const [includeStatsInBackup, setIncludeStatsInBackup] = useState(true);
@@ -1543,6 +1546,19 @@ export default function App() {
   const copy = APP_COPY[settings.language] || APP_COPY.en;
 
   useEffect(() => {
+    setTermsExpanded(false);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (!termsExpanded) return undefined;
+    const collapseWhenClickingElsewhere = event => {
+      if (!termsSectionRef.current?.contains(event.target)) setTermsExpanded(false);
+    };
+    document.addEventListener('click', collapseWhenClickingElsewhere);
+    return () => document.removeEventListener('click', collapseWhenClickingElsewhere);
+  }, [termsExpanded]);
+
+  useEffect(() => {
     if (!termsAccepted) {
       if (termsDeclined) termsReviewButtonRef.current?.focus();
       else termsCheckboxRef.current?.focus();
@@ -1558,6 +1574,7 @@ export default function App() {
       setTermsStorageError(false);
     } catch (error) {
       console.error('Could not save Terms acceptance:', error);
+      setTermsAcceptance(acceptance);
       setTermsStorageError(true);
     }
   };
@@ -2547,7 +2564,12 @@ export default function App() {
               </div>
             ) : (
               <>
-                <div className="overflow-y-auto p-5 sm:p-7" tabIndex={0} aria-label={t('termsTitle')}>
+                <div
+                  className="overflow-y-auto p-5 sm:p-7"
+                  role="region"
+                  aria-label={t('termsTitle')}
+                  tabIndex={0}
+                >
                   {renderTermsDocument()}
                 </div>
                 <footer className="space-y-4 border-t border-slate-700 bg-slate-900 p-5 sm:p-7">
@@ -2561,11 +2583,6 @@ export default function App() {
                     />
                     <span>{t('termsAgreeCheckbox')}</span>
                   </label>
-                  {termsStorageError && (
-                    <p role="alert" className="rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-200">
-                      {t('termsStorageError')}
-                    </p>
-                  )}
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <button
                       type="button"
@@ -2626,6 +2643,12 @@ export default function App() {
           animation: pulse-blue 2s infinite;
         }
       `}</style>
+
+      {termsStorageError && (
+        <p role="status" className="mx-auto mt-4 max-w-4xl rounded-xl border border-amber-500/40 bg-amber-950/50 p-3 text-xs leading-relaxed text-amber-100">
+          {t('termsStorageError')}
+        </p>
+      )}
 
       {globalErrorMsg && (
         <div role="alert" aria-live="assertive" className="fixed top-20 left-1/2 -translate-x-1/2 z-[60] bg-red-600 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 rtl:space-x-reverse animate-bounce border border-red-400">
@@ -3454,23 +3477,35 @@ export default function App() {
             </div>
 
             {/* TERMS AND CONDITIONS */}
-            <section className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl" aria-labelledby="settings-terms-title">
-              <h2 id="settings-terms-title" className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
-                <ShieldCheck className="w-5 h-5 text-cyan-400" />
-                <span>{t('termsTitle')}</span>
-              </h2>
-              <p className="text-xs text-slate-400 leading-relaxed">{t('termsSettingsDescription')}</p>
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-xs text-slate-300">
+            <section ref={termsSectionRef} className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-2xl" aria-labelledby="settings-terms-title">
+              <button
+                type="button"
+                id="settings-terms-title"
+                aria-expanded={termsExpanded}
+                aria-controls="settings-terms-content"
+                onClick={() => setTermsExpanded(expanded => !expanded)}
+                className="flex w-full items-center justify-between gap-4 rounded-xl text-left rtl:text-right focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400"
+              >
+                <span className="flex items-center gap-3 text-base font-bold text-slate-100">
+                  <ShieldCheck className="h-5 w-5 shrink-0 text-cyan-400" />
+                  <span>{t('termsTitle')}</span>
+                </span>
+                <ChevronRight className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${termsExpanded ? 'rotate-90' : 'rtl:rotate-180'}`} />
+              </button>
+              <p className="mt-2 text-xs text-slate-400 leading-relaxed">{t('termsSettingsDescription')}</p>
+              <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-xs text-slate-300">
                 <span className="font-bold text-slate-100">{t('termsVersion')} {TERMS_VERSION}</span>
                 <span className="mx-2 text-slate-600">·</span>
                 <span>{t('termsEffective')} {TERMS_EFFECTIVE_DATE}</span>
                 {termsAcceptance?.acceptedAt && (
                   <p className="mt-2 text-slate-400">
-                    Accepted on this device: {new Date(termsAcceptance.acceptedAt).toLocaleString()}
+                    Accepted on this device: {new Date(termsAcceptance.acceptedAt).toLocaleString(settings.language)}
                   </p>
                 )}
               </div>
-              {renderTermsDocument()}
+              <div id="settings-terms-content" hidden={!termsExpanded} className="mt-6 border-t border-slate-800 pt-6">
+                {renderTermsDocument()}
+              </div>
             </section>
 
             {/* BACKUP & RESTORE SECTION */}
