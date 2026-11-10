@@ -1450,8 +1450,7 @@ export default function App() {
   // --- Charger Change Validation ---
   const handleAttemptChangeCharger = (newChargerId) => {
     if (activeSlots.length > 0) {
-      setGlobalErrorMsg(t('errorChargerInUse'));
-      setTimeout(() => setGlobalErrorMsg(''), 4000);
+      showGlobalError(t('errorChargerInUse'));
       return;
     }
     setActiveChargerId(newChargerId);
@@ -1474,8 +1473,7 @@ export default function App() {
 
   const handleAttemptDeleteCharger = (chargerId) => {
     if (activeSlots.length > 0 && chargerId === activeChargerId) {
-      setGlobalErrorMsg(t('errorChargerInUse'));
-      setTimeout(() => setGlobalErrorMsg(''), 4000);
+      showGlobalError(t('errorChargerInUse'));
       return;
     }
     setChargers(prev => prev.filter(item => item.id !== chargerId));
@@ -1487,8 +1485,7 @@ export default function App() {
       (slot.profileId === profile.id || slot.label === profile.name) && slot.status !== 'completed'
     );
     if (isCharging) {
-      setGlobalErrorMsg(t('errorProfileInUse'));
-      setTimeout(() => setGlobalErrorMsg(''), 4000);
+      showGlobalError(t('errorProfileInUse'));
       return;
     }
     setEditingBatteryProfile(profile);
@@ -1502,8 +1499,7 @@ export default function App() {
       (slot.profileId === profileId || slot.label === profile.name) && slot.status !== 'completed'
     );
     if (isCharging) {
-      setGlobalErrorMsg(t('errorProfileInUse'));
-      setTimeout(() => setGlobalErrorMsg(''), 4000);
+      showGlobalError(t('errorProfileInUse'));
       return;
     }
     setBatteryProfiles(prev => prev.filter(item => item.id !== profileId));
@@ -1583,7 +1579,7 @@ export default function App() {
       }, 1500);
     };
 
-    // Use public/alarm.mp4 as the primary looping alarm; Web Audio is the fallback.
+    // Use the bundled alarm audio first, with Web Audio as a fallback.
     const alarmAudio = alarmAudioRef.current;
     if (alarmAudio) {
       alarmAudio.loop = true;
@@ -1707,7 +1703,7 @@ export default function App() {
   };
 
   const calculateChargeTime = (size, capacity, initialCharge, efficiency, targetMode) => {
-    const baseCurrent = size === 'AA' ? currentCharger.aaCurrentMa : currentCharger.aaaCurrentMa;
+    const baseCurrent = size === 'AAA' ? currentCharger.aaaCurrentMa : currentCharger.aaCurrentMa;
     const targetPct = targetMode === 'half' ? 50 : 100;
     const netCapacityNeeded = capacity * Math.max(0.05, (targetPct / 100) - (initialCharge / 100));
     if (baseCurrent <= 0) return { totalSec: 3600, effectiveCurrentMa: baseCurrent };
@@ -1898,7 +1894,7 @@ export default function App() {
     };
 
     setActiveSlots(prev => [...prev, newSlot]);
-    setIsAddModalOpen(false);
+    handleCloseAddSlotModal();
     setSelectedBatteryProfileId('');
     setTargetSlotIndex(null);
     setAddSlotError('');
