@@ -2457,6 +2457,99 @@ export default function App() {
     };
   }, [batteryProfiles, history]);
 
+  if (!termsAccepted) {
+    const termsWereUpdated = Boolean(termsAcceptance?.version);
+    return (
+      <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased p-4 sm:p-8">
+        <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl items-center justify-center">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="terms-dialog-title"
+            aria-describedby="terms-gate-notice"
+            className="flex max-h-[calc(100vh-2rem)] w-full flex-col overflow-hidden rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl"
+          >
+            <header className="space-y-3 border-b border-slate-700 p-5 sm:p-7">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="h-6 w-6 shrink-0 text-cyan-400" />
+                <h1 id="terms-dialog-title" className="text-xl font-extrabold">{t('termsTitle')}</h1>
+              </div>
+              <p id="terms-gate-notice" className="text-sm leading-relaxed text-slate-300">
+                {termsWereUpdated ? t('termsUpdateNotice') : t('termsFirstUseNotice')}
+              </p>
+              <p className="text-xs text-slate-400">
+                {t('termsVersion')} {TERMS_VERSION} · {t('termsEffective')} {TERMS_EFFECTIVE_DATE}
+              </p>
+            </header>
+
+            {termsDeclined ? (
+              <div className="space-y-5 p-5 sm:p-7">
+                <div role="alert" className="rounded-2xl border border-amber-500/40 bg-amber-950/40 p-4 text-sm leading-relaxed text-amber-100">
+                  <h2 className="mb-2 font-bold">{t('termsDeclinedTitle')}</h2>
+                  <p>{t('termsDeclinedMessage')}</p>
+                </div>
+                <button
+                  ref={termsReviewButtonRef}
+                  type="button"
+                  onClick={() => {
+                    setTermsDeclined(false);
+                    setTermsAgreed(false);
+                  }}
+                  className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400"
+                >
+                  {t('termsReview')}
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="overflow-y-auto p-5 sm:p-7" tabIndex={0} aria-label={t('termsTitle')}>
+                  {renderTermsDocument()}
+                </div>
+                <footer className="space-y-4 border-t border-slate-700 bg-slate-900 p-5 sm:p-7">
+                  <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-slate-200">
+                    <input
+                      ref={termsCheckboxRef}
+                      type="checkbox"
+                      checked={termsAgreed}
+                      onChange={event => setTermsAgreed(event.target.checked)}
+                      className="mt-1 h-4 w-4 shrink-0 accent-cyan-500"
+                    />
+                    <span>{t('termsAgreeCheckbox')}</span>
+                  </label>
+                  {termsStorageError && (
+                    <p role="alert" className="rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-200">
+                      {t('termsStorageError')}
+                    </p>
+                  )}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTermsDeclined(true);
+                        setTermsAgreed(false);
+                      }}
+                      className="rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-slate-200 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400"
+                    >
+                      {t('termsDecline')}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!termsAgreed}
+                      onClick={acceptCurrentTerms}
+                      className="rounded-xl bg-cyan-600 px-4 py-3 text-sm font-extrabold text-white hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+                    >
+                      {t('termsAccept')}
+                    </button>
+                  </div>
+                </footer>
+              </>
+            )}
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased pb-36 selection:bg-blue-500 selection:text-white pt-[env(safe-area-inset-top)]">
       <audio ref={alarmAudioRef} src={getAppAssetUrl('alarm.mp3')} preload="auto" loop playsInline />
@@ -3314,6 +3407,27 @@ export default function App() {
 
               </div>
             </div>
+
+            {/* TERMS AND CONDITIONS */}
+            <section className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl" aria-labelledby="settings-terms-title">
+              <h2 id="settings-terms-title" className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
+                <ShieldCheck className="w-5 h-5 text-cyan-400" />
+                <span>{t('termsTitle')}</span>
+              </h2>
+              <p className="text-xs text-slate-400 leading-relaxed">{t('termsSettingsDescription')}</p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-xs text-slate-300">
+                <span className="font-bold text-slate-100">{t('termsVersion')} {TERMS_VERSION}</span>
+                <span className="mx-2 text-slate-600">·</span>
+                <span>{t('termsEffective')} {TERMS_EFFECTIVE_DATE}</span>
+                {termsAcceptance?.acceptedAt && (
+                  <p className="mt-2 text-slate-400">
+                    Accepted on this device: {new Date(termsAcceptance.acceptedAt).toLocaleString()}
+                  </p>
+                )}
+              </div>
+              {renderTermsDocument()}
+            </section>
+
             {/* BACKUP & RESTORE SECTION */}
             <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl">
               <h2 className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
