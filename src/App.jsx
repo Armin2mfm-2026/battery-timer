@@ -2124,11 +2124,13 @@ export default function App() {
     if (remainingCompletedSlots.length === 0) stopContinuousAlarmSound();
     const targetSlot = activeSlots.find(s => s.id === id);
     if (saveToHistory && targetSlot) {
+      const completed = targetSlot.status === 'completed';
       const historyItem = { 
         ...targetSlot, 
+        status: completed ? 'completed' : 'stopped',
         finishedAt: new Date().toISOString(), 
         actualChargeSec: targetSlot.elapsedSec,
-        overcharged: targetSlot.overchargeSec > 0
+        overcharged: completed && targetSlot.overchargeSec > 0
       };
       setHistory(h => [historyItem, ...h]);
     }
@@ -2291,19 +2293,19 @@ export default function App() {
   };
 
   const statisticsAnalytics = useMemo(() => {
-    const totalCycles = history.length;
-    const overchargeCount = history.filter(h => h.overchargeSec > 0 || h.overcharged).length;
+    const completedHistory = history.filter(item => item.status === 'completed');
+    const stoppedHistory = history.filter(item => item.status === 'stopped');
+    const totalCycles = completedHistory.length;
 
     const profileStats = batteryProfiles.map(p => {
       const priorMonths = p.condition === 'Used' 
         ? (p.priorUsageUnit === 'Years' ? (Number(p.priorUsageValue) || 0) * 12 : (Number(p.priorUsageValue) || 0)) 
         : 0;
-      const pCycles = history.filter(h => h.profileId === p.id || h.label === p.name).length;
+      const pCycles = completedHistory.filter(h => h.profileId === p.id || h.label === p.name).length;
       const soh = Math.max(15, Math.round(100 - (priorMonths * 0.65) - (pCycles * 0.18)));
       const currentCapacity = Math.round(p.capacity * (soh / 100));
       const fullRuntimeHours = ((currentCapacity / 500)).toFixed(1);
       const halfRuntimeHours = ((currentCapacity * 0.5 / 500)).toFixed(1);
-      const heatLossIndex = Math.round(12 + (100 - soh) * 0.45);
 
       return {
         ...p,
@@ -2312,8 +2314,7 @@ export default function App() {
         soh,
         currentCapacity,
         fullRuntimeHours,
-        halfRuntimeHours,
-        heatLossIndex
+        halfRuntimeHours
       };
     });
 
@@ -2323,7 +2324,7 @@ export default function App() {
 
     return {
       totalCycles,
-      overchargeCount,
+      stoppedTimerCount: stoppedHistory.length,
       profileStats,
       avgSoH
     };
@@ -2659,12 +2660,12 @@ export default function App() {
               <div>
                 <h2 className="text-xl font-extrabold text-slate-100 flex items-center space-x-2.5 rtl:space-x-reverse">
                   <TrendingUp className="text-cyan-400 w-6 h-6 animate-pulse" />
-                  <span>Battery Health Analytics & Statistics</span>
+                  <span>Battery Profile Estimates & Statistics</span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-1">Real-world electrochemistry degradation tracking, SoH estimation, and RUL runtime projections.</p>
+                <p className="text-xs text-slate-400 mt-1">{copy.modeledHealthDescription} {copy.runtimeEstimateDescription}</p>
               </div>
               <div className="px-5 py-3 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-inner flex items-center space-x-3 rtl:space-x-reverse">
-                <span className="text-xs text-slate-400 font-semibold">Average Fleet SoH:</span>
+                <span className="text-xs text-slate-400 font-semibold">{copy.modeledHealth}:</span>
                 <span className={`text-lg font-black font-mono ${statisticsAnalytics.avgSoH >= 80 ? 'text-emerald-400' : statisticsAnalytics.avgSoH >= 50 ? 'text-amber-400' : 'text-red-400'}`}>
                   {statisticsAnalytics.avgSoH}%
                 </span>
@@ -2691,29 +2692,27 @@ export default function App() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('chargeCycles')}</span>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{copy.completedTimerEstimates}</span>
                 <div className="text-3xl font-black text-cyan-400 font-mono">{statisticsAnalytics.totalCycles}</div>
-                <p className="text-[11px] text-slate-500">Cumulative completed charge cycles recorded across history logs.</p>
+                <p className="text-[11px] text-slate-500">{copy.modeledHealthDescription}</p>
               </div>
 
               <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('overchargeInstances')}</span>
-                <div className="text-3xl font-black text-rose-400 font-mono">{statisticsAnalytics.overchargeCount}</div>
-                <p className="text-[11px] text-slate-500">Instances where batteries remained connected past 100% completion.</p>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{copy.stoppedTimerEstimates}</span>
+                <div className="text-3xl font-black text-slate-300 font-mono">{statisticsAnalytics.stoppedTimerCount}</div>
+                <p className="text-[11px] text-slate-500">Stopped or cancelled before the estimated target; not counted as completed.</p>
               </div>
 
               <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('sohTitle')}</span>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{copy.modeledHealth}</span>
                 <div className="text-3xl font-black text-emerald-400 font-mono">{statisticsAnalytics.avgSoH}%</div>
-                <p className="text-[11px] text-slate-500">Calculated state of health based on electrochemical wear models.</p>
+                <p className="text-[11px] text-slate-500">{copy.modeledHealthDescription}</p>
               </div>
 
               <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-2">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('heatLoss')}</span>
-                <div className="text-3xl font-black text-amber-400 font-mono">
-                  {statisticsAnalytics.profileStats.length > 0 ? Math.round(statisticsAnalytics.profileStats.reduce((a, b) => a + b.heatLossIndex, 0) / statisticsAnalytics.profileStats.length) : 12}%
-                </div>
-                <p className="text-[11px] text-slate-500">Internal resistance heat dissipation loss factor.</p>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('batteryProfiles')}</span>
+                <div className="text-3xl font-black text-amber-400 font-mono">{statisticsAnalytics.profileStats.length}</div>
+                <p className="text-[11px] text-slate-500">{copy.profilesStoredDescription}</p>
               </div>
             </div>
 
@@ -2722,6 +2721,7 @@ export default function App() {
                 <BatteryFull className="w-5 h-5 text-blue-400" />
                 <span>Profile-Specific Health & Estimated Runtime Projections</span>
               </h3>
+              <p className="text-[11px] leading-relaxed text-amber-100">{copy.modeledHealthDescription} {copy.runtimeEstimateDescription}</p>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left rtl:text-right text-xs">
@@ -2968,7 +2968,9 @@ export default function App() {
                     <div className="font-extrabold text-slate-200 text-sm">{h.label} ({h.size})</div>
                     <div className="text-[11px] text-slate-400 mt-0.5">{h.capacity}mAh • Mode: {h.targetMode === 'half' ? '50%' : '100%'} • {new Date(h.finishedAt).toLocaleString()}</div>
                   </div>
-                  <span className="text-emerald-400 font-extrabold bg-emerald-950/80 backdrop-blur-xl px-3.5 py-1 rounded-full border border-emerald-500/40 shadow">Completed</span>
+                  <span className={`font-extrabold px-3.5 py-1 rounded-full border shadow ${h.status === 'stopped' ? 'text-slate-300 bg-slate-800/80 border-slate-600/50' : 'text-emerald-400 bg-emerald-950/80 border-emerald-500/40'}`}>
+                    {h.status === 'completed' ? copy.completed : copy.stopped}
+                  </span>
                 </div>
               ))
             )}
