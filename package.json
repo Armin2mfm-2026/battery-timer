@@ -7,14 +7,27 @@
     "dev": "vite",
     "build": "vite build",
     "build:embedded": "vite build --base ./",
+    "build:native": "npm run build:embedded && node scripts/sync-native-version.mjs && cap sync",
+    "sync:android": "npm run build:embedded && node scripts/sync-native-version.mjs && cap sync android",
+    "sync:ios": "npm run build:embedded && node scripts/sync-native-version.mjs && cap sync ios",
+    "assets:native": "capacitor-assets generate --ios --android --iconBackgroundColor #020617 --splashBackgroundColor #020617",
+    "open:android": "cap open android",
+    "open:ios": "cap open ios",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app-launcher": "^8.0.1",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/local-notifications": "^8.3.1",
     "lucide-react": "^1.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

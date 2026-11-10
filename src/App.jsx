@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import packageJson from '../package.json';
+import { APP_LINKS, getContactUrl, getPaymentUrl } from './config/links.js';
+import { AppLauncher } from '@capacitor/app-launcher';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { 
   Zap, BatteryCharging, AlertTriangle, ShieldCheck, Plus, Trash2, Edit3, 
   Play, Pause, RefreshCw, Volume2, VolumeX, Settings, Bell, Info, Save, 
@@ -34,6 +37,13 @@ const APP_RELEASE_HISTORY = [
   CURRENT_RELEASE,
   ...APP_RELEASES.filter(release => release.version !== APP_VERSION)
 ];
+const getNativeNotificationId = (slotId) => {
+  let hash = 2166136261;
+  for (let index = 0; index < slotId.length; index++) {
+    hash = Math.imul(hash ^ slotId.charCodeAt(index), 16777619);
+  }
+  return hash & 0x7fffffff;
+};
 
 const TERMS_SECTIONS = [
   {
@@ -78,7 +88,7 @@ const TERMS_SECTIONS = [
   },
   {
     heading: '11. Contact',
-    text: 'For questions about these Terms, contact support@voltguard.pro. The app publisher should provide its complete legal identity, geographic address, and any required local disclosures in the applicable store listing and legal notices.'
+    text: `For questions about these Terms, contact ${APP_LINKS.contact.email}. The app publisher should provide its complete legal identity, geographic address, and any required local disclosures in the applicable store listing and legal notices.`
   }
 ];
 
@@ -190,7 +200,8 @@ const TRANSLATIONS = {
     appUpdateChecking: "Checking for updates…",
     appUpdateFailed: "Could not check for the update. Please try again.",
     appUpdatePwaHint: "The PWA will reload and fetch the latest deployed version.",
-    appUpdateNativeHint: "Continue to your device’s app store to update."
+    appUpdateNativeHint: "Continue to your device’s app store to update.",
+    nativeNotificationsDescription: "Optional device reminders are scheduled for estimated timer completion. Delivery can still be delayed or disabled by device settings; this app does not monitor the battery."
   },
   fa: {
     title: "ولتشیلد پرو",
@@ -1325,6 +1336,10 @@ const writeVoltGuardSnapshot = async (data) => {
 };
 
 export default function App() {
+  const isNativeApp = window.Capacitor?.isNativePlatform?.() === true;
+  const [nativeNotificationsGranted, setNativeNotificationsGranted] = useState(null);
+  const nativeNotificationSyncRef = useRef(Promise.resolve());
+
   // --- Persistent Core States ---
   const [chargers, setChargers] = useState(() => JSON.parse(localStorage.getItem('batt_chargers')) || INITIAL_CHARGERS);
   const [batteryProfiles, setBatteryProfiles] = useState(() => JSON.parse(localStorage.getItem('batt_profiles')) || INITIAL_BATTERY_PROFILES);
@@ -1390,6 +1405,17 @@ export default function App() {
   const termsSectionRef = useRef(null);
   const updateHistoryRef = useRef(null);
 
+  useEffect(() => {
+    if (!isNativeApp) return undefined;
+    let active = true;
+    LocalNotifications.checkPermissions()
+      .then(({ display }) => {
+        if (active) setNativeNotificationsGranted(display);
+      })
+      .catch(error => console.error('Could not check native notification permissions:', error));
+    return () => { active = false; };
+  }, [isNativeApp]);
+
   // --- Backup & Restore UI States ---
   const [includeStatsInBackup, setIncludeStatsInBackup] = useState(true);
   const [backupFeedbackMsg, setBackupFeedbackMsg] = useState({ type: '', text: '' });
@@ -1411,7 +1437,6 @@ export default function App() {
 
   // UI Navigation & Modals
   const [activeTab, setActiveTab] = useState('dashboard');
-  const isNativeApp = window.Capacitor?.isNativePlatform?.() === true;
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [targetSlotIndex, setTargetSlotIndex] = useState(null);
   const [isChargerModalOpen, setIsChargerModalOpen] = useState(false);
@@ -1430,7 +1455,7 @@ export default function App() {
     if (!window.__voltGuardTesseractPromise) {
       window.__voltGuardTesseractPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+        script.src = APP_LINKS.ocrScript;
         script.async = true;
         script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error('OCR engine could not be initialized.'));
         script.onerror = () => reject(new Error('Could not load the OCR engine. Check your internet connection.'));
@@ -1552,7 +1577,10 @@ export default function App() {
   const globalErrorTimeoutRef = useRef(null);
   const addSlotModalRef = useRef(null);
   const addSlotTriggerRef = useRef(null);
-  const notificationsAvailable = typeof window !== 'undefined' && 'Notification' in window;
+  const notificationsAvailable = isNativeApp || (typeof window !== 'undefined' && 'Notification' in window);
+  const notificationsGranted = isNativeApp
+    ? nativeNotificationsGranted === 'granted'
+    : notificationsAvailable && Notification.permission === 'granted';
 
   const showGlobalError = (message) => {
     setGlobalErrorMsg(message);
@@ -1650,10 +1678,14 @@ export default function App() {
   const handleAppUpdate = async () => {
     if (isNativeApp) {
       const platform = window.Capacitor?.getPlatform?.();
-      const storeUrl = platform === 'ios'
-        ? (import.meta.env.VITE_IOS_APP_STORE_URL || 'https://apps.apple.com/search?term=VoltGuard%20Pro')
-        : (import.meta.env.VITE_ANDROID_PLAY_STORE_URL || 'https://play.google.com/store/search?q=VoltGuard%20Pro&c=apps');
-      window.open(storeUrl, '_system');
+      const storeUrl = platform === 'ios' ? APP_LINKS.stores.ios : APP_LINKS.stores.android;
+      try {
+        const { completed } = await AppLauncher.openUrl({ url: storeUrl });
+        if (!completed) throw new Error('The store link could not be opened.');
+      } catch (error) {
+        console.error('Could not open the app store:', error);
+        setAppUpdateFeedback(t('appUpdateFailed'));
+      }
       return;
     }
 
@@ -1944,14 +1976,16 @@ export default function App() {
     const existingLogs = JSON.parse(localStorage.getItem('batt_transaction_logs') || '[]');
     localStorage.setItem('batt_transaction_logs', JSON.stringify([transactionLog, ...existingLogs]));
 
-    let paymentLink = '';
-    if (provider === 'paypal') {
-      paymentLink = `https://www.paypal.com/ncp/payment/YOUR_PAYPAL_BUSINESS_ID?email=${encodeURIComponent(checkoutEmail)}`;
-    } else if (provider === 'revolut') {
-      paymentLink = `https://revolut.me/voltguard?reference=${encodeURIComponent(checkoutEmail)}`;
+    let paymentLink;
+    try {
+      paymentLink = getPaymentUrl(provider, checkoutEmail);
+    } catch (error) {
+      console.error('Invalid payment URL configuration:', error);
+      return;
     }
+    if (!paymentLink) return;
 
-    window.open(paymentLink, '_blank');
+    window.open(paymentLink, '_blank', 'noopener,noreferrer');
 
     setTimeout(() => {
       const expiresAt = new Date().getTime() + (365 * 24 * 60 * 60 * 1000);
@@ -2047,6 +2081,52 @@ export default function App() {
     }
   };
 
+  const nativeNotificationScheduleKey = activeSlots
+    .filter(slot => slot.status === 'charging')
+    .map(slot => `${slot.id}:${slot.startTime}:${slot.totalSec}`)
+    .join('|');
+
+  useEffect(() => {
+    if (!isNativeApp || nativeNotificationsGranted === null) return undefined;
+    let active = true;
+    const synchronizeNativeNotifications = async () => {
+      if (!active) return;
+      const pending = await LocalNotifications.getPending();
+      const ownedNotifications = pending.notifications.filter(notification =>
+        notification.extra?.voltGuardNotification === 'charge-estimate'
+      );
+      if (!active) return;
+      if (ownedNotifications.length) {
+        await LocalNotifications.cancel({
+          notifications: ownedNotifications.map(({ id }) => ({ id }))
+        });
+      }
+      if (!active || !settings.pushNotifications || nativeNotificationsGranted !== 'granted') return;
+
+      const notifications = activeSlots
+        .filter(slot => slot.status === 'charging')
+        .map(slot => ({
+          id: getNativeNotificationId(slot.id),
+          title: 'Battery Timer Estimate Reached',
+          body: `${slot.size} battery timer estimate reached its target. Check the battery and charger; this app cannot detect actual charge.`,
+          schedule: {
+            at: new Date(Math.max(slot.startTime + (slot.totalSec * 1000), Date.now() + 1000)),
+            isExactNotification: false
+          },
+          extra: { voltGuardNotification: 'charge-estimate', slotId: slot.id }
+        }));
+
+      if (notifications.length) {
+        const result = await LocalNotifications.schedule({ notifications });
+        if (result.warning) console.warn('Native timer notifications may be delayed:', result.warning.message);
+      }
+    };
+    nativeNotificationSyncRef.current = nativeNotificationSyncRef.current
+      .then(synchronizeNativeNotifications)
+      .catch(error => console.error('Could not synchronize native timer notifications:', error));
+    return () => { active = false; };
+  }, [isNativeApp, nativeNotificationScheduleKey, nativeNotificationsGranted, settings.pushNotifications]);
+
   // Global Timer Tick for Active Slots
   useEffect(() => {
     const timer = setInterval(() => {
@@ -2071,7 +2151,7 @@ export default function App() {
             newStatus = 'completed';
             alarmNeeded = true;
 
-            if (settings.pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
+            if (!isNativeApp && settings.pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
               const notificationOptions = {
                 body: `${slot.size} battery timer estimate reached its target. Check the battery and charger; this app cannot detect actual charge.`,
                 icon: getAppAssetUrl('icons/icon-192.png'),
@@ -2115,10 +2195,21 @@ export default function App() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [settings.pushNotifications, settings.selectedAlarmId, settings.audioAlerts]);
+  }, [isNativeApp, settings.pushNotifications, settings.selectedAlarmId, settings.audioAlerts]);
 
-  const requestNotificationPermission = (enableState) => {
+  const requestNotificationPermission = async (enableState) => {
     if (enableState) {
+      if (isNativeApp) {
+        try {
+          const permission = await LocalNotifications.requestPermissions();
+          setNativeNotificationsGranted(permission.display);
+          setSettings(s => ({ ...s, pushNotifications: permission.display === 'granted' }));
+        } catch (error) {
+          console.error('Native notification permission request failed:', error);
+          setSettings(s => ({ ...s, pushNotifications: false }));
+        }
+        return;
+      }
       if (notificationsAvailable) {
         Notification.requestPermission().then(permission => {
           setSettings(s => ({ ...s, pushNotifications: permission === 'granted' }));
@@ -3377,7 +3468,10 @@ export default function App() {
 
               <div className="space-y-4 text-xs">
                 
-                <div 
+                <a
+                  href={getContactUrl('telegram')}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => triggerJiggle('telegram')}
                   className="p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/90 flex items-center justify-between shadow-lg hover:border-blue-500/50 transition cursor-pointer group"
                 >
@@ -3387,13 +3481,16 @@ export default function App() {
                     </div>
                     <div>
                       <span className="font-bold text-slate-200 text-sm block">Telegram ID</span>
-                      <span className="text-slate-400 font-mono">@VoltGuardSupport</span>
+                      <span className="text-slate-400 font-mono">@{APP_LINKS.contact.telegramHandle}</span>
                     </div>
                   </div>
                   <span className="text-xs bg-sky-500/20 text-sky-300 px-3 py-1.5 rounded-full border border-sky-500/30 font-semibold">Connect</span>
-                </div>
+                </a>
 
-                <div 
+                <a
+                  href={getContactUrl('whatsapp')}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => triggerJiggle('whatsapp')}
                   className="p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/90 flex items-center justify-between shadow-lg hover:border-emerald-500/50 transition cursor-pointer group"
                 >
@@ -3403,13 +3500,14 @@ export default function App() {
                     </div>
                     <div>
                       <span className="font-bold text-slate-200 text-sm block">WhatsApp ID</span>
-                      <span className="text-slate-400 font-mono">+1 (555) 019-2834</span>
+                      <span className="text-slate-400 font-mono">{APP_LINKS.contact.whatsappPhone}</span>
                     </div>
                   </div>
                   <span className="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-full border border-emerald-500/30 font-semibold">Chat Now</span>
-                </div>
+                </a>
 
-                <div 
+                <a
+                  href={getContactUrl('email')}
                   onClick={() => triggerJiggle('email')}
                   className="p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/90 flex items-center justify-between shadow-lg hover:border-purple-500/50 transition cursor-pointer group"
                 >
@@ -3419,11 +3517,11 @@ export default function App() {
                     </div>
                     <div>
                       <span className="font-bold text-slate-200 text-sm block">Email Address</span>
-                      <span className="text-slate-400 font-mono">support@voltguard.pro</span>
+                      <span className="text-slate-400 font-mono">{APP_LINKS.contact.email}</span>
                     </div>
                   </div>
                   <span className="text-xs bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-full border border-purple-500/30 font-semibold">Send Mail</span>
-                </div>
+                </a>
 
               </div>
             </div>
@@ -3532,7 +3630,9 @@ export default function App() {
                 <div className="p-4 sm:p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/80 space-y-3 shadow-inner">
                   <div>
                     <span className="font-semibold text-slate-200 text-sm block">{t('notificationsLabel')}</span>
-                    <span className="text-[11px] text-slate-400">{copy.notificationDescription}</span>
+                    <span className="text-[11px] text-slate-400">
+                      {isNativeApp ? t('nativeNotificationsDescription') : copy.notificationDescription}
+                    </span>
                   </div>
 
                   {!notificationsAvailable && (
@@ -3544,27 +3644,27 @@ export default function App() {
                       disabled={!notificationsAvailable}
                       onClick={() => requestNotificationPermission(true)}
                       className={`py-3 px-4 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer shadow-lg backdrop-blur-xl ${
-                        settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted'
+                        settings.pushNotifications && notificationsGranted
                           ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white ring-2 ring-cyan-400/50 shadow-blue-500/30 scale-[1.02] border border-cyan-300/40' 
                           : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50'
                       }`}
                     >
                       <Bell className="w-4 h-4" />
                       <span>{t('enable')}</span>
-                      {settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted' && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
+                      {settings.pushNotifications && notificationsGranted && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
                     </button>
 
                     <button
                       onClick={() => requestNotificationPermission(false)}
                       className={`py-3 px-4 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer shadow-lg backdrop-blur-xl ${
-                        !(settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted')
+                        !(settings.pushNotifications && notificationsGranted)
                           ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-white ring-2 ring-slate-500/50 shadow-slate-900/50 scale-[1.02] border border-slate-500/40' 
                           : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200'
                       }`}
                     >
                       <X className="w-4 h-4" />
                       <span>{t('disable')}</span>
-                      {!(settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted') && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
+                      {!(settings.pushNotifications && notificationsGranted) && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
                     </button>
                   </div>
                 </div>
@@ -3878,17 +3978,17 @@ export default function App() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    disabled={Boolean(selectedBatteryProfileId)}
-                    onClick={() => setNewSlotForm({ ...newSlotForm, targetMode: 'full' })}
-                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-60 ${newSlotForm.targetMode === 'full' ? 'bg-blue-600/35 border-blue-500 text-blue-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+                    aria-pressed={newSlotForm.targetMode === 'full'}
+                    onClick={() => handleSlotFormChange('targetMode', 'full')}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'full' ? 'bg-blue-600/35 border-blue-500 text-blue-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
                   >
                     <span>{t('fullCharge100')}</span>
                   </button>
                   <button
                     type="button"
-                    disabled={Boolean(selectedBatteryProfileId)}
-                    onClick={() => setNewSlotForm({ ...newSlotForm, targetMode: 'half' })}
-                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-60 ${newSlotForm.targetMode === 'half' ? 'bg-amber-600/35 border-amber-500 text-amber-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+                    aria-pressed={newSlotForm.targetMode === 'half'}
+                    onClick={() => handleSlotFormChange('targetMode', 'half')}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-2 ${newSlotForm.targetMode === 'half' ? 'bg-amber-600/35 border-amber-500 text-amber-200 shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
                   >
                     <span>{t('halfCharge50')}</span>
                   </button>
@@ -3933,7 +4033,6 @@ export default function App() {
                     value={newSlotForm.initialCharge} 
                     onChange={(e) => handleSlotFormChange('initialCharge', Number(e.target.value))} 
                     className="w-full bg-slate-950/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-3 text-xs text-slate-200 focus:border-blue-500 outline-none" 
-                    disabled={Boolean(selectedBatteryProfileId)}
                   />
                 </div>
               </div>
@@ -4424,21 +4523,21 @@ export default function App() {
                 </div>
 
                 <div className="space-y-2.5 pt-2">
-                  <button 
+                  {APP_LINKS.payments.paypal && <button
                     onClick={() => handlePaymentRedirect('paypal')}
                     className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs py-3.5 rounded-2xl shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer transform hover:scale-[1.02] backdrop-blur-xl border border-blue-400/30"
                   >
                     <DollarSign className="w-4 h-4" />
                     <span>{t('payWithPaypal')}</span>
-                  </button>
+                  </button>}
 
-                  <button 
+                  {APP_LINKS.payments.revolut && <button
                     onClick={() => handlePaymentRedirect('revolut')}
                     className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs py-3.5 rounded-2xl shadow-lg shadow-cyan-500/30 flex items-center justify-center space-x-2 rtl:space-x-reverse transition cursor-pointer transform hover:scale-[1.02] backdrop-blur-xl border border-cyan-400/30"
                   >
                     <CreditCard className="w-4 h-4" />
                     <span>{t('payWithRevolut')}</span>
-                  </button>
+                  </button>}
                 </div>
 
                 <div className="pt-2 space-y-3 border-t border-slate-800/90">
@@ -4454,11 +4553,11 @@ export default function App() {
                       </div>
                       <div className="truncate">
                         <span className="font-bold text-slate-200 block text-[11px]">BTC (Bitcoin)</span>
-                        <span className="text-[10px] text-slate-400 font-mono truncate">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span>
+                        <span className="text-[10px] text-slate-400 font-mono truncate">{APP_LINKS.wallets.bitcoin}</span>
                       </div>
                     </div>
                     <button 
-                      onClick={(e) => { e.stopPropagation(); handleCopyCrypto('bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', 'btc'); }}
+                      onClick={(e) => { e.stopPropagation(); handleCopyCrypto(APP_LINKS.wallets.bitcoin, 'btc'); }}
                       className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer shrink-0 ml-2 flex items-center space-x-1"
                     >
                       {copiedCrypto === 'btc' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -4475,11 +4574,11 @@ export default function App() {
                       </div>
                       <div className="truncate">
                         <span className="font-bold text-slate-200 block text-[11px]">USDT (TRC20)</span>
-                        <span className="text-[10px] text-slate-400 font-mono truncate">TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t</span>
+                        <span className="text-[10px] text-slate-400 font-mono truncate">{APP_LINKS.wallets.usdtTrc20}</span>
                       </div>
                     </div>
                     <button 
-                      onClick={(e) => { e.stopPropagation(); handleCopyCrypto('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', 'usdt'); }}
+                      onClick={(e) => { e.stopPropagation(); handleCopyCrypto(APP_LINKS.wallets.usdtTrc20, 'usdt'); }}
                       className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition cursor-pointer shrink-0 ml-2 flex items-center space-x-1"
                     >
                       {copiedCrypto === 'usdt' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
