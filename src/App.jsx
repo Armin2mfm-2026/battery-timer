@@ -1234,7 +1234,7 @@ export default function App() {
   
   const [settings, setSettings] = useState(() => JSON.parse(localStorage.getItem('batt_settings')) || {
     audioAlerts: true,
-    pushNotifications: true,
+    pushNotifications: false,
     selectedAlarmId: 'chime',
     defaultEfficiency: 1.3,
     language: 'en',
@@ -1430,13 +1430,8 @@ export default function App() {
   const activeAlarmLoopIntervalRef = useRef(null);
   const wakeLockRef = useRef(null);
 
-  // Service Worker and Background Notification Setup
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(err => {
-        console.warn('Service Worker registration skipped or failed:', err);
-      });
-    }
+  useEffect(() => () => {
+    if (globalErrorTimeoutRef.current) window.clearTimeout(globalErrorTimeoutRef.current);
   }, []);
 
   // Keep the display awake while charging where supported; this does not guarantee background execution.
@@ -1837,20 +1832,28 @@ export default function App() {
 
             if (settings.pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
               const notificationOptions = {
-                body: `${slot.size} battery (${slot.capacity}mAh) has reached target charge time.`,
-                icon: '/icon-192.png',
-                badge: '/icon-192.png',
+                body: `${slot.size} battery timer estimate reached its target. Check the battery and charger; this app cannot detect actual charge.`,
+                icon: getAppAssetUrl('icons/icon-192.png'),
+                badge: getAppAssetUrl('icons/icon-192.png'),
                 vibrate: [200, 100, 200, 100, 200],
                 tag: 'charge-complete-' + slot.id,
                 renotify: true,
-                data: { url: '/' }
+                data: { url: getAppAssetUrl('') }
               };
+              const title = '🔋 Battery Timer Estimate Reached';
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready
-                  .then(registration => registration.showNotification('🔋 Battery Fully Charged!', notificationOptions))
-                  .catch(() => new Notification('🔋 Battery Fully Charged!', notificationOptions));
+                navigator.serviceWorker.getRegistration()
+                  .then(registration => registration
+                    ? registration.showNotification(title, notificationOptions)
+                    : new Notification(title, notificationOptions))
+                  .catch(error => {
+                    console.warn('Service worker notification failed:', error);
+                    if (settings.pushNotifications && Notification.permission === 'granted') {
+                      new Notification(title, notificationOptions);
+                    }
+                  });
               } else {
-                new Notification('🔋 Battery Fully Charged!', notificationOptions);
+                new Notification(title, notificationOptions);
               }
             }
           }
@@ -1875,14 +1878,15 @@ export default function App() {
 
   const requestNotificationPermission = (enableState) => {
     if (enableState) {
-      if ('Notification' in window) {
+      if (notificationsAvailable) {
         Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            setSettings(s => ({ ...s, pushNotifications: true }));
-          }
+          setSettings(s => ({ ...s, pushNotifications: permission === 'granted' }));
+        }).catch(error => {
+          console.error('Notification permission request failed:', error);
+          setSettings(s => ({ ...s, pushNotifications: false }));
         });
       } else {
-        setSettings(s => ({ ...s, pushNotifications: true }));
+        setSettings(s => ({ ...s, pushNotifications: false }));
       }
     } else {
       setSettings(s => ({ ...s, pushNotifications: false }));
@@ -2345,7 +2349,7 @@ export default function App() {
 
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased pb-36 selection:bg-blue-500 selection:text-white pt-[env(safe-area-inset-top)]">
-      <audio ref={alarmAudioRef} src="/alarm.mp4" preload="auto" loop playsInline />
+      <audio ref={alarmAudioRef} src={getAppAssetUrl('alarm.mp3')} preload="auto" loop playsInline />
       
       <style>{`
         @keyframes jiggle {
@@ -3097,7 +3101,7 @@ export default function App() {
             <div className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
               <h2 className="text-base font-bold text-slate-100 flex items-center space-x-3 rtl:space-x-reverse">
                 <Bell className="w-5 h-5 text-blue-400" />
-                <span>Audio Alarm & Push Notifications</span>
+                <span>{copy.notificationHeading}</span>
               </h2>
 
               <div className="space-y-5 text-xs">
@@ -3105,7 +3109,7 @@ export default function App() {
                 <div className="flex items-center justify-between p-4 sm:p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-inner">
                   <div>
                     <span className="font-semibold text-slate-200 text-sm block">Web Audio Completion Chime</span>
-                    <span className="text-[11px] text-slate-400">Play synthetic tone when battery finishes charging.</span>
+                    <span className="text-[11px] text-slate-400">Play a synthetic tone when the timer estimate reaches its target.</span>
                   </div>
                   <input 
                     type="checkbox" 
@@ -3161,40 +3165,39 @@ export default function App() {
                 <div className="p-4 sm:p-5 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-slate-800/80 space-y-3 shadow-inner">
                   <div>
                     <span className="font-semibold text-slate-200 text-sm block">{t('notificationsLabel')}</span>
-                    <span className="text-[11px] text-slate-400">Receive alerts and push notifications when charging completes.</span>
+                    <span className="text-[11px] text-slate-400">{copy.notificationDescription}</span>
                   </div>
+
+                  {!notificationsAvailable && (
+                    <p role="status" className="rounded-xl border border-amber-500/30 bg-amber-950/30 p-3 text-[11px] text-amber-100">{copy.notificationUnavailable}</p>
+                  )}
 
                   <div className="grid grid-cols-2 gap-3 pt-1">
                     <button
-                      onClick={() => {
-                        setSettings({ ...settings, pushNotifications: true });
-                        requestNotificationPermission(true);
-                      }}
+                      disabled={!notificationsAvailable}
+                      onClick={() => requestNotificationPermission(true)}
                       className={`py-3 px-4 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer shadow-lg backdrop-blur-xl ${
-                        settings.pushNotifications 
+                        settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted'
                           ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white ring-2 ring-cyan-400/50 shadow-blue-500/30 scale-[1.02] border border-cyan-300/40' 
-                          : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200'
+                          : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50'
                       }`}
                     >
                       <Bell className="w-4 h-4" />
                       <span>{t('enable')}</span>
-                      {settings.pushNotifications && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
+                      {settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted' && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
                     </button>
 
                     <button
-                      onClick={() => {
-                        setSettings({ ...settings, pushNotifications: false });
-                        requestNotificationPermission(false);
-                      }}
+                      onClick={() => requestNotificationPermission(false)}
                       className={`py-3 px-4 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center justify-center space-x-2 rtl:space-x-reverse cursor-pointer shadow-lg backdrop-blur-xl ${
-                        !settings.pushNotifications 
+                        !(settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted')
                           ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-white ring-2 ring-slate-500/50 shadow-slate-900/50 scale-[1.02] border border-slate-500/40' 
                           : 'bg-slate-900/90 text-slate-400 border border-slate-800/90 hover:text-slate-200'
                       }`}
                     >
                       <X className="w-4 h-4" />
                       <span>{t('disable')}</span>
-                      {!settings.pushNotifications && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
+                      {!(settings.pushNotifications && notificationsAvailable && Notification.permission === 'granted') && <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-white" />}
                     </button>
                   </div>
                 </div>

@@ -1,135 +1,116 @@
+/* VoltGuard Pro service worker.
+ * The app registers this worker relative to its configured deployment base.
+ * Push delivery still requires a VAPID subscription flow and a server sender.
+ */
+const CACHE_NAME = 'voltguard-pro-runtime-v1';
 
-const CACHE_NAME = "voltguard-pro-v1";
-const OFFLINE_URL = "/";
-
-const STATIC_ASSETS = [
-  "/",
-  "/index.html"
-];
-
-// Install service worker and cache the main application files.
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
-  );
-});
-
-// Activate the new service worker and remove old caches.
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys()
-      .then((cacheNames) =>
-        Promise.all(
-          cacheNames
-            .filter((cacheName) => cacheName !== CACHE_NAME)
-            .map((cacheName) => caches.delete(cacheName))
-        )
-      )
-      .then(() => self.clients.claim())
-  );
-});
-
-// Network-first strategy for same-origin GET requests.
-self.addEventListener("fetch", (event) => {
-  const request = event.request;
-
-  if (
-    request.method !== "GET" ||
-    new URL(request.url).origin !== self.location.origin
-  ) {
-    return;
-  }
-
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        if (response && response.ok) {
-          const responseClone = response.clone();
-
-          caches.open(CACHE_NAME)
-            .then((cache) => cache.put(request, responseClone));
-        }
-
-        return response;
-      })
-      .catch(async () => {
-        const cachedResponse = await caches.match(request);
-
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        if (request.mode === "navigate") {
-          return (
-            await caches.match(OFFLINE_URL) ||
-            new Response("You are offline.", {
-              status: 503,
-              headers: {
-                "Content-Type": "text/plain"
-              }
-            })
-          );
-        }
-
-        return new Response("", { status: 503 });
-      })
-  );
-});
-
-// Receive push notifications from a configured push server.
-self.addEventListener("push", (event) => {
-  let data = {};
-
-  try {
-    data = event.data ? event.data.json() : {};
-  } catch {
-    data = {
-      body: event.data ? event.data.text() : ""
-    };
-  }
-
-  const title = data.title || "VoltGuard Pro";
-
-  const options = {
-    body: data.body || "Your battery charging status has changed.",
-    icon: data.icon || "/icons/icon-192.png",
-    badge: data.badge || "/icons/badge-72.png",
-    tag: data.tag || "voltguard-notification",
-    renotify: true,
-    data: {
-      url: data.url || "/"
+const arePushNotificationsEnabled = () => new Promise((resolve, reject) => {
+  const request = indexedDB.open('VoltGuardProDB', 1);
+  request.onupgradeneeded = () => {
+    if (!request.result.objectStoreNames.contains('appState')) {
+      request.result.createObjectStore('appState', { keyPath: 'id' });
     }
   };
-
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  request.onerror = () => reject(request.error || new Error('Could not read notification preferences.'));
+  request.onsuccess = () => {
+    const db = request.result;
+    if (!db.objectStoreNames.contains('appState')) {
+      db.close();
+      resolve(false);
+      return;
+    }
+    const transaction = db.transaction('appState', 'readonly');
+    const snapshotRequest = transaction.objectStore('appState').get('main');
+    snapshotRequest.onsuccess = () => {
+      const enabled = snapshotRequest.result?.data?.settings?.pushNotifications === true;
+      db.close();
+      resolve(enabled);
+    };
+    snapshotRequest.onerror = () => {
+      db.close();
+      reject(snapshotRequest.error || new Error('Could not read notification preferences.'));
+    };
+  };
 });
 
-// Handle notification clicks and open the application.
-self.addEventListener("notificationclick", (event) => {
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((key) => key.startsWith('voltguard-pro-') && key !== CACHE_NAME)
+      .map((key) => caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+
+// Runtime cache for same-origin app assets; network-first keeps deployed updates fresh.
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    try {
+      const response = await fetch(request);
+      if (response && response.ok) await cache.put(request, response.clone());
+      return response;
+    } catch (error) {
+      const cached = await cache.match(request);
+      if (cached) return cached;
+      if (request.mode === 'navigate') {
+        const appShellUrl = new URL('./', self.registration.scope);
+        const appShell = await cache.match(appShellUrl) ||
+          await cache.match(new URL('index.html', appShellUrl));
+        if (appShell) return appShell;
+      }
+      return new Response('VoltGuard Pro is offline and this resource is not cached yet.', {
+        status: 503,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+      });
+    }
+  })());
+});
+
+self.addEventListener('push', (event) => {
+  event.waitUntil((async () => {
+    try {
+      if (!await arePushNotificationsEnabled()) return;
+    } catch (error) {
+      console.error('Push notification preference could not be read:', error);
+      return;
+    }
+
+    let payload = {};
+    try { payload = event.data ? event.data.json() : {}; }
+    catch (error) { payload = { body: event.data ? event.data.text() : 'A VoltGuard alert is available.' }; }
+
+    const title = payload.title || 'VoltGuard Pro';
+    const options = {
+      body: payload.body || 'Your charging timer has completed.',
+      icon: payload.icon || new URL('icons/icon-192.png', self.registration.scope).href,
+      badge: payload.badge || new URL('icons/icon-192.png', self.registration.scope).href,
+      tag: payload.tag || 'voltguard-push-alert',
+      renotify: Boolean(payload.renotify),
+      data: { url: payload.url ? new URL(payload.url, self.registration.scope).href : self.registration.scope },
+      vibrate: [200, 100, 200]
+    };
+    await self.registration.showNotification(title, options);
+  })());
+});
+
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-
-  const targetUrl =
-    event.notification.data?.url || "/";
-
-  event.waitUntil(
-    self.clients.matchAll({
-      type: "window",
-      includeUncontrolled: true
-    }).then((clientList) => {
-      for (const client of clientList) {
-        if ("focus" in client) {
-          client.navigate(targetUrl);
-          return client.focus();
-        }
-      }
-
-      if (self.clients.openWindow) {
-        return self.clients.openWindow(targetUrl);
-      }
-    })
-  );
+  const targetUrl = new URL(event.notification.data?.url || '', self.registration.scope).href;
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of windows) {
+      if (client.url === targetUrl && 'focus' in client) return client.focus();
+    }
+    if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
+  })());
 });
