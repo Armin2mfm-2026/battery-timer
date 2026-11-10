@@ -8,6 +8,58 @@ import {
   Download, Upload, Cloud, CloudRain, CloudUpload, CloudDownload, RefreshCw as SyncIcon
 } from 'lucide-react';
 
+// Increment this when the displayed terms change so prior users must review them again.
+const TERMS_VERSION = '1.0.0';
+const TERMS_EFFECTIVE_DATE = '2026-11-10';
+const TERMS_STORAGE_KEY = 'voltguard_terms_acceptance';
+
+const TERMS_SECTIONS = [
+  {
+    heading: '1. Agreement and eligibility',
+    text: 'These Terms govern your use of VoltGuard Pro and its website, PWA, and any official mobile app. You accept by selecting “I agree” after reviewing these Terms. If you do not agree, do not use the app. If you are not old enough to enter a binding agreement where you live, use the app only with the involvement and permission of a parent or legal guardian.'
+  },
+  {
+    heading: '2. What the app does—and does not do',
+    text: 'The app provides user-entered battery profiles, calculations, reminders, and time estimates for convenience only. It does not measure battery state of charge, temperature, capacity, condition, or charger output; it does not connect to, control, stop, or disconnect a battery or charger. Estimates can be inaccurate or interrupted, and alarms or notifications may be delayed, unavailable, or prevented by device, browser, operating-system, or power settings. The app is not a safety system, professional engineering advice, or a substitute for manufacturer instructions.'
+  },
+  {
+    heading: '3. Battery and charging safety',
+    text: 'You are responsible for confirming the exact battery chemistry, size, condition, polarity, charger compatibility, settings, and environment using the manufacturers’ instructions. Use only a charger designed for that battery. Never rely on this app as the sole means of monitoring charging, and do not leave charging batteries unattended or charge damaged, leaking, hot, or otherwise suspect batteries. Stop charging and follow the manufacturers’ safety guidance if you notice unusual heat, odor, noise, swelling, leakage, or smoke. The app cannot prevent fire, injury, property damage, overcharging, or equipment failure.'
+  },
+  {
+    heading: '4. Your responsibilities and acceptable use',
+    text: 'Use the app lawfully and at your own discretion. Check any entered data and estimates before relying on them, keep your device and backups secure, and do not use the app where an inaccurate, delayed, or unavailable estimate could cause injury or damage. You remain responsible for your batteries, chargers, decisions, and compliance with local laws. Accepting these Terms does not authorize a payment. Any optional donation or paid offer is subject to its own price, payment, renewal, cancellation, refund, and withdrawal disclosures shown before you proceed.'
+  },
+  {
+    heading: '5. Data and privacy',
+    text: 'Profiles, settings, and history may be stored on your device or browser and can be lost when app or browser data is cleared. You control any backups you export or share. Optional features may involve third-party software or services. Read the applicable Privacy Notice and platform disclosures for details about data handling; these Terms are not a substitute for a legally required privacy notice. Do not enter information you do not want processed by the features you choose to use.'
+  },
+  {
+    heading: '6. Third-party products and services',
+    text: 'Battery, charger, platform, and service names are provided for identification or convenience and do not imply endorsement or a guarantee of compatibility. Third-party products and services are governed by their own instructions and terms. We do not control third-party services, and their availability or behavior may change.'
+  },
+  {
+    heading: '7. Intellectual property and feedback',
+    text: 'The app and its original content are owned by their respective rights holders and are protected by applicable intellectual-property laws. You may use the app for personal, lawful purposes, subject to these Terms and any applicable open-source licenses. If you send feedback, you allow us to use it to improve the app without an obligation to you, to the extent permitted by law.'
+  },
+  {
+    heading: '8. Availability and changes',
+    text: 'We may update, suspend, or discontinue features or the app, and we do not promise uninterrupted or error-free operation. We may revise these Terms. The current version and effective date are shown here. When a new version is released, the app will display a notice at your next launch and require your affirmative acceptance before further use. If you decline, you cannot use the app; close the app or browser. Acceptance is recorded on this device, so clearing its storage may cause the notice to appear again.'
+  },
+  {
+    heading: '9. Disclaimers and liability',
+    text: 'To the maximum extent the law permits, the app is provided “as is” and “as available,” without promises that estimates are accurate, that the app is suitable for a particular purpose, or that it will be uninterrupted or secure. To the maximum extent permitted by applicable law, the publisher is not liable for indirect or consequential loss arising from use of the app. Nothing in these Terms excludes or limits liability, warranty, remedy, or consumer rights that applicable law does not allow to be excluded or limited, including rights concerning death or personal injury caused by negligence, fraud, or intentional misconduct where such exclusion is prohibited.'
+  },
+  {
+    heading: '10. Governing law and consumer rights',
+    text: 'These general Terms do not claim to satisfy every country’s laws and do not select a governing law, court, arbitration process, or waive your right to bring a claim. Before distribution in a jurisdiction, the publisher must obtain local legal review and provide any required localized terms, privacy notice, publisher identity, address, and consumer disclosures. Mandatory protections and rights available to you under the laws that apply in your country or state remain unaffected. You may have additional rights that cannot be waived by contract.'
+  },
+  {
+    heading: '11. Contact',
+    text: 'For questions about these Terms, contact support@voltguard.pro. The app publisher should provide its complete legal identity, geographic address, and any required local disclosures in the applicable store listing and legal notices.'
+  }
+];
+
 // --- i18n TRANSLATION DICTIONARY WITH FULL LANGUAGE NAMES ---
 const TRANSLATIONS = {
   en: {
@@ -90,7 +142,20 @@ const TRANSLATIONS = {
     errorBatteryExists: "Error: A battery with the same name and specifications already exists.",
     errorChargerExists: "Error: A charger with the same name and specifications already exists.",
     errorValidation: "Please fix all validation errors before submitting.",
-    errorIncompatibleBattery: "Error: Selected battery size/type is incompatible with this charger slot."
+    errorIncompatibleBattery: "Error: Selected battery size/type is incompatible with this charger slot.",
+    termsTitle: "Terms and Conditions",
+    termsVersion: "Version",
+    termsEffective: "Effective",
+    termsFirstUseNotice: "Please review and accept these Terms and Conditions to use the app.",
+    termsUpdateNotice: "Our Terms have been updated since the version previously accepted on this device. Review and accept the current version to continue.",
+    termsAgreeCheckbox: "I have read and agree to these Terms and Conditions.",
+    termsAccept: "Agree and continue",
+    termsDecline: "Decline",
+    termsDeclinedTitle: "Terms not accepted",
+    termsDeclinedMessage: "You cannot use the app without accepting the current Terms. Close this app or browser window, or review the Terms and choose again.",
+    termsReview: "Review Terms",
+    termsStorageError: "Your acceptance could not be saved on this device. Enable browser storage and try again.",
+    termsSettingsDescription: "Review the current terms and the version accepted on this device."
   },
   fa: {
     title: "ولتشیلد پرو",
