@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import packageJson from '../package.json';
 import { 
   Zap, BatteryCharging, AlertTriangle, ShieldCheck, Plus, Trash2, Edit3, 
   Play, Pause, RefreshCw, Volume2, VolumeX, Settings, Bell, Info, Save, 
@@ -12,6 +13,27 @@ import {
 const TERMS_VERSION = '1.0.0';
 const TERMS_EFFECTIVE_DATE = '2026-11-10';
 const TERMS_STORAGE_KEY = 'voltguard_terms_acceptance';
+const APP_VERSION = packageJson.version;
+const APP_VERSION_STORAGE_KEY = 'voltguard_app_version_seen';
+// For each release, bump package.json and add its notes here while retaining older entries.
+const APP_RELEASES = [
+  {
+    version: '1.1.0',
+    summary: 'Added app version history and a one-time update notice, with PWA reload and mobile store links.'
+  },
+  {
+    version: '1.0.0',
+    summary: 'Initial release with battery and charger profiles, charge-time estimates, history, safety guidance, and PWA support.'
+  }
+];
+const CURRENT_RELEASE = APP_RELEASES.find(release => release.version === APP_VERSION) || {
+  version: APP_VERSION,
+  summary: 'Open Settings to review the latest release information.'
+};
+const APP_RELEASE_HISTORY = [
+  CURRENT_RELEASE,
+  ...APP_RELEASES.filter(release => release.version !== APP_VERSION)
+];
 
 const TERMS_SECTIONS = [
   {
@@ -142,7 +164,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Error: A battery with the same name and specifications already exists.",
     errorChargerExists: "Error: A charger with the same name and specifications already exists.",
     errorValidation: "Please fix all validation errors before submitting.",
-    errorIncompatibleBattery: "Error: Selected battery size/type is incompatible with this charger slot.",
+    errorIncompatibleBattery: "Error: Selected battery chemistry, size, or voltage is incompatible with this charger slot.",
     errorChargerCurrentMissing: "Add the per-slot charging current from the charger's manual to this charger profile before estimating this battery.",
     termsTitle: "Terms and Conditions",
     termsVersion: "Version",
@@ -156,7 +178,19 @@ const TRANSLATIONS = {
     termsDeclinedMessage: "You cannot use the app without accepting the current Terms. Close this app or browser window, or review the Terms and choose again.",
     termsReview: "Review Terms",
     termsStorageError: "Your acceptance could not be saved. You can continue this session, but these Terms will be shown again next time. Enable browser storage to remember your acceptance.",
-    termsSettingsDescription: "Review the current terms and the version accepted on this device."
+    termsSettingsDescription: "Review the current terms and the version accepted on this device.",
+    appUpdateTitle: "App updates",
+    appUpdateDescription: "See the installed version, release notes, and get the latest update.",
+    appUpdateCurrentVersion: "Current version",
+    appUpdateHistory: "Version history",
+    appUpdateAvailable: "A new version is available.",
+    appUpdateNow: "Update app",
+    appUpdateLater: "Later",
+    appUpdateSettings: "View in Settings",
+    appUpdateChecking: "Checking for updates…",
+    appUpdateFailed: "Could not check for the update. Please try again.",
+    appUpdatePwaHint: "The PWA will reload and fetch the latest deployed version.",
+    appUpdateNativeHint: "Continue to your device’s app store to update."
   },
   fa: {
     title: "ولتشیلد پرو",
@@ -238,7 +272,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "خطا: باتری با همین نام و مشخصات قبلاً وجود دارد.",
     errorChargerExists: "خطا: شارژر با همین نام و مشخصات قبلاً وجود دارد.",
     errorValidation: "لطفاً خطاهای فرم را برطرف کنید.",
-    errorIncompatibleBattery: "خطا: سایز/نوع باتری انتخابی با این اسلات شارژر سازگار نیست."
+    errorIncompatibleBattery: "خطا: شیمی، اندازه یا ولتاژ باتری انتخابی با این اسلات شارژر سازگار نیست."
   },
   it: {
     title: "VoltGuard Pro",
@@ -320,7 +354,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Errore: esiste già una batteria con lo stesso nome e le stesse specifiche.",
     errorChargerExists: "Errore: esiste già un caricabatterie con lo stesso nome e le stesse specifiche.",
     errorValidation: "Correggere gli errori prima di inviare.",
-    errorIncompatibleBattery: "Errore: La batteria selezionata non è compatibile con questo slot."
+    errorIncompatibleBattery: "Errore: chimica, dimensione o tensione della batteria selezionata non compatibile con questo slot."
   },
   es: {
     title: "VoltGuard Pro",
@@ -402,7 +436,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Error: Ya existe una batería con el mismo nombre y especificaciones.",
     errorChargerExists: "Error: Ya existe un cargador con el mismo nombre y especificaciones.",
     errorValidation: "Corrija los errores antes de continuar.",
-    errorIncompatibleBattery: "Error: La batería seleccionada no es compatible con esta ranura."
+    errorIncompatibleBattery: "Error: la química, el tamaño o el voltaje de la batería seleccionada no son compatibles con esta ranura."
   },
   zh: {
     title: "VoltGuard Pro",
@@ -484,7 +518,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "错误：已存在具有相同名称和规格的电池。",
     errorChargerExists: "错误：已存在具有相同名称和规格的充电器。",
     errorValidation: "请修正表单错误后提交。",
-    errorIncompatibleBattery: "错误：所选电池尺寸/类型与此充电槽不兼容。"
+    errorIncompatibleBattery: "错误：所选电池的化学体系、尺寸或电压与此充电槽不兼容。"
   },
   fr: {
     title: "VoltGuard Pro",
@@ -566,7 +600,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Erreur : Une pile avec le même nom et les mêmes spécifications existe déjà.",
     errorChargerExists: "Erreur : Un chargeur avec le même nom et les mêmes spécifications existe déjà.",
     errorValidation: "Veuillez corriger les erreurs avant de soumettre.",
-    errorIncompatibleBattery: "Erreur : La pile sélectionnée n'est pas compatible avec cet emplacement."
+    errorIncompatibleBattery: "Erreur : la chimie, la taille ou la tension de la pile sélectionnée n’est pas compatible avec cet emplacement."
   },
   de: {
     title: "VoltGuard Pro",
@@ -647,7 +681,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Fehler: Ein Akku mit demselben Namen und denselben Spezifikationen existiert bereits.",
     errorChargerExists: "Fehler: Ein Ladegerät mit demselben Namen und denselben Spezifikationen existiert bereits.",
     errorValidation: "Bitte korrigieren Sie die Fehler.",
-    errorIncompatibleBattery: "Fehler: Der ausgewählte Akku ist mit diesem Ladeslot nicht kompatibel."
+    errorIncompatibleBattery: "Fehler: Chemie, Größe oder Spannung des ausgewählten Akkus sind mit diesem Ladeslot nicht kompatibel."
   },
   ar: {
     title: "VoltGuard Pro",
@@ -729,7 +763,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "خطأ: توجد بطارية بنفس الاسم والمواصفات بالفعل.",
     errorChargerExists: "خطأ: يوجد شاحن بنفس الاسم والمواصفات بالفعل.",
     errorValidation: "يرجى تصحيح أخطاء النموذج.",
-    errorIncompatibleBattery: "خطأ: حجم/نوع البطارية المحددة غير متوافق مع فتحة الشاحن هذه."
+    errorIncompatibleBattery: "خطأ: كيمياء البطارية المحددة أو حجمها أو جهدها غير متوافق مع فتحة الشاحن هذه."
   },
   ja: {
     title: "VoltGuard Pro",
@@ -811,7 +845,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "エラー: 同じ名前と仕様のバッテリーが既に存在します。",
     errorChargerExists: "エラー: 同じ名前と仕様の充電器が既に存在します。",
     errorValidation: "エラーを修正してください。",
-    errorIncompatibleBattery: "エラー: 選択されたバッテリーサイズ/タイプはこの充電スロットと互換性がありません。"
+    errorIncompatibleBattery: "エラー: 選択した電池の化学組成、サイズ、または電圧はこの充電スロットと互換性がありません。"
   },
   pt: {
     title: "VoltGuard Pro",
@@ -893,7 +927,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Erro: Já existe uma bateria com o mesmo nome e especificações.",
     errorChargerExists: "Erro: Já existe um carregador com o mesmo nome e especificações.",
     errorValidation: "Corrija os erros antes de enviar.",
-    errorIncompatibleBattery: "Erro: A bateria selecionada não é compatível com este slot."
+    errorIncompatibleBattery: "Erro: a química, o tamanho ou a tensão da bateria selecionada não são compatíveis com este slot."
   },
   ru: {
     title: "VoltGuard Pro",
@@ -975,7 +1009,7 @@ const TRANSLATIONS = {
     errorBatteryExists: "Ошибка: Батарея с таким же именем и характеристиками уже существует.",
     errorChargerExists: "Ошибка: Зарядное устройство с таким же именем и характеристиками уже существует.",
     errorValidation: "Пожалуйста, исправьте ошибки валидации.",
-    errorIncompatibleBattery: "Ошибка: Выбранный размер/тип аккумулятора несовместим с этим слотом."
+    errorIncompatibleBattery: "Ошибка: химический состав, размер или напряжение выбранного аккумулятора несовместимы с этим слотом."
   }
 };
 
@@ -1324,14 +1358,37 @@ export default function App() {
       return null;
     }
   });
+  const [appUpdateNotice, setAppUpdateNotice] = useState(() => {
+    try {
+      const previousVersion = localStorage.getItem(APP_VERSION_STORAGE_KEY);
+      const hasExistingInstall = [
+        'batt_settings',
+        'batt_profiles',
+        'batt_chargers',
+        TERMS_STORAGE_KEY
+      ].some(key => localStorage.getItem(key) !== null);
+      const shouldNotify = previousVersion
+        ? previousVersion !== APP_VERSION
+        : hasExistingInstall;
+      localStorage.setItem(APP_VERSION_STORAGE_KEY, APP_VERSION);
+      return shouldNotify ? CURRENT_RELEASE : null;
+    } catch (error) {
+      console.error('Could not read or save the app version:', error);
+      return CURRENT_RELEASE;
+    }
+  });
+  const [appUpdateChecking, setAppUpdateChecking] = useState(false);
+  const [appUpdateFeedback, setAppUpdateFeedback] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [termsDeclined, setTermsDeclined] = useState(false);
   const [termsStorageError, setTermsStorageError] = useState(false);
   const [termsExpanded, setTermsExpanded] = useState(false);
+  const [updateHistoryExpanded, setUpdateHistoryExpanded] = useState(false);
   const termsAccepted = termsAcceptance?.version === TERMS_VERSION;
   const termsCheckboxRef = useRef(null);
   const termsReviewButtonRef = useRef(null);
   const termsSectionRef = useRef(null);
+  const updateHistoryRef = useRef(null);
 
   // --- Backup & Restore UI States ---
   const [includeStatsInBackup, setIncludeStatsInBackup] = useState(true);
@@ -1354,6 +1411,7 @@ export default function App() {
 
   // UI Navigation & Modals
   const [activeTab, setActiveTab] = useState('dashboard');
+  const isNativeApp = window.Capacitor?.isNativePlatform?.() === true;
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [targetSlotIndex, setTargetSlotIndex] = useState(null);
   const [isChargerModalOpen, setIsChargerModalOpen] = useState(false);
@@ -1547,6 +1605,7 @@ export default function App() {
 
   useEffect(() => {
     setTermsExpanded(false);
+    setUpdateHistoryExpanded(false);
   }, [activeTab]);
 
   useEffect(() => {
@@ -1557,6 +1616,15 @@ export default function App() {
     document.addEventListener('click', collapseWhenClickingElsewhere);
     return () => document.removeEventListener('click', collapseWhenClickingElsewhere);
   }, [termsExpanded]);
+
+  useEffect(() => {
+    if (!updateHistoryExpanded) return undefined;
+    const collapseWhenClickingElsewhere = event => {
+      if (!updateHistoryRef.current?.contains(event.target)) setUpdateHistoryExpanded(false);
+    };
+    document.addEventListener('click', collapseWhenClickingElsewhere);
+    return () => document.removeEventListener('click', collapseWhenClickingElsewhere);
+  }, [updateHistoryExpanded]);
 
   useEffect(() => {
     if (!termsAccepted) {
@@ -1576,6 +1644,31 @@ export default function App() {
       console.error('Could not save Terms acceptance:', error);
       setTermsAcceptance(acceptance);
       setTermsStorageError(true);
+    }
+  };
+
+  const handleAppUpdate = async () => {
+    if (isNativeApp) {
+      const platform = window.Capacitor?.getPlatform?.();
+      const storeUrl = platform === 'ios'
+        ? (import.meta.env.VITE_IOS_APP_STORE_URL || 'https://apps.apple.com/search?term=VoltGuard%20Pro')
+        : (import.meta.env.VITE_ANDROID_PLAY_STORE_URL || 'https://play.google.com/store/search?q=VoltGuard%20Pro&c=apps');
+      window.open(storeUrl, '_system');
+      return;
+    }
+
+    setAppUpdateChecking(true);
+    setAppUpdateFeedback('');
+    try {
+      const registration = 'serviceWorker' in navigator
+        ? await navigator.serviceWorker.getRegistration()
+        : null;
+      if (registration) await registration.update();
+      window.location.reload();
+    } catch (error) {
+      console.error('Could not check for an app update:', error);
+      setAppUpdateFeedback(t('appUpdateFailed'));
+      setAppUpdateChecking(false);
     }
   };
 
@@ -2150,17 +2243,13 @@ export default function App() {
     setNewSlotForm(prev => {
       const updated = { ...prev, [field]: val };
       if (field === 'type' && !isBatteryCompatibleWithCharger(updated, currentCharger)) {
-        const voltageRange = getNominalVoltageRange(updated.type);
-        if (Number(updated.voltage) < voltageRange.min || Number(updated.voltage) > voltageRange.max) {
-          updated.voltage = voltageRange.defaultValue;
-        }
         const nextCompatibleSize = AVAILABLE_SLOT_TYPES.find(size =>
           size !== 'AA/AAA Combined' &&
           isBatteryCompatibleWithCharger({ ...updated, size }, currentCharger)
         );
         if (nextCompatibleSize) updated.size = nextCompatibleSize;
       }
-      if (field === 'size' || field === 'type') {
+      if (field === 'size' || field === 'type' || field === 'voltage') {
         if (!isBatteryCompatibleWithCharger(updated, currentCharger)) {
           setAddSlotError(t('errorIncompatibleBattery'));
         } else {
@@ -2173,37 +2262,44 @@ export default function App() {
 
   const handleAddSlotSubmit = (e) => {
     e.preventDefault();
-    if (!selectedBatteryProfileId && (!newSlotForm.capacity || !newSlotForm.voltage || !newSlotForm.slotLabel)) {
+    const selectedProfile = selectedBatteryProfileId
+      ? batteryProfiles.find(profile => profile.id === selectedBatteryProfileId)
+      : null;
+    if (selectedBatteryProfileId && !selectedProfile) {
+      setAddSlotError(t('errorIncompatibleBattery'));
+      return;
+    }
+    const batteryToUse = selectedProfile
+      ? {
+        ...newSlotForm,
+        slotLabel: selectedProfile.name,
+        size: selectedProfile.size,
+        type: selectedProfile.type,
+        capacity: selectedProfile.capacity,
+        voltage: selectedProfile.voltage
+      }
+      : newSlotForm;
+
+    if (!selectedProfile && (!batteryToUse.capacity || !batteryToUse.voltage || !batteryToUse.slotLabel)) {
       setAddSlotError(t('errorProfileRequired'));
       return;
     }
-    if (!newSlotForm.capacity || newSlotForm.capacity <= 0) {
+    if (!batteryToUse.capacity || batteryToUse.capacity <= 0) {
       setAddSlotError('Capacity must be greater than 0 mAh.');
       return;
     }
-    if (!newSlotForm.voltage || newSlotForm.voltage <= 0) {
+    if (!batteryToUse.voltage || batteryToUse.voltage <= 0) {
       setAddSlotError('Voltage must be a valid number.');
       return;
     }
 
-    if (!isBatteryCompatibleWithCharger(newSlotForm, currentCharger)) {
+    if (!isBatteryCompatibleWithCharger(batteryToUse, currentCharger)) {
       setAddSlotError(t('errorIncompatibleBattery'));
       return;
     }
-    if (!getChargerCurrentMa(currentCharger, newSlotForm)) {
+    if (!getChargerCurrentMa(currentCharger, batteryToUse)) {
       setAddSlotError(t('errorChargerCurrentMissing'));
       return;
-    }
-    if (selectedBatteryProfileId) {
-      const selectedProfile = batteryProfiles.find(profile => profile.id === selectedBatteryProfileId);
-      if (!isBatteryCompatibleWithCharger(selectedProfile, currentCharger)) {
-        setAddSlotError(t('errorIncompatibleBattery'));
-        return;
-      }
-      if (!getChargerCurrentMa(currentCharger, selectedProfile)) {
-        setAddSlotError(t('errorChargerCurrentMissing'));
-        return;
-      }
     }
 
     const slotCount = currentCharger.slotCount || 4;
@@ -2225,7 +2321,7 @@ export default function App() {
       return;
     }
 
-    const { slotLabel, size, type, capacity, voltage, initialCharge, efficiency, targetMode } = newSlotForm;
+    const { slotLabel, size, type, capacity, voltage, initialCharge, efficiency, targetMode } = batteryToUse;
 
     let profileIdToUse = selectedBatteryProfileId;
 
@@ -3476,6 +3572,61 @@ export default function App() {
               </div>
             </div>
 
+            {/* APP VERSION AND RELEASE NOTES */}
+            <section className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-2xl" aria-labelledby="settings-app-updates-title">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h2 id="settings-app-updates-title" className="flex items-center gap-3 text-base font-bold text-slate-100">
+                    <Info className="h-5 w-5 shrink-0 text-cyan-400" />
+                    <span>{t('appUpdateTitle')}</span>
+                  </h2>
+                  <p className="mt-2 text-xs text-slate-400 leading-relaxed">{t('appUpdateDescription')}</p>
+                  <p className="mt-3 text-sm font-bold text-slate-100">
+                    {t('appUpdateCurrentVersion')}: <span className="text-cyan-300">{APP_VERSION}</span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAppUpdate}
+                  disabled={appUpdateChecking}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-cyan-600 px-4 py-3 text-xs font-bold text-white hover:bg-cyan-500 disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+                >
+                  <RefreshCw className={`h-4 w-4 ${appUpdateChecking ? 'animate-spin' : ''}`} />
+                  <span>{appUpdateChecking ? t('appUpdateChecking') : t('appUpdateNow')}</span>
+                </button>
+              </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
+                {isNativeApp ? t('appUpdateNativeHint') : t('appUpdatePwaHint')}
+              </p>
+              {appUpdateFeedback && (
+                <p role="alert" className="mt-3 rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-200">
+                  {appUpdateFeedback}
+                </p>
+              )}
+              <div ref={updateHistoryRef} className="mt-5 border-t border-slate-800 pt-4">
+                <button
+                  type="button"
+                  aria-expanded={updateHistoryExpanded}
+                  aria-controls="app-update-history-content"
+                  onClick={() => setUpdateHistoryExpanded(expanded => !expanded)}
+                  className="flex w-full items-center justify-between gap-4 rounded-xl text-left rtl:text-right focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400"
+                >
+                  <span className="text-xs font-bold uppercase tracking-wide text-slate-300">{t('appUpdateHistory')}</span>
+                  <ChevronRight className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${updateHistoryExpanded ? 'rotate-90' : 'rtl:rotate-180'}`} />
+                </button>
+                <div id="app-update-history-content" hidden={!updateHistoryExpanded}>
+                  <ol className="mt-3 space-y-3">
+                    {APP_RELEASE_HISTORY.map(release => (
+                      <li key={release.version} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                        <p className="text-xs font-bold text-cyan-300">{release.version}</p>
+                        <p className="mt-1 text-xs leading-relaxed text-slate-400">{release.summary}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </section>
+
             {/* TERMS AND CONDITIONS */}
             <section ref={termsSectionRef} className="bg-slate-900/70 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-2xl" aria-labelledby="settings-terms-title">
               <button
@@ -3607,6 +3758,63 @@ export default function App() {
         )}
 
       </main>
+
+      {appUpdateNotice && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-xl">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="app-update-dialog-title"
+            aria-describedby="app-update-dialog-description"
+            className="w-full max-w-lg space-y-5 rounded-3xl border border-cyan-500/30 bg-slate-900 p-6 shadow-2xl sm:p-8"
+          >
+            <div className="flex items-start gap-3">
+              <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-3 text-cyan-300">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 id="app-update-dialog-title" className="text-lg font-extrabold text-slate-100">{t('appUpdateTitle')}</h2>
+                <p id="app-update-dialog-description" className="mt-1 text-sm leading-relaxed text-slate-300">
+                  {t('appUpdateAvailable')} {t('appUpdateCurrentVersion')}: {APP_VERSION}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <p className="text-xs font-bold text-cyan-300">{appUpdateNotice.version}</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-300">{appUpdateNotice.summary}</p>
+            </div>
+            {appUpdateFeedback && <p role="alert" className="text-xs text-red-300">{appUpdateFeedback}</p>}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                autoFocus
+                onClick={handleAppUpdate}
+                disabled={appUpdateChecking}
+                className="rounded-xl bg-cyan-600 px-4 py-3 text-sm font-bold text-white hover:bg-cyan-500 disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+              >
+                {appUpdateChecking ? t('appUpdateChecking') : t('appUpdateNow')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAppUpdateNotice(null);
+                  setActiveTab('settings');
+                }}
+                className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-bold text-slate-200 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+              >
+                {t('appUpdateSettings')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setAppUpdateNotice(null)}
+                className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 sm:col-span-2"
+              >
+                {t('appUpdateLater')}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {/* --- MODAL: ADD BATTERY SLOT --- */}
       {isAddModalOpen && (

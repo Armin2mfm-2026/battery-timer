@@ -9,24 +9,49 @@ let settingsDatabasePromise;
 const getSettingsDatabase = () => {
   if (!settingsDatabasePromise) {
     settingsDatabasePromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open('VoltGuardProDB', 1);
-      request.onupgradeneeded = () => {
-        if (!request.result.objectStoreNames.contains('appState')) {
-          request.result.createObjectStore('appState', { keyPath: 'id' });
+      let settled = false;
+      const fail = (error) => {
+        if (settled) return;
+        settled = true;
+        settingsDatabasePromise = undefined;
+        reject(error);
+      };
+      let request;
+      try {
+        request = indexedDB.open('VoltGuardProDB', 1);
+      } catch (error) {
+        fail(error);
+        return;
+      }
+      request.onupgradeneeded = (event) => {
+        try {
+          if (!request.result.objectStoreNames.contains('appState')) {
+            request.result.createObjectStore('appState', { keyPath: 'id' });
+          }
+        } catch (error) {
+          try {
+            event.target.transaction?.abort();
+          } catch (abortError) {
+            console.error('Could not abort notification preferences database upgrade:', abortError);
+          }
+          fail(error);
         }
       };
       request.onsuccess = () => {
         const db = request.result;
+        if (settled) {
+          db.close();
+          return;
+        }
+        settled = true;
         db.onversionchange = () => {
           db.close();
           settingsDatabasePromise = undefined;
         };
         resolve(db);
       };
-      request.onerror = () => {
-        settingsDatabasePromise = undefined;
-        reject(request.error || new Error('Could not open notification preferences.'));
-      };
+      request.onerror = () => fail(request.error || new Error('Could not open notification preferences.'));
+      request.onblocked = () => fail(new Error('Opening notification preferences was blocked by another database connection.'));
     });
   }
   return settingsDatabasePromise;
