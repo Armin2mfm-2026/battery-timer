@@ -1305,6 +1305,20 @@ export default function App() {
     language: 'en',
     autoArchiveFinished: false
   });
+  const [termsAcceptance, setTermsAcceptance] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(TERMS_STORAGE_KEY));
+      return saved && typeof saved.version === 'string' ? saved : null;
+    } catch {
+      return null;
+    }
+  });
+  const [termsAgreed, setTermsAgreed] = useState(false);
+  const [termsDeclined, setTermsDeclined] = useState(false);
+  const [termsStorageError, setTermsStorageError] = useState(false);
+  const termsAccepted = termsAcceptance?.version === TERMS_VERSION;
+  const termsCheckboxRef = useRef(null);
+  const termsReviewButtonRef = useRef(null);
 
   // --- Backup & Restore UI States ---
   const [includeStatsInBackup, setIncludeStatsInBackup] = useState(true);
@@ -1517,6 +1531,37 @@ export default function App() {
   const isRTL = useMemo(() => settings.language === 'fa' || settings.language === 'ar', [settings.language]);
   const t = (key) => TRANSLATIONS[settings.language]?.[key] || TRANSLATIONS['en'][key] || key;
   const copy = APP_COPY[settings.language] || APP_COPY.en;
+
+  useEffect(() => {
+    if (!termsAccepted) {
+      if (termsDeclined) termsReviewButtonRef.current?.focus();
+      else termsCheckboxRef.current?.focus();
+    }
+  }, [termsAccepted, termsDeclined]);
+
+  const acceptCurrentTerms = () => {
+    if (!termsAgreed) return;
+    const acceptance = { version: TERMS_VERSION, acceptedAt: new Date().toISOString() };
+    try {
+      localStorage.setItem(TERMS_STORAGE_KEY, JSON.stringify(acceptance));
+      setTermsAcceptance(acceptance);
+      setTermsStorageError(false);
+    } catch (error) {
+      console.error('Could not save Terms acceptance:', error);
+      setTermsStorageError(true);
+    }
+  };
+
+  const renderTermsDocument = () => (
+    <div className="space-y-5 text-xs sm:text-sm leading-relaxed text-slate-300">
+      {TERMS_SECTIONS.map(section => (
+        <section key={section.heading} className="space-y-1.5">
+          <h3 className="font-bold text-slate-100">{section.heading}</h3>
+          <p>{section.text}</p>
+        </section>
+      ))}
+    </div>
+  );
   
   const currentCharger = useMemo(() => chargers.find(c => c.id === activeChargerId) || chargers[0], [chargers, activeChargerId]);
 
